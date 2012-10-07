@@ -24,26 +24,36 @@ class Ship(object):
         self.health = 50
         self.death = False
 
-        self.accel = 5
-        self.speed = 15
+        self.accel = 0
+        self.ACCELERATION = 0.5
+        self.speed = 0
+        self.max_speed = 15
         self.mv = {'left':False, 'right':False, 'up':False, 'down':False}
         self.facing = {'west':False, 'east':False, 'north':True, 'south':False}
 
+    def accelerate(self, direction):
+        if direction == 'left':
+            self.accel = -1 * self.ACCELERATION
+        elif direction == 'right':
+            self.accel = self.ACCELERATION
+        elif direction == 'off':
+            self.accel = 0
+        else:
+            # log error: "Bad acceleration"
+            self.accel = 0
     def move(self):
+    
+        if abs(self.speed) < self.max_speed:
+            self.speed += self.accel
+        if ((self.speed < 0) != (self.accel < 0)):
+            self.speed += self.accel
 
-        # Cannot move if dead
-        if self.mv['left']:
-            self.rect.move_ip(-self.speed, 0)
-            self.dir_ew = 'left'    # East / West direction
-        elif self.mv['right']:
-            self.rect.move_ip(self.speed, 0)
+        self.rect.move_ip(self.speed, 0)
+
+        if self.speed > 0:
             self.dir_ew = 'right'
-        if self.mv['up']: 
-            self.rect.move_ip(0, -self.speed)
-            self.dir_ns = 'up'
-        elif self.mv['down']:
-            self.rect.move_ip(0, self.speed)
-            self.dir_ns = 'down'
+        if self.speed < 0:
+            self.dir_ew = 'left'    # East / West direction
 
     def damage(self, strength):
         """Damage our object, kill it if zero health."""
@@ -103,7 +113,6 @@ class Monster(object):
 
         global win_surf
         win_surf.blit(self.img, self.rect.topleft)
-
 
 class Bullet(object):
     
@@ -205,7 +214,7 @@ class PewPew(object):
 
         sounds = {}
         sounds['shot'] = pygame.mixer.Sound('_sounds/blip2.wav')
-        sounds['shot'].set_volume(0.3)
+        sounds['shot'].set_volume(0.2)
         sounds['hit'] = pygame.mixer.Sound('_sounds/blip.wav')
         sounds['explode'] = pygame.mixer.Sound('_sounds/smash.wav')
         sounds['explode'].set_volume(0.3)
@@ -229,11 +238,9 @@ class PewPew(object):
                     if event.key == K_ESCAPE:
                         terminate()
                     elif event.key == K_LEFT:
-                        hero.mv['left'] = True
-                        hero.mv['right'] = False
+                        hero.accelerate('left')
                     elif event.key == K_RIGHT:
-                        hero.mv['right'] = True
-                        hero.mv['left'] = False
+                        hero.accelerate('right')
                     elif event.key == K_SPACE:
                         if len(bullets) < 2:
                             sounds['shot'].play()
@@ -242,13 +249,13 @@ class PewPew(object):
 
                 elif event.type == KEYUP:
                     if event.key == K_LEFT:
-                        hero.mv['left'] = False
+                        hero.accelerate('off')
                     elif event.key == K_RIGHT:
-                        hero.mv['right'] = False
+                        hero.accelerate('off')
                     elif event.key == K_UP:
-                        hero.mv['up'] = False
+                        pass
                     elif event.key == K_DOWN:
-                        hero.mv['down'] = False
+                        pass
             
             win_surf.fill(self.BG_COLOR)
             win_rect = win_surf.get_rect()
@@ -306,6 +313,8 @@ class PewPew(object):
             if hero.death:
                 terminate()
             else:
+                if not win_rect.contains(hero.rect):
+                    hero.speed = 0
                 hero.move()
                 hero.draw()
 
