@@ -32,6 +32,7 @@ class Ship(object):
         self.facing = {'west':False, 'east':False, 'north':True, 'south':False}
 
     def accelerate(self, direction):
+
         if direction == 'left':
             self.accel = -1 * self.ACCELERATION
         elif direction == 'right':
@@ -41,15 +42,18 @@ class Ship(object):
         else:
             # log error: "Bad acceleration"
             self.accel = 0
+        # can't accelerate past max speed
+        if (abs(self.speed) >= self.max_speed) \
+            and ((self.speed < 0) == (self.accel < 0)):
+            self.accel = 0
+
+    def set_speed(self, accel):
+        self.speed += self.accel
+
     def move(self):
-    
-        if abs(self.speed) < self.max_speed:
-            self.speed += self.accel
-        if ((self.speed < 0) != (self.accel < 0)):
-            self.speed += self.accel
+        self.set_speed(self.accel)
 
         self.rect.move_ip(self.speed, 0)
-
         if self.speed > 0:
             self.dir_ew = 'right'
         if self.speed < 0:
@@ -133,8 +137,12 @@ class Bullet(object):
 
         self.mv = {'up':True}
         # inherit shooter's left & right velocity
-        self.mv['left'] = shooter.mv['left']
-        self.mv['right'] = shooter.mv['right']
+        self.mv['right'] = False
+        self.mv['left'] = False
+        if shooter.speed > 0:
+            self.mv['right'] = True
+        elif shooter.speed < 0:
+            self.mv['left'] = True
 
     def move(self):
         if self.mv['up']: 
@@ -143,13 +151,8 @@ class Bullet(object):
             trail_height = (old_bottom - self.rect.top)
             self.trail_rect = pygame.Rect(self.rect.topleft,
                                         (self.rect.width, trail_height))
-            
-        if self.mv['left']:
-            self.rect.move_ip(-self.speed_x, 0)
-            self.dir_ew = 'left'    # East / West direction
-        elif self.mv['right']:
+        if self.mv['left'] or self.mv['right']:
             self.rect.move_ip(self.speed_x, 0)
-            self.dir_ew = 'right'
 
     def draw(self):
 
@@ -225,6 +228,10 @@ class PewPew(object):
         bullets = []
         monsters = []
         explosions = []
+        walls = [
+            pygame.Rect(-50, -50, 50, self.W_HEIGHT + 100),
+            pygame.Rect(self.W_WIDTH, -50, 50, self.W_HEIGHT + 100)
+        ]
 
         # Game loop:
         monster_counter = 0
@@ -313,9 +320,13 @@ class PewPew(object):
             if hero.death:
                 terminate()
             else:
-                if not win_rect.contains(hero.rect):
-                    hero.speed = 0
                 hero.move()
+                if hero.rect.left < 0:
+                    hero.rect.left = 0
+                    hero.speed = -hero.speed/2
+                elif hero.rect.right > self.W_WIDTH:
+                    hero.rect.right = self.W_WIDTH
+                    hero.speed = -hero.speed/2
                 hero.draw()
 
 
