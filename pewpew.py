@@ -24,6 +24,7 @@ class Ship(object):
         self.health = 50
         self.death = False
 
+        self.mass = 10
         self.accel = 0
         self.ACCELERATION = 0.5
         self.speed = 0
@@ -64,6 +65,10 @@ class Ship(object):
         self.health = self.health - strength
         if self.health <= 0:
             self.death = True
+
+    def collide(self, other):
+        self.speed = (self.speed * (self.mass - other.mass) + \
+                     2 * other.mass * other.speed_x) / (self.mass + other.mass)
        
     def draw(self):
 
@@ -75,12 +80,16 @@ class Monster(object):
     def __init__(self, screen_size, image_set):
         if random.choice([True, False]):
             self.img = image_set['enemy_1']
+            self.speed_y = 1
             self.strength = 10
             self.health = 50
+            self.mass = 20
         else:
             self.img = image_set['enemy_2']
+            self.speed_y = 3
             self.strength = 2
             self.health = 10
+            self.mass = 2
 
         self.width = self.img.get_width()
         self.height = self.img.get_height()
@@ -91,7 +100,6 @@ class Monster(object):
         self.y = 0
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
-        self.speed_y = 2
         self.speed_x = 0
 
         self.mv = {'left':False, 'right':False, 'up':False, 'down':True}
@@ -184,6 +192,17 @@ class Explosion(object):
         global win_surf
         win_surf.blit(self.img, self.rect.topleft)
 
+class Wall(object):
+    """Screen walls"""
+
+    def __init__(self, left, screen_height):
+
+        self.rect = pygame.Rect(left, -50, 50, screen_height + 100)
+        self.strength = float("inf")
+        self.mass = float("inf")
+        self.health = float("inf")
+        self.speed = 0
+
 class PewPew(object):
     """Primary game object. Not sure this is the best way,
     saw it in someone's game..."""
@@ -229,8 +248,8 @@ class PewPew(object):
         monsters = []
         explosions = []
         walls = [
-            pygame.Rect(-50, -50, 50, self.W_HEIGHT + 100),
-            pygame.Rect(self.W_WIDTH, -50, 50, self.W_HEIGHT + 100)
+            Wall(-50, self.W_HEIGHT),
+            Wall(self.W_WIDTH, self.W_HEIGHT)
         ]
 
         # Game loop:
@@ -301,6 +320,7 @@ class PewPew(object):
                 m.draw()
 
                 if m.rect.colliderect(hero.rect):
+                    hero.collide(m)
                     hero.damage(m.strength)
                     monsters.remove(m)
                     explosions.append(Explosion(m, self.image_set['explosion']))
@@ -321,14 +341,14 @@ class PewPew(object):
                 terminate()
             else:
                 hero.move()
-                if hero.rect.left < 0:
-                    hero.rect.left = 0
-                    hero.speed = -hero.speed/2
-                elif hero.rect.right > self.W_WIDTH:
-                    hero.rect.right = self.W_WIDTH
-                    hero.speed = -hero.speed/2
+                for w in walls:
+                    if w.rect.colliderect(hero.rect):
+                        if w.rect.left < hero.rect.left < w.rect.right:
+                            hero.rect.left = w.rect.right
+                        elif w.rect.right > hero.rect.right > w.rect.left:
+                            hero.rect.right = w.rect.left
+                        hero.speed = -hero.speed/2
                 hero.draw()
-
 
             for e in explosions[:]:
                 e.update()
