@@ -66,10 +66,16 @@ class Ship(object):
         if self.health <= 0:
             self.death = True
 
-    def collide(self, other):
+    def collide(self, other, elasticity, reset):
+        # this code assumes only some overlap, not total object crossing!
+        if reset:
+            if other.rect.left < self.rect.left < other.rect.right:
+                self.rect.left = other.rect.right
+            elif other.rect.right > self.rect.right > other.rect.left:
+                self.rect.right = other.rect.left
         self.speed = (self.speed * (self.mass - other.mass) + \
                      2 * other.mass * other.speed_x) / (self.mass + other.mass)
-       
+        self.speed *= elasticity    # scale by elasticity
     def draw(self):
 
         global win_surf
@@ -199,9 +205,10 @@ class Wall(object):
 
         self.rect = pygame.Rect(left, -50, 50, screen_height + 100)
         self.strength = float("inf")
-        self.mass = float("inf")
+        self.mass = 1e20 #float("inf")
         self.health = float("inf")
-        self.speed = 0
+        self.speed_x = 0
+        self.speed_y = 0
 
 class PewPew(object):
     """Primary game object. Not sure this is the best way,
@@ -320,7 +327,7 @@ class PewPew(object):
                 m.draw()
 
                 if m.rect.colliderect(hero.rect):
-                    hero.collide(m)
+                    hero.collide(m, 1.0, False)
                     hero.damage(m.strength)
                     monsters.remove(m)
                     explosions.append(Explosion(m, self.image_set['explosion']))
@@ -343,11 +350,7 @@ class PewPew(object):
                 hero.move()
                 for w in walls:
                     if w.rect.colliderect(hero.rect):
-                        if w.rect.left < hero.rect.left < w.rect.right:
-                            hero.rect.left = w.rect.right
-                        elif w.rect.right > hero.rect.right > w.rect.left:
-                            hero.rect.right = w.rect.left
-                        hero.speed = -hero.speed/2
+                        hero.collide(w, 0.5, True)
                 hero.draw()
 
             for e in explosions[:]:
