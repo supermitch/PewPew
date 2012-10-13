@@ -1,12 +1,6 @@
 import sys, random
 import pygame
 from pygame.locals import *
-
-
-def terminate():
-    pygame.quit()   # uninitialize
-    sys.exit()
-
     
 class Ship(object):
     
@@ -269,7 +263,11 @@ class PewPew(object):
                     terminate()
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
-                        terminate()
+                        self.terminate()
+                    elif event.key == K_p:
+                        self.pause_game()
+                    elif event.key == K_x:
+                        self.game_over()
                     elif event.key == K_LEFT:
                         hero.accelerate('left')
                     elif event.key == K_RIGHT:
@@ -309,13 +307,11 @@ class PewPew(object):
                         e = Explosion(m, self.image_set['explosion'])
                         explosions.append(e)
                         bullets.remove(b)
-                        collision = True
 
-                # draw bullets only if we didn't collide with them
-                if not collision:
-                    b.draw()
-                    if not win_rect.contains(b.rect):
-                        bullets.remove(b)
+            for b in bullets[:]:
+                b.draw()
+                if not win_rect.contains(b.rect):
+                    bullets.remove(b)
 
             if monster_counter == self.ADD_MONSTER:
                 monster_counter = 0
@@ -332,11 +328,7 @@ class PewPew(object):
                     monsters.remove(m)
                     explosions.append(Explosion(m, self.image_set['explosion']))
                     sounds['explode'].play()
-                    if hero.death:
-                        e = Explosion(hero, self.image_set['explosion'])
-                        explosions.append(e)
-                        sounds['explode'].play()
-                    else:
+                    if not hero.death:
                         sounds['hit'].play()
                         continue
 
@@ -345,7 +337,10 @@ class PewPew(object):
                     continue
 
             if hero.death:
-                terminate()
+                e = Explosion(hero, self.image_set['explosion'])
+                explosions.append(e)
+                sounds['explode'].play()
+                break # out of game loop
             else:
                 hero.move()
                 for w in walls:
@@ -358,11 +353,48 @@ class PewPew(object):
                 e.draw()
                 if e.complete:
                     explosions.remove(e)
-
+ 
             pygame.display.update()
 
             fps_clock.tick(self.FPS)
 
+        if hero.death:
+            self.game_over()
+
+    def game_over(self):
+        fps_clock = pygame.time.Clock()
+        print("Game over!")
+        print("Do you want to play again? (y/n)")
+        waiting_for_answer = True
+        while waiting_for_answer:
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    terminate()
+                elif event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        self.terminate()
+                    elif event.key == K_n:
+                        self.terminate()
+                    elif event.key == K_y:
+                        waiting_for_answer = False
+            pygame.time.Clock().tick(self.FPS)
+        self.run()
+
+    def pause_game(self):
+        fps_clock = pygame.time.Clock()
+        print("Paused! Press spacebar to continue.")
+        paused = True
+        while paused:
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    terminate()
+                elif event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        self.terminate()
+                    elif event.key == K_SPACE:
+                        paused = False
+            fps_clock.tick(self.FPS)
+    
     def load_images(self):
 
         image_set = {} 
@@ -379,6 +411,11 @@ class PewPew(object):
                     ]
         image_set['explosion'] = explosion
         return image_set
+
+    def terminate(self):
+        pygame.quit()   # uninitialize
+        sys.exit()
+
 
 if __name__ == "__main__":
     app = PewPew()
