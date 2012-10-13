@@ -224,7 +224,8 @@ class PewPew(object):
 
         # Build window
         global win_surf
-        win_surf = pygame.display.set_mode(self.screen_size, RESIZABLE)
+        self.win_surf = pygame.display.set_mode(self.screen_size, RESIZABLE)
+        win_surf = self.win_surf
         pygame.display.set_caption('Pew Pew 1.0') 
 
         # Load our external resources
@@ -382,7 +383,16 @@ class PewPew(object):
 
     def pause_game(self):
         fps_clock = pygame.time.Clock()
-        print("Paused! Press spacebar to continue.")
+        text = pygame.font.Font(None, 60)
+        surf = text.render("Paused!", True, (0,0,255))
+        self.win_surf.blit(surf, (self.W_WIDTH/2 - surf.get_width()/2,
+                                  self.W_HEIGHT/2 - surf.get_height()/2))
+        small_text = pygame.font.Font(None, 30)
+        surf = small_text.render("(Press spacebar to resume)", True, (0,0,255))
+        self.win_surf.blit(surf, (self.W_WIDTH/2 - surf.get_width()/2,
+                                  self.W_HEIGHT/2 - surf.get_height()/2 + 60))
+        pygame.display.update()
+
         paused = True
         while paused:
             for event in pygame.event.get():
