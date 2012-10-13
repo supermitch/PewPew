@@ -9,15 +9,17 @@ class Ship(object):
         self.img = pygame.image.load('_images/ship.png')
         self.width = self.img.get_width()
         self.height = self.img.get_height()
-        self.color = (100, 100, 150)
 
         self.x = (screen_size[0] / 2) - (self.width / 2)
         self.y = screen_size[1] - (self.height * 2)
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
-        self.health = 50
+        self.max_health = 50.0
+        self.health = 50.0
         self.death = False
 
+        self.max_fuel = 400.0
+        self.fuel = 400.0
         self.mass = 10
         self.accel = 0
         self.ACCELERATION = 0.5
@@ -43,9 +45,14 @@ class Ship(object):
             self.accel = 0
 
     def set_speed(self, accel):
+
+        if self.accel != 0:
+            self.fuel -= abs(self.accel) * 1.0
+        
         self.speed += self.accel
 
     def move(self):
+
         self.set_speed(self.accel)
 
         self.rect.move_ip(self.speed, 0)
@@ -254,6 +261,14 @@ class PewPew(object):
             Wall(self.W_WIDTH, self.W_HEIGHT)
         ]
 
+        stats = {
+            'bullets_fired': 0,
+            'bullets_missed': 0,
+            'bullets_hit': 0,
+            'monsters_killed': 0,
+            'monsters_missed': 0,
+        }
+
         # Game loop:
         monster_counter = 0
         while True:
@@ -278,6 +293,7 @@ class PewPew(object):
                             sounds['shot'].play()
                             b = Bullet(hero)
                             bullets.append(b)
+                            stats['bullets_fired'] += 1
 
                 elif event.type == KEYUP:
                     if event.key == K_LEFT:
@@ -299,9 +315,11 @@ class PewPew(object):
                 # look for collisions with monsters
                 for m in monsters[:]:
                     if m.rect.colliderect(b.trail_rect):
+                        stats['bullets_hit'] += 1
                         m.damage(b.strength)
                         if m.death:
                             monsters.remove(m)
+                            stats['monsters_killed'] += 1
                             sounds['explode'].play(maxtime=400)
                         else:
                             sounds['hit'].play()
@@ -312,6 +330,7 @@ class PewPew(object):
             for b in bullets[:]:
                 b.draw()
                 if not win_rect.contains(b.rect):
+                    stats['bullets_missed'] += 1
                     bullets.remove(b)
 
             if monster_counter == self.ADD_MONSTER:
@@ -334,6 +353,7 @@ class PewPew(object):
                         continue
 
                 if not win_rect.contains(m.rect):
+                    stats['monsters_missed'] += 1
                     monsters.remove(m)
                     continue
 
@@ -355,6 +375,11 @@ class PewPew(object):
                 if e.complete:
                     explosions.remove(e)
  
+            # Text displays
+            self.plot_stats(stats)
+            self.plot_fuel(hero.fuel, hero.max_fuel)
+            self.plot_health(hero.health, hero.damage, hero.max_health)
+
             pygame.display.update()
 
             fps_clock.tick(self.FPS)
@@ -383,6 +408,7 @@ class PewPew(object):
 
     def pause_game(self):
         fps_clock = pygame.time.Clock()
+
         text = pygame.font.Font(None, 60)
         surf = text.render("Paused!", True, (0,0,255))
         self.win_surf.blit(surf, (self.W_WIDTH/2 - surf.get_width()/2,
@@ -404,7 +430,55 @@ class PewPew(object):
                     elif event.key == K_SPACE:
                         paused = False
             fps_clock.tick(self.FPS)
-    
+
+    def plot_stats(self, stats):
+        "Plots text statistics, but doesn't display them"
+        try:
+            accuracy = float(stats['bullets_hit']) / stats['bullets_fired'] * 100
+        except ZeroDivisionError:
+            accuracy = 0.0
+        text = pygame.font.Font(None, 20)
+        surf = text.render("Accuracy: %0.2f %%" % accuracy,
+                           True, (0,0,255))
+        self.win_surf.blit(surf, (20, 20))
+
+        surf = text.render("Enemies killed: %d" % stats['monsters_killed'],
+                           True, (0,0,255))
+        self.win_surf.blit(surf, (20, 40))
+
+        surf = text.render("Enemies missed: %d" % stats['monsters_missed'],
+                           True, (0,0,255))
+        self.win_surf.blit(surf, (20, 60))
+
+    def plot_fuel(self, fuel, max_fuel):
+        "Plots text statistics, but doesn't display them"
+        text = pygame.font.Font(None, 20)
+
+        surf = text.render("Fuel burned: %0.2f" % (max_fuel - fuel),
+                           True, (0,0,255))
+        self.win_surf.blit(surf, (20, 80))
+
+        surf = text.render("Fuel remaining: %0.2f" % fuel,
+                           True, (0,0,255))
+        self.win_surf.blit(surf, (20, 100))
+
+
+    def plot_health(self, health, damage, max_health):
+        "Display hero health info"
+        try:
+            percentage = float(health) / max_health * 100
+        except ZeroDivisionError:
+            accuracy = 0.0
+        text = pygame.font.Font(None, 20)
+        surf = text.render("Health: %0.1f %%" % percentage,
+                           True, (0,0,255))
+        self.win_surf.blit(surf, (20, 120))
+
+        surf = text.render("Remaining: %0.2f" % health,
+                           True, (0,0,255))
+        self.win_surf.blit(surf, (20, 140))
+
+
     def load_images(self):
 
         image_set = {} 
