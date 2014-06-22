@@ -9,5 +9,5 @@ Simply type `python pewpew.py` to run.
 
 ## Controls ##
 
-_Left_ & _Right_ arrows to move, _Spacebar_ to shoot. _Esc_ to exit.
+__Left__ & __Right__ arrows to move, __Spacebar__ to shoot. __Esc__ to exit.
 
