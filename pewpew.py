@@ -1,219 +1,17 @@
 import sys, random
 import pygame
 from pygame.locals import *
-    
-class Ship(object):
-    
-    def __init__(self, screen_size):
 
-        self.img = pygame.image.load('_images/ship.png')
-        self.width = self.img.get_width()
-        self.height = self.img.get_height()
-
-        self.x = (screen_size[0] / 2) - (self.width / 2)
-        self.y = screen_size[1] - (self.height * 2)
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-
-        self.max_health = 50.0
-        self.health = 50.0
-        self.death = False
-
-        self.max_fuel = 400.0
-        self.fuel = 400.0
-        self.mass = 10
-        self.accel = 0
-        self.ACCELERATION = 0.5
-        self.speed = 0
-        self.max_speed = 15
-        self.mv = {'left':False, 'right':False, 'up':False, 'down':False}
-        self.facing = {'west':False, 'east':False, 'north':True, 'south':False}
-
-    def accelerate(self, direction):
-
-        if direction == 'left':
-            self.accel = -1 * self.ACCELERATION
-        elif direction == 'right':
-            self.accel = self.ACCELERATION
-        elif direction == 'off':
-            self.accel = 0
-        else:
-            # log error: "Bad acceleration"
-            self.accel = 0
-        # can't accelerate past max speed
-        if (abs(self.speed) >= self.max_speed) \
-            and ((self.speed < 0) == (self.accel < 0)):
-            self.accel = 0
-
-    def set_speed(self, accel):
-
-        if self.accel != 0:
-            self.fuel -= abs(self.accel) * 1.0
-        
-        self.speed += self.accel
-
-    def move(self):
-
-        self.set_speed(self.accel)
-
-        self.rect.move_ip(self.speed, 0)
-        if self.speed > 0:
-            self.dir_ew = 'right'
-        if self.speed < 0:
-            self.dir_ew = 'left'    # East / West direction
-
-    def damage(self, strength):
-        """Damage our object, kill it if zero health."""
-        self.health = self.health - strength
-        if self.health <= 0:
-            self.death = True
-
-    def collide(self, other, elasticity, reset):
-        # this code assumes only some overlap, not total object crossing!
-        if reset:
-            if other.rect.left < self.rect.left < other.rect.right:
-                self.rect.left = other.rect.right
-            elif other.rect.right > self.rect.right > other.rect.left:
-                self.rect.right = other.rect.left
-        self.speed = (self.speed * (self.mass - other.mass) + \
-                     2 * other.mass * other.speed_x) / (self.mass + other.mass)
-        self.speed *= elasticity    # scale by elasticity
-    def draw(self):
-
-        global win_surf
-        win_surf.blit(self.img, self.rect.topleft)
-
-class Monster(object):
-    
-    def __init__(self, screen_size, image_set):
-        if random.choice([True, False]):
-            self.img = image_set['enemy_1']
-            self.speed_y = 1
-            self.strength = 10
-            self.health = 50
-            self.mass = 20
-        else:
-            self.img = image_set['enemy_2']
-            self.speed_y = 3
-            self.strength = 2
-            self.health = 10
-            self.mass = 2
-
-        self.width = self.img.get_width()
-        self.height = self.img.get_height()
-
-        self.death = False
-
-        self.x = random.randint(20+self.width, screen_size[0] - (20+self.width))
-        self.y = 0
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-
-        self.speed_x = 0
-
-        self.mv = {'left':False, 'right':False, 'up':False, 'down':True}
-
-    def move(self):
-
-        if self.mv['left']:
-            self.rect.move_ip(-self.speed_x, 0)
-        elif self.mv['right']:
-            self.rect.move_ip(self.speed_x, 0)
-        if self.mv['up']: 
-            self.rect.move_ip(0, -self.speed_y)
-        elif self.mv['down']:
-            self.rect.move_ip(0, self.speed_y)
-
-    def damage(self, strength):
-        """Damage our object, kill it if zero health."""
-        self.health = self.health - strength
-        if self.health <= 0:
-            self.death = True
-
-    def draw(self):
-
-        global win_surf
-        win_surf.blit(self.img, self.rect.topleft)
-
-class Bullet(object):
-    
-    def __init__(self, shooter):
-        
-        self.width = 4
-        self.height = 4
-        self.color = (250, 255, 255)
-
-        self.strength = 10
-
-        self.x = shooter.rect.midtop[0] - (self.width / 2)
-        self.y = shooter.rect.midtop[1]
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-
-        self.speed_y = 40
-        self.speed_x = shooter.speed
-
-        self.mv = {'up':True}
-        # inherit shooter's left & right velocity
-        self.mv['right'] = False
-        self.mv['left'] = False
-        if shooter.speed > 0:
-            self.mv['right'] = True
-        elif shooter.speed < 0:
-            self.mv['left'] = True
-
-    def move(self):
-        if self.mv['up']: 
-            old_bottom = self.rect.bottom
-            self.rect.move_ip(0, -self.speed_y)
-            trail_height = (old_bottom - self.rect.top)
-            self.trail_rect = pygame.Rect(self.rect.topleft,
-                                        (self.rect.width, trail_height))
-        if self.mv['left'] or self.mv['right']:
-            self.rect.move_ip(self.speed_x, 0)
-
-    def draw(self):
-
-        global win_surf
-        pygame.draw.rect(win_surf, self.color, self.rect)
-
-class Explosion(object):
-    
-    def __init__(self, source, image_list):
-
-        self.explosion = image_list
-        self.frame = 0
-        self.complete = False
-        self.img = self.explosion[self.frame]
-        self.x = source.rect.centerx - self.img.get_width()/2
-        self.y = source.rect.centery - self.img.get_height()/2
-        self.rect = pygame.Rect(self.x, self.y, self.img.get_width(),
-                                 self.img.get_height())
-        self.rect.center = source.rect.center
-
-    def update(self):
-        self.frame += 1
-        if self.frame < 5:
-            self.img = self.explosion[self.frame]
-        else:
-            self.complete = True
-
-    def draw(self):
-        global win_surf
-        win_surf.blit(self.img, self.rect.topleft)
-
-class Wall(object):
-    """Screen walls"""
-
-    def __init__(self, left, screen_height):
-
-        self.rect = pygame.Rect(left, -50, 50, screen_height + 100)
-        self.strength = float("inf")
-        self.mass = 1e20 #float("inf")
-        self.health = float("inf")
-        self.speed_x = 0
-        self.speed_y = 0
+from classes.ship import Ship
+from classes.monster import Monster
+from classes.bullet import Bullet
+from classes.wall import Wall
+from classes.explosion import Explosion
+from classes.world import World
 
 class PewPew(object):
-    """Primary game object. Not sure this is the best way,
-    saw it in someone's game..."""
+    """ Primary game object. Not sure this is the best way,
+    saw it in someone's game... """
 
     def __init__(self):
         """Initalize some game constants."""
@@ -225,6 +23,7 @@ class PewPew(object):
         self.BG_COLOR = (0, 0, 0)
         self.FPS = 40
         self.ADD_MONSTER = 40
+        self.world = World()  # Empty world
 
     def run(self):
         """Run the actual game."""
@@ -236,26 +35,27 @@ class PewPew(object):
         pygame.display.set_caption('Pew Pew 1.0') 
 
         # Load our external resources
-        self.image_set = self.load_images()
+        self.image_set = self.loadimages()
 
         # Initialize framerate clock
         fps_clock = pygame.time.Clock()
 
-        hero = Ship(self.screen_size)   # initialize hero
+        # Add world items
+        self.world.hero = Ship(self.screen_size)   # initialize hero
+        self.world.bullets = []
+        self.world.monsters = []
+        self.world.explosions = []
 
         sounds = {}
-        sounds['shot'] = pygame.mixer.Sound('_sounds/blip2.wav')
+        sounds['shot'] = pygame.mixer.Sound('sounds/blip2.wav')
         sounds['shot'].set_volume(0.2)
-        sounds['hit'] = pygame.mixer.Sound('_sounds/blip.wav')
-        sounds['explode'] = pygame.mixer.Sound('_sounds/smash.wav')
+        sounds['hit'] = pygame.mixer.Sound('sounds/blip.wav')
+        sounds['explode'] = pygame.mixer.Sound('sounds/smash.wav')
         sounds['explode'].set_volume(0.3)
         pygame.mixer.set_num_channels(12)
         #pygame.mixer.music.load('sounds/castlevania.mid')
         #pygame.mixer.music.play(-1, 0.0)
 
-        bullets = []
-        monsters = []
-        explosions = []
         walls = [
             Wall(-50, self.W_HEIGHT),
             Wall(self.W_WIDTH, self.W_HEIGHT)
@@ -285,21 +85,21 @@ class PewPew(object):
                     elif event.key == K_x:
                         self.game_over()
                     elif event.key == K_LEFT:
-                        hero.accelerate('left')
+                        self.world.hero.accelerate('left')
                     elif event.key == K_RIGHT:
-                        hero.accelerate('right')
+                        self.world.hero.accelerate('right')
                     elif event.key == K_SPACE:
-                        if len(bullets) < 2:
+                        if len(self.world.bullets) < 2:
                             sounds['shot'].play()
-                            b = Bullet(hero)
-                            bullets.append(b)
+                            b = Bullet(self.world.hero)
+                            self.world.bullets.append(b)
                             stats['bullets_fired'] += 1
 
                 elif event.type == KEYUP:
                     if event.key == K_LEFT:
-                        hero.accelerate('off')
+                        self.world.hero.accelerate('off')
                     elif event.key == K_RIGHT:
-                        hero.accelerate('off')
+                        self.world.hero.accelerate('off')
                     elif event.key == K_UP:
                         pass
                     elif event.key == K_DOWN:
@@ -308,84 +108,93 @@ class PewPew(object):
             win_surf.fill(self.BG_COLOR)
             win_rect = win_surf.get_rect()
 
-            
-            for b in bullets[:]:
+            for b in self.world.bullets[:]:
                 collision = False
                 b.move()
                 # look for collisions with monsters
-                for m in monsters[:]:
+                for m in self.world.monsters[:]:
                     if m.rect.colliderect(b.trail_rect):
                         stats['bullets_hit'] += 1
                         m.damage(b.strength)
                         if m.death:
-                            monsters.remove(m)
+                            self.world.monsters.remove(m)
                             stats['monsters_killed'] += 1
                             sounds['explode'].play(maxtime=400)
                         else:
                             sounds['hit'].play()
                         e = Explosion(m, self.image_set['explosion'])
-                        explosions.append(e)
-                        bullets.remove(b)
+                        self.world.explosions.append(e)
+                        self.world.bullets.remove(b)
 
-            for b in bullets[:]:
-                b.draw()
+            for b in self.world.bullets[:]:
                 if not win_rect.contains(b.rect):
                     stats['bullets_missed'] += 1
-                    bullets.remove(b)
+                    self.world.bullets.remove(b)
 
             if monster_counter == self.ADD_MONSTER:
                 monster_counter = 0
                 m = Monster(self.screen_size, self.image_set)
-                monsters.append(m)
+                self.world.monsters.append(m)
 
-            for m in monsters[:]:
+            for m in self.world.monsters[:]:
                 m.move()
-                m.draw()
 
-                if m.rect.colliderect(hero.rect):
-                    hero.collide(m, 1.0, False)
-                    hero.damage(m.strength)
-                    monsters.remove(m)
-                    explosions.append(Explosion(m, self.image_set['explosion']))
+                if m.rect.colliderect(self.world.hero.rect):
+                    self.world.hero.collide(m, 1.0, False)
+                    self.world.hero.damage(m.strength)
+                    self.world.monsters.remove(m)
+                    self.world.explosions.append(Explosion(m, self.image_set['explosion']))
                     sounds['explode'].play()
-                    if not hero.death:
+                    if not self.world.hero.death:
                         sounds['hit'].play()
                         continue
 
                 if not win_rect.contains(m.rect):
                     stats['monsters_missed'] += 1
-                    monsters.remove(m)
+                    self.world.monsters.remove(m)
                     continue
 
-            if hero.death:
+            if self.world.hero.death:
                 e = Explosion(hero, self.image_set['explosion'])
-                explosions.append(e)
+                self.world.explosions.append(e)
                 sounds['explode'].play()
                 break # out of game loop
             else:
-                hero.move()
+                self.world.hero.move()
                 for w in walls:
-                    if w.rect.colliderect(hero.rect):
-                        hero.collide(w, 0.5, True)
-                hero.draw()
+                    if w.rect.colliderect(self.world.hero.rect):
+                        self.world.hero.collide(w, 0.5, True)
 
-            for e in explosions[:]:
+            for e in self.world.explosions[:]:
                 e.update()
-                e.draw()
                 if e.complete:
-                    explosions.remove(e)
+                    self.world.explosions.remove(e)
  
             # Text displays
-            self.plot_stats(stats)
-            self.plot_fuel(hero.fuel, hero.max_fuel)
-            self.plot_health(hero.health, hero.damage, hero.max_health)
+            colour = (100, 100, 255)
+            self.plot_stats(stats, colour)
+            self.plot_fuel(self.world.hero.fuel, self.world.hero.max_fuel, colour)
+            self.plot_health(self.world.hero.health, self.world.hero.damage, self.world.hero.max_health, colour)
 
+            self.render()
             pygame.display.update()
 
             fps_clock.tick(self.FPS)
 
-        if hero.death:
+        if self.world.hero.death:
             self.game_over()
+
+    def render(self):
+        """ Blit our game objects to the screen. """
+        self.win_surf.blit(*self.world.hero.draw())
+        for monster in self.world.monsters:
+            self.win_surf.blit(*monster.draw())
+        for explosion in self.world.explosions:
+            self.win_surf.blit(*explosion.draw())
+        for bullet in self.world.bullets:
+            # Bullets are filled rects, for now.
+            pygame.draw.rect(win_surf, *bullet.draw())
+        return None
 
     def game_over(self):
         fps_clock = pygame.time.Clock()
@@ -431,76 +240,81 @@ class PewPew(object):
                         paused = False
             fps_clock.tick(self.FPS)
 
-    def plot_stats(self, stats):
-        "Plots text statistics, but doesn't display them"
+    def plot_stats(self, stats, colour):
+        """ Plots text statistics, but doesn't display them. """
         try:
             accuracy = float(stats['bullets_hit']) / stats['bullets_fired'] * 100
         except ZeroDivisionError:
             accuracy = 0.0
         text = pygame.font.Font(None, 20)
+        left = 20
         surf = text.render("Accuracy: %0.2f %%" % accuracy,
-                           True, (0,0,255))
-        self.win_surf.blit(surf, (20, 20))
+                           True, colour)
+        self.win_surf.blit(surf, (left, 20))
 
         surf = text.render("Enemies killed: %d" % stats['monsters_killed'],
-                           True, (0,0,255))
-        self.win_surf.blit(surf, (20, 40))
+                           True, colour)
+        self.win_surf.blit(surf, (left, 40))
 
         surf = text.render("Enemies missed: %d" % stats['monsters_missed'],
-                           True, (0,0,255))
-        self.win_surf.blit(surf, (20, 60))
+                           True, colour)
+        self.win_surf.blit(surf, (left, 60))
 
-    def plot_fuel(self, fuel, max_fuel):
-        "Plots text statistics, but doesn't display them"
+    def plot_fuel(self, fuel, max_fuel, colour):
+        """ Plots text statistics, but doesn't display them. """
+        left = 20
         text = pygame.font.Font(None, 20)
 
         surf = text.render("Fuel burned: %0.2f" % (max_fuel - fuel),
-                           True, (0,0,255))
-        self.win_surf.blit(surf, (20, 80))
+                           True, colour)
+        self.win_surf.blit(surf, (left, 80))
 
         surf = text.render("Fuel remaining: %0.2f" % fuel,
-                           True, (0,0,255))
-        self.win_surf.blit(surf, (20, 100))
+                           True, colour)
+        self.win_surf.blit(surf, (left, 100))
 
-
-    def plot_health(self, health, damage, max_health):
-        "Display hero health info"
+    def plot_health(self, health, damage, max_health, colour):
+        """ Display hero health info. """
+        left = 20
         try:
             percentage = float(health) / max_health * 100
         except ZeroDivisionError:
             accuracy = 0.0
         text = pygame.font.Font(None, 20)
         surf = text.render("Health: %0.1f %%" % percentage,
-                           True, (0,0,255))
-        self.win_surf.blit(surf, (20, 120))
+                           True, colour)
+        self.win_surf.blit(surf, (left, 120))
 
         surf = text.render("Remaining: %0.2f" % health,
-                           True, (0,0,255))
-        self.win_surf.blit(surf, (20, 140))
+                           True, colour)
+        self.win_surf.blit(surf, (left, 140))
 
-
-    def load_images(self):
-
+    def loadimages(self):
+        """ Returns a dictionary of pygame.image entries. """
         image_set = {} 
-        image_set['enemy_1'] = pygame.image.load('_images/enemy_1.png').convert()
-        image_set['enemy_2'] = pygame.image.load('_images/enemy_2.png').convert()
-        image_set['ship'] = pygame.image.load('_images/ship.png').convert()
+        image_set['ship'] = pygame.image.load('images/ship.png').convert()
 
-        sprite_sheet = pygame.image.load("_images/explosion_1.png")
-        explosion = [sprite_sheet.subsurface((46,46,100,100))
-                    ,sprite_sheet.subsurface((238,238,100,100))
-                    ,sprite_sheet.subsurface((430,430,100,100))
-                    ,sprite_sheet.subsurface((622,622,100,100))
-                    ,sprite_sheet.subsurface((814,814,100,100))
-                    ]
+        image_set['enemy_1'] = pygame.image.load('images/enemy_1.png').convert()
+        image_set['enemy_2'] = pygame.image.load('images/enemy_2.png').convert()
+
+        sprite_sheet = pygame.image.load("images/explosion_1.png")
+        explosion = [
+            sprite_sheet.subsurface((46,46,100,100)),
+            sprite_sheet.subsurface((238,238,100,100)),
+            sprite_sheet.subsurface((430,430,100,100)),
+            sprite_sheet.subsurface((622,622,100,100)),
+            sprite_sheet.subsurface((814,814,100,100)),
+        ]
         image_set['explosion'] = explosion
         return image_set
 
     def terminate(self):
+        """ Shut 'er down. """
         pygame.quit()   # uninitialize
         sys.exit()
 
 
 if __name__ == "__main__":
-    app = PewPew()
+    app = PewPew()  # Instantiate new app
     app.run()
+
