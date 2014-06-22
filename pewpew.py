@@ -155,7 +155,8 @@ class PewPew(object):
                     continue
 
             if self.world.hero.death:
-                e = Explosion(hero, self.image_set['explosion'])
+                e = Explosion(self.world.hero,
+                              self.image_set['explosion'])
                 self.world.explosions.append(e)
                 sounds['explode'].play()
                 break # out of game loop
@@ -173,8 +174,11 @@ class PewPew(object):
             # Text displays
             colour = (100, 100, 255)
             self.plot_stats(stats, colour)
-            self.plot_fuel(self.world.hero.fuel, self.world.hero.max_fuel, colour)
-            self.plot_health(self.world.hero.health, self.world.hero.damage, self.world.hero.max_health, colour)
+            self.plot_fuel(self.world.hero.fuel,
+                           self.world.hero.max_fuel, colour)
+            self.plot_health(self.world.hero.health,
+                             self.world.hero.damage,
+                             self.world.hero.max_health, colour)
 
             self.render()
             pygame.display.update()
