@@ -19,11 +19,11 @@ class Ship(object):
 
         self.max_fuel = 400.0
         self.fuel = 400.0
-        self.mass = 10
-        self.accel = 0
-        self.ACCELERATION = 0.5
-        self.speed = 0
-        self.max_speed = 15
+        self.mass = 10.0
+        self.accel = 0.0
+        self.ACCELERATION = 0.6
+        self.speed = 0.0
+        self.max_speed = 12.0
         self.mv = {'left':False, 'right':False, 'up':False, 'down':False}
         self.facing = {'west':False, 'east':False,
                        'north':True, 'south':False}

@@ -30,7 +30,8 @@ class PewPew(object):
 
         # Build window
         global win_surf
-        self.win_surf = pygame.display.set_mode(self.screen_size, RESIZABLE)
+        self.win_surf = pygame.display.set_mode(self.screen_size,
+                                                RESIZABLE)
         win_surf = self.win_surf
         pygame.display.set_caption('Pew Pew 1.0') 
 
@@ -50,8 +51,9 @@ class PewPew(object):
         sounds['shot'] = pygame.mixer.Sound('sounds/blip2.wav')
         sounds['shot'].set_volume(0.2)
         sounds['hit'] = pygame.mixer.Sound('sounds/blip.wav')
+        sounds['hit'].set_volume(0.3)
         sounds['explode'] = pygame.mixer.Sound('sounds/smash.wav')
-        sounds['explode'].set_volume(0.3)
+        sounds['explode'].set_volume(0.2)
         pygame.mixer.set_num_channels(12)
         #pygame.mixer.music.load('sounds/castlevania.mid')
         #pygame.mixer.music.play(-1, 0.0)
@@ -70,10 +72,10 @@ class PewPew(object):
         }
 
         # Game loop:
-        monster_counter = 0
+        frame_counter = 0
         while True:
-
-            monster_counter += 1
+            # Main game loop
+            frame_counter += 1
             for event in pygame.event.get():
                 if event.type == QUIT:
                     terminate()
@@ -94,7 +96,6 @@ class PewPew(object):
                             b = Bullet(self.world.hero)
                             self.world.bullets.append(b)
                             stats['bullets_fired'] += 1
-
                 elif event.type == KEYUP:
                     if event.key == K_LEFT:
                         self.world.hero.accelerate('off')
@@ -131,8 +132,9 @@ class PewPew(object):
                     stats['bullets_missed'] += 1
                     self.world.bullets.remove(b)
 
-            if monster_counter == self.ADD_MONSTER:
-                monster_counter = 0
+            if frame_counter >= self.ADD_MONSTER:
+                # Trigger a new monster
+                frame_counter = 0
                 m = Monster(self.screen_size, self.image_set)
                 self.world.monsters.append(m)
 
@@ -143,7 +145,8 @@ class PewPew(object):
                     self.world.hero.collide(m, 1.0, False)
                     self.world.hero.damage(m.strength)
                     self.world.monsters.remove(m)
-                    self.world.explosions.append(Explosion(m, self.image_set['explosion']))
+                    self.world.explosions.append(Explosion(m,
+                         self.image_set['explosion']))
                     sounds['explode'].play()
                     if not self.world.hero.death:
                         sounds['hit'].play()
