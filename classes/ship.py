@@ -19,47 +19,58 @@ class Ship(object):
 
         self.max_fuel = 400.0
         self.fuel = 400.0
-        self.mass = 10.0
+        self.mass = 50.0
         self.accel = 0.0
-        self.ACCELERATION = 0.6
-        self.speed = 0.0
-        self.max_speed = 12.0
+
+        self.thrust = 0  # Current thrust
+        self.thrust_max = 60  # Thrust capability
+
+        # TODO: Add anti-gravity, which allows frictionless sliding
+
+        self.speed = 0.0  # Current speed
+        self.max_speed = 12.0  # Speed capability
+
         self.mv = {'left':False, 'right':False, 'up':False, 'down':False}
         self.facing = {'west':False, 'east':False,
                        'north':True, 'south':False}
 
-    def accelerate(self, direction):
-
-        if direction == 'left':
-            self.accel = -1 * self.ACCELERATION
-        elif direction == 'right':
-            self.accel = self.ACCELERATION
-        elif direction == 'off':
-            self.accel = 0
+    @property
+    def friction(self):
+        vector = 1 if self.speed > 0 else -1
+        mu = 0.1
+        g = 9.8  # m/s^2
+        if abs(self.speed) <= 0.01 * self.max_speed:
+            return 0
         else:
-            # log error: "Bad acceleration"
-            self.accel = 0
-        # can't accelerate past max speed
-        if (abs(self.speed) >= self.max_speed) \
-            and ((self.speed < 0) == (self.accel < 0)):
-            self.accel = 0
+            return mu * self.mass * g * vector
+
+    @property
+    def acceleration(self):
+        self.fuel -= abs(self.thrust) * 0.1
+        net_force = self.thrust - self.friction
+        print('{} = {} - {}'.format(net_force, self.thrust, self.friction))
+        return net_force / self.mass
+
+    def activate_thrusters(self, direction):
+        if direction == 'left':
+            self.thrust = -1 * self.thrust_max
+        elif direction == 'right':
+            self.thrust = self.thrust_max
+        elif direction == 'off':
+            self.thrust = 0
+        else:
+            self.thrust = 0  # log error: "Bad acceleration"
 
     def set_speed(self, accel):
-
-        if self.accel != 0:
-            self.fuel -= abs(self.accel) * 1.0
-        
-        self.speed += self.accel
+        """ Modify speed by acceleration. Limited to max_speed. """
+        self.speed += self.acceleration
+        if abs(self.speed) >= self.max_speed:
+            self.speed = self.speed / abs(self.speed) * self.max_speed
 
     def move(self):
-
+        """ Update speed given acceleration and move ship accordingly. """
         self.set_speed(self.accel)
-
         self.rect.move_ip(self.speed, 0)
-        if self.speed > 0:
-            self.dir_ew = 'right'
-        if self.speed < 0:
-            self.dir_ew = 'left'    # East / West direction
 
     def damage(self, strength):
         """ Damage our object, kill it if zero health."""

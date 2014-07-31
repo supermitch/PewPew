@@ -87,9 +87,9 @@ class PewPew(object):
                     elif event.key == K_x:
                         self.game_over()
                     elif event.key == K_LEFT:
-                        self.world.hero.accelerate('left')
+                        self.world.hero.activate_thrusters('left')
                     elif event.key == K_RIGHT:
-                        self.world.hero.accelerate('right')
+                        self.world.hero.activate_thrusters('right')
                     elif event.key == K_SPACE:
                         if len(self.world.bullets) < 2:
                             sounds['shot'].play()
@@ -98,9 +98,9 @@ class PewPew(object):
                             stats['bullets_fired'] += 1
                 elif event.type == KEYUP:
                     if event.key == K_LEFT:
-                        self.world.hero.accelerate('off')
+                        self.world.hero.activate_thrusters('off')
                     elif event.key == K_RIGHT:
-                        self.world.hero.accelerate('off')
+                        self.world.hero.activate_thrusters('off')
                     elif event.key == K_UP:
                         pass
                     elif event.key == K_DOWN:
