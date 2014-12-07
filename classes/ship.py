@@ -18,12 +18,13 @@ class Ship(object):
         self.death = False
 
         self.max_fuel = 400.0
+        self.fuel_consumption = 0.1  # Lower is better
         self.fuel = 400.0
         self.mass = 50.0
         self.accel = 0.0
 
         self.thrust = 0  # Current thrust
-        self.thrust_max = 60  # Thrust capability
+        self.thrust_max = 40  # Thrust capability
 
         # TODO: Add anti-gravity, which allows frictionless sliding
 
@@ -36,20 +37,19 @@ class Ship(object):
 
     @property
     def friction(self):
+        """ Calculate force of friction. """
         vector = 1 if self.speed > 0 else -1
-        mu = 0.1
-        g = 9.8  # m/s^2
-        if abs(self.speed) <= 0.01 * self.max_speed:
+        mu = 0.05  # TODO: Function of surface and ship attribs!
+        g = 9.8  # m/s^2 TODO: Function of planet
+        if abs(self.speed) <= 0.001 * self.max_speed:
             return 0
         else:
             return mu * self.mass * g * vector
 
     @property
     def acceleration(self):
-        self.fuel -= abs(self.thrust) * 0.1
-        net_force = self.thrust - self.friction
-        print('{} = {} - {}'.format(net_force, self.thrust, self.friction))
-        return net_force / self.mass
+        self.fuel -= abs(self.thrust) * self.fuel_consumption
+        return (self.thrust - self.friction) / self.mass
 
     def activate_thrusters(self, direction):
         if direction == 'left':
@@ -59,7 +59,7 @@ class Ship(object):
         elif direction == 'off':
             self.thrust = 0
         else:
-            self.thrust = 0  # log error: "Bad acceleration"
+            self.thrust = 0  # log error: "Bad direction"
 
     def set_speed(self, accel):
         """ Modify speed by acceleration. Limited to max_speed. """

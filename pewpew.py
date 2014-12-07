@@ -1,13 +1,21 @@
-import sys, random
+#!/usr/bin/env python
+import random
+import sys
+
 import pygame
 from pygame.locals import *
 
-from classes.ship import Ship
-from classes.monster import Monster
-from classes.bullet import Bullet
-from classes.wall import Wall
-from classes.explosion import Explosion
-from classes.world import World
+from classes import ship
+from classes import monster
+from classes import bullet
+from classes import wall
+from classes import explosion
+from classes import world
+from classes import renderer
+
+from screens.start import StartScreen
+from screens.level import LevelScreen
+
 
 class PewPew(object):
     """ Primary game object. Not sure this is the best way,
@@ -20,10 +28,9 @@ class PewPew(object):
         self.W_WIDTH = 800
         self.W_HEIGHT = 600
         self.screen_size = (self.W_WIDTH, self.W_HEIGHT)
-        self.BG_COLOR = (0, 0, 0)
         self.FPS = 40
         self.ADD_MONSTER = 40
-        self.world = World()  # Empty world
+        self.world = world.World()  # Empty world
 
     def run(self):
         """Run the actual game."""
@@ -33,7 +40,7 @@ class PewPew(object):
         self.win_surf = pygame.display.set_mode(self.screen_size,
                                                 RESIZABLE)
         win_surf = self.win_surf
-        pygame.display.set_caption('Pew Pew 1.0') 
+        pygame.display.set_caption('Pew Pew 1.0')
 
         # Load our external resources
         self.image_set = self.loadimages()
@@ -41,29 +48,41 @@ class PewPew(object):
         # Initialize framerate clock
         fps_clock = pygame.time.Clock()
 
+        # Display Start Screen
+        start_screen = StartScreen(self.win_surf, fps_clock, self.FPS)
+        start_screen.render()
+
+        #Display Level 1 Screen
+        level_screen = LevelScreen(1, self.win_surf, fps_clock, self.FPS)
+        level_screen.render()
+
+        #Start the game:
         # Add world items
-        self.world.hero = Ship(self.screen_size)   # initialize hero
+        self.world.hero = ship.Ship(self.screen_size)   # initialize hero
         self.world.bullets = []
         self.world.monsters = []
         self.world.explosions = []
+
+        # Initialize renderer
+        self.renderer = renderer.Renderer(win_surf, self.world)
 
         sounds = {}
         sounds['shot'] = pygame.mixer.Sound('sounds/blip2.wav')
         sounds['shot'].set_volume(0.2)
         sounds['hit'] = pygame.mixer.Sound('sounds/blip.wav')
         sounds['hit'].set_volume(0.3)
-        sounds['explode'] = pygame.mixer.Sound('sounds/smash.wav')
-        sounds['explode'].set_volume(0.2)
+        sounds['explode'] = pygame.mixer.Sound('sounds/beep-41.wav')
+        sounds['explode'].set_volume(1.0)
         pygame.mixer.set_num_channels(12)
-        #pygame.mixer.music.load('sounds/castlevania.mid')
-        #pygame.mixer.music.play(-1, 0.0)
+        pygame.mixer.music.load('sounds/castlevania.mid')
+        pygame.mixer.music.play(-1, 0.0)
 
         walls = [
-            Wall(-50, self.W_HEIGHT),
-            Wall(self.W_WIDTH, self.W_HEIGHT)
+            wall.Wall(-50, self.W_HEIGHT),
+            wall.Wall(self.W_WIDTH, self.W_HEIGHT)
         ]
 
-        stats = {
+        self.world.stats = {
             'bullets_fired': 0,
             'bullets_missed': 0,
             'bullets_hit': 0,
@@ -80,62 +99,63 @@ class PewPew(object):
                 if event.type == QUIT:
                     terminate()
                 elif event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
+                    if event.key in (K_q, K_ESCAPE):
                         self.terminate()
                     elif event.key == K_p:
                         self.pause_game()
-                    elif event.key == K_x:
+                    elif event.key == K_x:  # Reset
                         self.game_over()
-                    elif event.key == K_LEFT:
+                    elif event.key in (K_h, K_LEFT):
                         self.world.hero.activate_thrusters('left')
-                    elif event.key == K_RIGHT:
+                    elif event.key in (K_l, K_RIGHT):
                         self.world.hero.activate_thrusters('right')
                     elif event.key == K_SPACE:
                         if len(self.world.bullets) < 2:
                             sounds['shot'].play()
-                            b = Bullet(self.world.hero)
+                            b = bullet.Bullet(self.world.hero)
                             self.world.bullets.append(b)
-                            stats['bullets_fired'] += 1
+                            self.world.stats['bullets_fired'] += 1
                 elif event.type == KEYUP:
-                    if event.key == K_LEFT:
+                    if event.key in (K_h, K_LEFT):
                         self.world.hero.activate_thrusters('off')
-                    elif event.key == K_RIGHT:
+                    elif event.key in (K_l, K_RIGHT):
                         self.world.hero.activate_thrusters('off')
                     elif event.key == K_UP:
                         pass
                     elif event.key == K_DOWN:
                         pass
-            
-            win_surf.fill(self.BG_COLOR)
+
             win_rect = win_surf.get_rect()
 
             for b in self.world.bullets[:]:
-                collision = False
                 b.move()
                 # look for collisions with monsters
                 for m in self.world.monsters[:]:
                     if m.rect.colliderect(b.trail_rect):
-                        stats['bullets_hit'] += 1
+                        self.world.stats['bullets_hit'] += 1
                         m.damage(b.strength)
                         if m.death:
                             self.world.monsters.remove(m)
-                            stats['monsters_killed'] += 1
-                            sounds['explode'].play(maxtime=400)
+                            self.world.stats['monsters_killed'] += 1
+                            sounds['explode'].play(maxtime=350)
+                            e = explosion.Explosion(m,
+                                self.image_set['explosion'])
+                            self.world.explosions.append(e)
                         else:
                             sounds['hit'].play()
-                        e = Explosion(m, self.image_set['explosion'])
-                        self.world.explosions.append(e)
+                        # TODO: Crashes here?
                         self.world.bullets.remove(b)
 
             for b in self.world.bullets[:]:
                 if not win_rect.contains(b.rect):
-                    stats['bullets_missed'] += 1
+                    self.world.stats['bullets_missed'] += 1
+                    # TODO: Crashes here?
                     self.world.bullets.remove(b)
 
             if frame_counter >= self.ADD_MONSTER:
                 # Trigger a new monster
                 frame_counter = 0
-                m = Monster(self.screen_size, self.image_set)
+                m = monster.Monster(self.screen_size, self.image_set)
                 self.world.monsters.append(m)
 
             for m in self.world.monsters[:]:
@@ -145,7 +165,7 @@ class PewPew(object):
                     self.world.hero.collide(m, 1.0, False)
                     self.world.hero.damage(m.strength)
                     self.world.monsters.remove(m)
-                    self.world.explosions.append(Explosion(m,
+                    self.world.explosions.append(explosion.Explosion(m,
                          self.image_set['explosion']))
                     sounds['explode'].play()
                     if not self.world.hero.death:
@@ -153,12 +173,12 @@ class PewPew(object):
                         continue
 
                 if not win_rect.contains(m.rect):
-                    stats['monsters_missed'] += 1
+                    self.world.stats['monsters_missed'] += 1
                     self.world.monsters.remove(m)
                     continue
 
             if self.world.hero.death:
-                e = Explosion(self.world.hero,
+                e = explosion.Explosion(self.world.hero,
                               self.image_set['explosion'])
                 self.world.explosions.append(e)
                 sounds['explode'].play()
@@ -173,35 +193,15 @@ class PewPew(object):
                 e.update()
                 if e.complete:
                     self.world.explosions.remove(e)
- 
-            # Text displays
-            colour = (100, 100, 255)
-            self.plot_stats(stats, colour)
-            self.plot_fuel(self.world.hero.fuel,
-                           self.world.hero.max_fuel, colour)
-            self.plot_health(self.world.hero.health,
-                             self.world.hero.damage,
-                             self.world.hero.max_health, colour)
 
-            self.render()
-            pygame.display.update()
+
+            self.renderer.render()
 
             fps_clock.tick(self.FPS)
 
         if self.world.hero.death:
             self.game_over()
 
-    def render(self):
-        """ Blit our game objects to the screen. """
-        self.win_surf.blit(*self.world.hero.draw())
-        for monster in self.world.monsters:
-            self.win_surf.blit(*monster.draw())
-        for explosion in self.world.explosions:
-            self.win_surf.blit(*explosion.draw())
-        for bullet in self.world.bullets:
-            # Bullets are filled rects, for now.
-            pygame.draw.rect(win_surf, *bullet.draw())
-        return None
 
     def game_over(self):
         fps_clock = pygame.time.Clock()
@@ -213,7 +213,7 @@ class PewPew(object):
                 if event.type == QUIT:
                     terminate()
                 elif event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
+                    if event.key in (K_ESCAPE, K_q):
                         self.terminate()
                     elif event.key == K_n:
                         self.terminate()
@@ -241,64 +241,16 @@ class PewPew(object):
                 if event.type == QUIT:
                     terminate()
                 elif event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
+                    if event.key in (K_ESCAPE, K_q):
                         self.terminate()
                     elif event.key == K_SPACE:
                         paused = False
             fps_clock.tick(self.FPS)
 
-    def plot_stats(self, stats, colour):
-        """ Plots text statistics, but doesn't display them. """
-        try:
-            accuracy = float(stats['bullets_hit']) / stats['bullets_fired'] * 100
-        except ZeroDivisionError:
-            accuracy = 0.0
-        text = pygame.font.Font(None, 20)
-        left = 20
-        surf = text.render("Accuracy: %0.2f %%" % accuracy,
-                           True, colour)
-        self.win_surf.blit(surf, (left, 20))
-
-        surf = text.render("Enemies killed: %d" % stats['monsters_killed'],
-                           True, colour)
-        self.win_surf.blit(surf, (left, 40))
-
-        surf = text.render("Enemies missed: %d" % stats['monsters_missed'],
-                           True, colour)
-        self.win_surf.blit(surf, (left, 60))
-
-    def plot_fuel(self, fuel, max_fuel, colour):
-        """ Plots text statistics, but doesn't display them. """
-        left = 20
-        text = pygame.font.Font(None, 20)
-
-        surf = text.render("Fuel burned: %0.2f" % (max_fuel - fuel),
-                           True, colour)
-        self.win_surf.blit(surf, (left, 80))
-
-        surf = text.render("Fuel remaining: %0.2f" % fuel,
-                           True, colour)
-        self.win_surf.blit(surf, (left, 100))
-
-    def plot_health(self, health, damage, max_health, colour):
-        """ Display hero health info. """
-        left = 20
-        try:
-            percentage = float(health) / max_health * 100
-        except ZeroDivisionError:
-            accuracy = 0.0
-        text = pygame.font.Font(None, 20)
-        surf = text.render("Health: %0.1f %%" % percentage,
-                           True, colour)
-        self.win_surf.blit(surf, (left, 120))
-
-        surf = text.render("Remaining: %0.2f" % health,
-                           True, colour)
-        self.win_surf.blit(surf, (left, 140))
 
     def loadimages(self):
         """ Returns a dictionary of pygame.image entries. """
-        image_set = {} 
+        image_set = {}
         image_set['ship'] = pygame.image.load('images/ship.png').convert()
 
         image_set['enemy_1'] = pygame.image.load('images/enemy_1.png').convert()
