@@ -1,12 +1,19 @@
 import pygame
+from pygame.locals import *
 
 class Renderer(object):
     """ Render the world. """
 
-    def __init__(self, win_surf, world):
-        self.surf = win_surf
+    def __init__(self, screen_size, world):
+        self.surf = None
+        self.screen_size = screen_size
         self.world = world
         self.BG_COLOR = (10, 10, 10)
+
+    def create_window(self):
+        self.surf = pygame.display.set_mode(self.screen_size, RESIZABLE)
+        pygame.display.set_caption('Pew Pew 1.0')
+        return self.surf
 
     def render(self):
         # Start with a blank screen

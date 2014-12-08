@@ -31,16 +31,13 @@ class PewPew(object):
         self.FPS = 40
         self.ADD_MONSTER = 40
         self.world = world.World()  # Empty world
+        self.renderer = renderer.Renderer(self.screen_size, self.world)
 
     def run(self):
         """Run the actual game."""
 
         # Build window
-        global win_surf
-        self.win_surf = pygame.display.set_mode(self.screen_size,
-                                                RESIZABLE)
-        win_surf = self.win_surf
-        pygame.display.set_caption('Pew Pew 1.0')
+        self.win_surf = self.renderer.create_window()
 
         # Load our external resources
         self.image_set = self.loadimages()
@@ -62,9 +59,6 @@ class PewPew(object):
         self.world.bullets = []
         self.world.monsters = []
         self.world.explosions = []
-
-        # Initialize renderer
-        self.renderer = renderer.Renderer(win_surf, self.world)
 
         sounds = {}
         sounds['shot'] = pygame.mixer.Sound('sounds/blip2.wav')
@@ -125,7 +119,7 @@ class PewPew(object):
                     elif event.key == K_DOWN:
                         pass
 
-            win_rect = win_surf.get_rect()
+            win_rect = self.win_surf.get_rect()
 
             for b in self.world.bullets[:]:
                 b.move()
