@@ -3,6 +3,7 @@ import pygame
 from pygame.locals import *
 
 def color_surface(surface, red, green, blue):
+    """ Modify R, G or B channels to new values. """
     arr = pygame.surfarray.pixels3d(surface)
     arr[:, :, 0] = red
     arr[:, :, 1] = green
@@ -29,11 +30,12 @@ class Renderer(object):
         self.surf.blit(*self.world.hero.draw())
         for monster in self.world.monsters:
             if monster.status == 'injured':
+                # We flash sprite red
                 surf, pos = monster.draw()
+                # don't fuck up original image
                 surf = surf.copy()
-                #surf.fill((255, 100, 100, 100))
-                surf.fill((0, 255, 100, 1), special_flags=BLEND_RGBA_ADD)
-                #color_surface(surf, 255, 100, 100)
+                # Add red overlay
+                surf.fill((255, 0, 0), special_flags=BLEND_RGB_ADD)
                 self.surf.blit(surf, pos)
 
             else:

@@ -248,7 +248,7 @@ class PewPew(object):
         image_set = {}
         image_set['ship'] = pygame.image.load('images/ship.png').convert_alpha()
 
-        image_set['enemy_1'] = pygame.image.load('images/enemy_1.png').convert_alpha()
+        image_set['enemy_1'] = pygame.image.load('images/enemy_1_trans.png').convert_alpha()
         image_set['enemy_2'] = pygame.image.load('images/enemy_2.png').convert_alpha()
 
         sprite_sheet = pygame.image.load("images/explosion_1.png")
