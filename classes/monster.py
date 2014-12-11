@@ -33,11 +33,11 @@ class Monster(object):
 
         self.mv = {'left':False, 'right':False, 'up':False, 'down':True}
 
-        self.status = None
-        self.status_times = {}
+        self.status = {}
 
     def update(self, time):
-        pass
+        self.check_status(time)
+        self.move()
 
     def move(self):
         """ Movement... """
@@ -60,7 +60,17 @@ class Monster(object):
         """ Return an (image, position) tuple. """
         return self.img, self.rect.topleft
 
-    def set_status(self, status, time):
-        self.status = status
-        self.status_times[status] = time
+    def set_status(self, status, time, duration):
+        self.status[status] = (time, duration)
+
+    def check_status(self, current_time):
+        remove = []
+        for key, (set_time, duration) in self.status.items():
+            # If enough time has gone by, this status has ended
+            if (current_time - set_time) > duration:
+                remove.append(key)
+        for key in remove:
+            del self.status[key]
+
+
 

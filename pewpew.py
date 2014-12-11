@@ -89,6 +89,7 @@ class PewPew(object):
         while True:
             # Main game loop
             frame_counter += 1
+            time = pygame.time.get_ticks()
             for event in pygame.event.get():
                 if event.type == QUIT:
                     terminate()
@@ -128,7 +129,7 @@ class PewPew(object):
                     if m.rect.colliderect(b.trail_rect):
                         self.world.stats['bullets_hit'] += 1
                         m.damage(b.strength)
-                        m.set_status('injured', frame_counter)
+                        m.set_status('injured', time, 50)
                         if m.death:
                             self.world.monsters.remove(m)
                             self.world.stats['monsters_killed'] += 1
@@ -154,10 +155,11 @@ class PewPew(object):
                 self.world.monsters.append(m)
 
             for m in self.world.monsters[:]:
-                m.move()
+                m.update(time)
 
                 if m.rect.colliderect(self.world.hero.rect):
                     self.world.hero.collide(m, 1.0, False)
+                    self.world.hero.set_status('injured', time, 50)
                     self.world.hero.damage(m.strength)
                     self.world.monsters.remove(m)
                     self.world.explosions.append(explosion.Explosion(m,

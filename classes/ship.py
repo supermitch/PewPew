@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 
 class Ship(object):
-    
+
     def __init__(self, screen_size):
 
         self.img = pygame.image.load('images/ship.png')
@@ -34,6 +34,8 @@ class Ship(object):
         self.mv = {'left':False, 'right':False, 'up':False, 'down':False}
         self.facing = {'west':False, 'east':False,
                        'north':True, 'south':False}
+
+        self.status = {}
 
     @property
     def friction(self):
