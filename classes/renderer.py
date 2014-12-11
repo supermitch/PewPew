@@ -1,5 +1,12 @@
+import numpy
 import pygame
 from pygame.locals import *
+
+def color_surface(surface, red, green, blue):
+    arr = pygame.surfarray.pixels3d(surface)
+    arr[:, :, 0] = red
+    arr[:, :, 1] = green
+    arr[:, :, 2] = blue
 
 class Renderer(object):
     """ Render the world. """
@@ -21,7 +28,17 @@ class Renderer(object):
 
         self.surf.blit(*self.world.hero.draw())
         for monster in self.world.monsters:
-            self.surf.blit(*monster.draw())
+            if monster.status == 'injured':
+                surf, pos = monster.draw()
+                surf = surf.copy()
+                #surf.fill((255, 100, 100, 100))
+                surf.fill((0, 255, 100, 1), special_flags=BLEND_RGBA_ADD)
+                #color_surface(surf, 255, 100, 100)
+                self.surf.blit(surf, pos)
+
+            else:
+                self.surf.blit(*monster.draw())
+
         for explosion in self.world.explosions:
             self.surf.blit(*explosion.draw())
         for bullet in self.world.bullets:

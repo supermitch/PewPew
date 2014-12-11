@@ -4,7 +4,7 @@ import pygame
 from pygame.locals import *
 
 class Monster(object):
-    
+
     def __init__(self, screen_size, image_set):
         if random.choice([True, False]):
             self.img = image_set['enemy_1']
@@ -33,13 +33,19 @@ class Monster(object):
 
         self.mv = {'left':False, 'right':False, 'up':False, 'down':True}
 
-    def move(self):
+        self.status = None
+        self.status_times = {}
 
+    def update(self, time):
+        pass
+
+    def move(self):
+        """ Movement... """
         if self.mv['left']:
             self.rect.move_ip(-self.speed_x, 0)
         elif self.mv['right']:
             self.rect.move_ip(self.speed_x, 0)
-        if self.mv['up']: 
+        if self.mv['up']:
             self.rect.move_ip(0, -self.speed_y)
         elif self.mv['down']:
             self.rect.move_ip(0, self.speed_y)
@@ -54,4 +60,7 @@ class Monster(object):
         """ Return an (image, position) tuple. """
         return self.img, self.rect.topleft
 
+    def set_status(self, status, time):
+        self.status = status
+        self.status_times[status] = time
 

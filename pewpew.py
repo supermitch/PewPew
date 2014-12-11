@@ -128,6 +128,7 @@ class PewPew(object):
                     if m.rect.colliderect(b.trail_rect):
                         self.world.stats['bullets_hit'] += 1
                         m.damage(b.strength)
+                        m.set_status('injured', frame_counter)
                         if m.death:
                             self.world.monsters.remove(m)
                             self.world.stats['monsters_killed'] += 1
@@ -245,10 +246,10 @@ class PewPew(object):
     def loadimages(self):
         """ Returns a dictionary of pygame.image entries. """
         image_set = {}
-        image_set['ship'] = pygame.image.load('images/ship.png').convert()
+        image_set['ship'] = pygame.image.load('images/ship.png').convert_alpha()
 
-        image_set['enemy_1'] = pygame.image.load('images/enemy_1.png').convert()
-        image_set['enemy_2'] = pygame.image.load('images/enemy_2.png').convert()
+        image_set['enemy_1'] = pygame.image.load('images/enemy_1.png').convert_alpha()
+        image_set['enemy_2'] = pygame.image.load('images/enemy_2.png').convert_alpha()
 
         sprite_sheet = pygame.image.load("images/explosion_1.png")
         explosion = [
