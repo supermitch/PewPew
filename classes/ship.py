@@ -37,6 +37,10 @@ class Ship(object):
 
         self.status = {}
 
+    def update(self, time):
+        self.check_status(time)
+        self.move()
+
     @property
     def friction(self):
         """ Calculate force of friction. """
@@ -95,4 +99,17 @@ class Ship(object):
     def draw(self):
         """ Return an (image, position) tuple. """
         return self.img, self.rect.topleft
+
+    def set_status(self, status, time, duration):
+        self.status[status] = (time, duration)
+
+    def check_status(self, current_time):
+        remove = []
+        for key, (set_time, duration) in self.status.items():
+            # If enough time has gone by, this status has ended
+            if (current_time - set_time) > duration:
+                remove.append(key)
+        for key in remove:
+            del self.status[key]
+
 

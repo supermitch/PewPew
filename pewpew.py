@@ -181,7 +181,7 @@ class PewPew(object):
                 sounds['explode'].play()
                 break # out of game loop
             else:
-                self.world.hero.move()
+                self.world.hero.update(time)
                 for w in walls:
                     if w.rect.colliderect(self.world.hero.rect):
                         self.world.hero.collide(w, 0.5, True)
@@ -250,10 +250,10 @@ class PewPew(object):
         image_set = {}
         image_set['ship'] = pygame.image.load('images/ship.png').convert_alpha()
 
-        image_set['enemy_1'] = pygame.image.load('images/enemy_1_trans.png').convert_alpha()
+        image_set['enemy_1'] = pygame.image.load('images/enemy_1.png').convert_alpha()
         image_set['enemy_2'] = pygame.image.load('images/enemy_2.png').convert_alpha()
 
-        sprite_sheet = pygame.image.load("images/explosion_1.png")
+        sprite_sheet = pygame.image.load("images/explosion_1.png").convert_alpha()
         explosion = [
             sprite_sheet.subsurface((46,46,100,100)),
             sprite_sheet.subsurface((238,238,100,100)),
