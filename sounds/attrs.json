@@ -1,0 +1,23 @@
+{
+    "castlevania": {
+        "kind": "music",
+        "loops": -1,
+        "start": 0.0
+    },
+    "blip2": {
+        "kind": "sound",
+        "name": "shot",
+        "volume": 0.2
+    },
+    "blip": {
+        "kind": "sound",
+        "name": "hit",
+        "volume": 0.3
+    },
+    "beep-41": {
+        "kind": "sound",
+        "name": "explode",
+        "volume": 1.0
+    }
+}
+

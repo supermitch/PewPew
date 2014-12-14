@@ -12,6 +12,7 @@ from classes import wall
 from classes import explosion
 from classes import world
 from classes import renderer
+from classes import assetloader
 
 from screens.start import StartScreen
 from screens.level import LevelScreen
@@ -30,27 +31,24 @@ class PewPew(object):
         self.screen_size = (self.W_WIDTH, self.W_HEIGHT)
         self.FPS = 40
         self.ADD_MONSTER = 40
-        self.world = world.World()  # Empty world
-        self.renderer = renderer.Renderer(self.screen_size, self.world)
+
+        self.renderer = renderer.Renderer(self.screen_size)
+        self.asset_loader = assetloader.AssetLoader()
+        self.world = world.World(self.screen_size)
+        self.renderer.world = self.world
 
     def run(self):
         """Run the actual game."""
-
-        # Build window
-        self.win_surf = self.renderer.create_window()
-
-        # Load our external resources
-        self.image_set = self.loadimages()
 
         # Initialize framerate clock
         fps_clock = pygame.time.Clock()
 
         # Display Start Screen
-        start_screen = StartScreen(self.win_surf, fps_clock, self.FPS)
+        start_screen = StartScreen(self.renderer.surf, fps_clock, self.FPS)
         start_screen.render()
 
         #Display Level 1 Screen
-        level_screen = LevelScreen(1, self.win_surf, fps_clock, self.FPS)
+        level_screen = LevelScreen(1, self.renderer.surf, fps_clock, self.FPS)
         level_screen.render()
 
         #Start the game:
@@ -60,16 +58,6 @@ class PewPew(object):
         self.world.monsters = []
         self.world.explosions = []
 
-        sounds = {}
-        sounds['shot'] = pygame.mixer.Sound('sounds/blip2.wav')
-        sounds['shot'].set_volume(0.2)
-        sounds['hit'] = pygame.mixer.Sound('sounds/blip.wav')
-        sounds['hit'].set_volume(0.3)
-        sounds['explode'] = pygame.mixer.Sound('sounds/beep-41.wav')
-        sounds['explode'].set_volume(1.0)
-        pygame.mixer.set_num_channels(12)
-        pygame.mixer.music.load('sounds/castlevania.mid')
-        pygame.mixer.music.play(-1, 0.0)
 
         walls = [
             wall.Wall(-50, self.W_HEIGHT),
@@ -85,6 +73,7 @@ class PewPew(object):
         }
 
         # Game loop:
+        win_rect = self.renderer.surf.get_rect()
         frame_counter = 0
         while True:
             # Main game loop
@@ -120,7 +109,7 @@ class PewPew(object):
                     elif event.key == K_DOWN:
                         pass
 
-            win_rect = self.win_surf.get_rect()
+            self.world.update(time)
 
             for b in self.world.bullets[:]:
                 b.move()
@@ -145,14 +134,15 @@ class PewPew(object):
             for b in self.world.bullets[:]:
                 if not win_rect.contains(b.rect):
                     self.world.stats['bullets_missed'] += 1
-                    # TODO: Crashes here?
+                    # TODO: Crashes here occasionally?
                     self.world.bullets.remove(b)
 
-            if frame_counter >= self.ADD_MONSTER:
-                # Trigger a new monster
-                frame_counter = 0
-                m = monster.Monster(self.screen_size, self.image_set)
-                self.world.monsters.append(m)
+
+            #if frame_counter >= self.ADD_MONSTER:
+            #    # Trigger a new monster
+            #    frame_counter = 0
+            #    m = monster.Monster(self.screen_size, self.image_set)
+            #    self.world.monsters.append(m)
 
             for m in self.world.monsters[:]:
                 m.update(time)
@@ -190,7 +180,6 @@ class PewPew(object):
                 e.update()
                 if e.complete:
                     self.world.explosions.remove(e)
-
 
             self.renderer.render()
 
@@ -245,24 +234,6 @@ class PewPew(object):
             fps_clock.tick(self.FPS)
 
 
-    def loadimages(self):
-        """ Returns a dictionary of pygame.image entries. """
-        image_set = {}
-        image_set['ship'] = pygame.image.load('images/ship.png').convert_alpha()
-
-        image_set['enemy_1'] = pygame.image.load('images/enemy_1.png').convert_alpha()
-        image_set['enemy_2'] = pygame.image.load('images/enemy_2.png').convert_alpha()
-
-        sprite_sheet = pygame.image.load("images/explosion_1.png").convert_alpha()
-        explosion = [
-            sprite_sheet.subsurface((46,46,100,100)),
-            sprite_sheet.subsurface((238,238,100,100)),
-            sprite_sheet.subsurface((430,430,100,100)),
-            sprite_sheet.subsurface((622,622,100,100)),
-            sprite_sheet.subsurface((814,814,100,100)),
-        ]
-        image_set['explosion'] = explosion
-        return image_set
 
     def terminate(self):
         """ Shut 'er down. """

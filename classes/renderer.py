@@ -12,16 +12,11 @@ def color_surface(surface, red, green, blue):
 class Renderer(object):
     """ Render the world. """
 
-    def __init__(self, screen_size, world):
-        self.surf = None
+    def __init__(self, screen_size):
         self.screen_size = screen_size
-        self.world = world
-        self.BG_COLOR = (10, 10, 10)
-
-    def create_window(self):
         self.surf = pygame.display.set_mode(self.screen_size, RESIZABLE)
         pygame.display.set_caption('Pew Pew 1.0')
-        return self.surf
+        self.BG_COLOR = (10, 10, 10)
 
     def render(self):
         # Start with a blank screen

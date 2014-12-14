@@ -5,15 +5,15 @@ from pygame.locals import *
 
 class Monster(object):
 
-    def __init__(self, screen_size, image_set):
+    def __init__(self, img, size, pos):
         if random.choice([True, False]):
-            self.img = image_set['enemy_1']
+            self.img = 'enemy_1'
             self.speed_y = 1
             self.strength = 10
             self.health = 50
             self.mass = 20
         else:
-            self.img = image_set['enemy_2']
+            self.img = 'enemy_2'
             self.speed_y = 3
             self.strength = 2
             self.health = 10
