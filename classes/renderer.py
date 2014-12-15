@@ -18,6 +18,10 @@ class Renderer(object):
         pygame.display.set_caption('Pew Pew 1.0')
         self.BG_COLOR = (10, 10, 10)
 
+        self.text = pygame.font.Font(None, 16)
+        self.text_colour = (200, 200, 255)
+
+
     def render(self):
         # Start with a blank screen
         self.surf.fill(self.BG_COLOR)
@@ -34,76 +38,61 @@ class Renderer(object):
 
         for monster in self.world.monsters:
             if 'injured' in monster.status:
-                # We flash sprite red
+                # Get original monster surface
                 surf, pos = monster.draw()
                 # don't fuck up original image
                 surf = surf.copy()
                 # Add red overlay
                 surf.fill((255, 0, 0), special_flags=BLEND_RGB_ADD)
+                # Now blit the result
                 self.surf.blit(surf, pos)
             else:
                 self.surf.blit(*monster.draw())
 
         for explosion in self.world.explosions:
             self.surf.blit(*explosion.draw())
+
         for bullet in self.world.bullets:
             # Bullets are filled rects, for now.
             pygame.draw.rect(self.surf, *bullet.draw())
 
         # Text displays
-        colour = (180, 180, 255)
-        self.plot_stats(self.world.stats, colour)
-        self.plot_fuel(self.world.hero.fuel,
-                       self.world.hero.max_fuel, colour)
-        self.plot_health(self.world.hero.health,
-                         self.world.hero.damage,
-                         self.world.hero.max_health, colour)
+        self.plot_stats(self.world.stats)
 
-        pygame.display.update()
         return None
 
-    def plot_stats(self, stats, colour):
+
+    def plot_stats(self, stats):
         """ Plots text statistics, but doesn't display them. """
+        left = 20
+
         try:
             accuracy = float(stats['bullets_hit']) / stats['bullets_fired'] * 100
         except ZeroDivisionError:
             accuracy = 0.0
-        text = pygame.font.Font(None, 20)
-        left = 20
-        surf = text.render("Accuracy: %0.2f %%" % accuracy, True, colour)
-        self.surf.blit(surf, (left, 20))
 
-        surf = text.render("Enemies killed: %d" % stats['monsters_killed'],
-                           True, colour)
-        self.surf.blit(surf, (left, 40))
+        strings = [
+            'Accuracy: {:.2%}'.format(accuracy),
+            'Enemies killed: {}'.format(stats['monsters_killed']),
+            'Enemies missed: {}'.format(stats['monsters_missed']),
+        ]
+        for y, string in zip(range(40, 81, 20), strings):
+            surf = self.text.render(string, True, self.text_colour,
+                                    self.BG_COLOR)
+            self.surf.blit(surf, (left, y))
 
-        surf = text.render("Enemies missed: %d" % stats['monsters_missed'],
-                           True, colour)
-        self.surf.blit(surf, (left, 60))
-
-    def plot_fuel(self, fuel, max_fuel, colour):
-        """ Plots text statistics, but doesn't display them. """
-        left = 20
-        text = pygame.font.Font(None, 20)
-
-        surf = text.render("Fuel burned: %0.2f" % (max_fuel - fuel),
-                           True, colour)
-        self.surf.blit(surf, (left, 80))
-
-        surf = text.render("Fuel remaining: %0.2f" % fuel, True, colour)
+        # === FUEL stats
+        surf = self.text.render("Fuel remaining: %0.2f" % self.world.hero.fuel,
+                                True, self.text_colour, self.BG_COLOR)
         self.surf.blit(surf, (left, 100))
 
-    def plot_health(self, health, damage, max_health, colour):
-        """ Display hero health info. """
-        left = 20
-        try:
-            percentage = float(health) / max_health * 100
-        except ZeroDivisionError:
-            accuracy = 0.0
-        text = pygame.font.Font(None, 20)
-        surf = text.render('Health: %0.1f %%' % percentage, True, colour)
-        self.surf.blit(surf, (left, 120))
-
-        surf = text.render('Remaining: %0.2f' % health, True, colour)
+        # === HEALTH info
+        surf = self.text.render('Remaining: %0.2f' % self.world.hero.health,
+                                True, self.text_colour, self.BG_COLOR)
         self.surf.blit(surf, (left, 140))
+
+    def plot_fps(self, fps):
+        surf = self.text.render('FPS: {:.1f}'.format(fps), True, self.text_colour,
+                                self.BG_COLOR)
+        self.surf.blit(surf, (20, 160))
 
