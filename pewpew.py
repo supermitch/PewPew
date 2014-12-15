@@ -58,17 +58,15 @@ class PewPew(object):
 
         self.world.stats = {
             'bullets_fired': 0,
-            'bullets_missed': 0,
             'bullets_hit': 0,
             'monsters_killed': 0,
             'monsters_missed': 0,
         }
 
-        # Game loop:
-        win_rect = self.renderer.surf.get_rect()
-        while True:
-            # Main game loop
+        while True:  # Game loop
+
             time = pygame.time.get_ticks()
+
             for event in pygame.event.get():
                 if event.type == QUIT:
                     terminate()
@@ -84,11 +82,7 @@ class PewPew(object):
                     elif event.key in (K_l, K_RIGHT):
                         self.world.hero.activate_thrusters('right')
                     elif event.key == K_SPACE:
-                        if len(self.world.bullets) < 2:
-                            self.assets.sounds['shot'].play()
-                            b = bullet.Bullet(self.world.hero)
-                            self.world.bullets.append(b)
-                            self.world.stats['bullets_fired'] += 1
+                        self.world.hero_shoot()
                 elif event.type == KEYUP:
                     if event.key in (K_h, K_LEFT):
                         self.world.hero.activate_thrusters('off')
@@ -102,7 +96,6 @@ class PewPew(object):
             self.world.update(time)
 
             for b in self.world.bullets[:]:
-                b.move()
                 # look for collisions with monsters
                 for m in self.world.monsters[:]:
                     if m.rect.colliderect(b.trail_rect):
@@ -120,13 +113,11 @@ class PewPew(object):
                         self.world.bullets.remove(b)
 
             for b in self.world.bullets[:]:
-                if not win_rect.contains(b.rect):
-                    self.world.stats['bullets_missed'] += 1
+                if not self.renderer.surf.get_rect().contains(b.rect):
                     # TODO: Crashes here occasionally?
                     self.world.bullets.remove(b)
 
             for m in self.world.monsters[:]:
-                m.update(time)
 
                 if m.rect.colliderect(self.world.hero.rect):
                     self.world.hero.collide(m, 1.0, False)
@@ -139,7 +130,7 @@ class PewPew(object):
                         self.assets.sounds['hit'].play()
                         continue
 
-                if not win_rect.contains(m.rect):
+                if not self.renderer.surf.get_rect().contains(m.rect):
                     self.world.stats['monsters_missed'] += 1
                     self.world.monsters.remove(m)
                     continue
@@ -149,16 +140,9 @@ class PewPew(object):
                 self.assets.sounds['explode'].play()
                 break # out of game loop
             else:
-                self.world.hero.update(time)
                 for w in walls:
                     if w.rect.colliderect(self.world.hero.rect):
                         self.world.hero.collide(w, 0.5, True)
-
-            # Move to world update
-            for e in self.world.explosions[:]:
-                e.update()
-                if e.complete:
-                    self.world.explosions.remove(e)
 
             self.renderer.render()
 
@@ -188,7 +172,7 @@ class PewPew(object):
                     elif event.key == K_y:
                         waiting_for_answer = False
             pygame.time.Clock().tick(self.FPS)
-        self.run()
+        self.run()  # Recursion idiocy here.
 
     def pause_game(self):
         fps_clock = pygame.time.Clock()
@@ -214,8 +198,6 @@ class PewPew(object):
                     elif event.key == K_SPACE:
                         paused = False
             fps_clock.tick(self.FPS)
-
-
 
     def terminate(self):
         """ Shut 'er down. """

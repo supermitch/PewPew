@@ -28,6 +28,9 @@ class Bullet(object):
         elif shooter.speed < 0:
             self.mv['left'] = True
 
+    def update(self):
+        self.move()
+
     def move(self):
         if self.mv['up']:
             old_bottom = self.rect.bottom

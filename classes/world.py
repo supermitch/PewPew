@@ -1,5 +1,6 @@
 import random
 
+import bullet
 import explosion
 import monster
 import ship
@@ -52,9 +53,28 @@ class World(object):
 
 
     def update(self, time):
-        if time - self.last_add < self.ADD_MONSTER:
-            return None
-        else:
+
+        self.hero.update(time)
+
+        for b in self.bullets:
+            b.update()
+
+        if (time - self.last_add) >= self.ADD_MONSTER:
             self.last_add = time
             self.__add_monster(self.screen_size)
+
+        for m in self.monsters:
+            m.update(time)
+
+        for e in self.explosions:
+            e.update()
+        self.explosions = [e for e in self.explosions if not e.complete]
+
+
+    def hero_shoot(self):
+        # Limit firing rate, should be done by hero?
+        if len(self.bullets) < 2:
+            self.assets.sounds['shot'].play()
+            self.bullets.append(bullet.Bullet(self.hero))
+            self.stats['bullets_fired'] += 1
 
