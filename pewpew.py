@@ -26,15 +26,15 @@ class PewPew(object):
         """Initalize some game constants."""
         pygame.init()   # initialize pygame
 
+        self.FPS = 60
+
         self.W_WIDTH = 800
         self.W_HEIGHT = 600
         self.screen_size = (self.W_WIDTH, self.W_HEIGHT)
-        self.FPS = 40
-        self.ADD_MONSTER = 40
 
         self.renderer = renderer.Renderer(self.screen_size)
-        self.asset_loader = assetloader.AssetLoader()
-        self.world = world.World(self.screen_size)
+        self.assets = assetloader.AssetLoader()
+        self.world = world.World(self.screen_size, self.assets)
         self.renderer.world = self.world
 
     def run(self):
@@ -51,14 +51,6 @@ class PewPew(object):
         level_screen = LevelScreen(1, self.renderer.surf, fps_clock, self.FPS)
         level_screen.render()
 
-        #Start the game:
-        # Add world items
-        self.world.hero = ship.Ship(self.screen_size)   # initialize hero
-        self.world.bullets = []
-        self.world.monsters = []
-        self.world.explosions = []
-
-
         walls = [
             wall.Wall(-50, self.W_HEIGHT),
             wall.Wall(self.W_WIDTH, self.W_HEIGHT)
@@ -74,10 +66,8 @@ class PewPew(object):
 
         # Game loop:
         win_rect = self.renderer.surf.get_rect()
-        frame_counter = 0
         while True:
             # Main game loop
-            frame_counter += 1
             time = pygame.time.get_ticks()
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -95,7 +85,7 @@ class PewPew(object):
                         self.world.hero.activate_thrusters('right')
                     elif event.key == K_SPACE:
                         if len(self.world.bullets) < 2:
-                            sounds['shot'].play()
+                            self.assets.sounds['shot'].play()
                             b = bullet.Bullet(self.world.hero)
                             self.world.bullets.append(b)
                             self.world.stats['bullets_fired'] += 1
@@ -122,12 +112,10 @@ class PewPew(object):
                         if m.death:
                             self.world.monsters.remove(m)
                             self.world.stats['monsters_killed'] += 1
-                            sounds['explode'].play(maxtime=350)
-                            e = explosion.Explosion(m,
-                                self.image_set['explosion'])
-                            self.world.explosions.append(e)
+                            self.world.add_explosion(m)
+                            self.assets.sounds['explode'].play(maxtime=350)
                         else:
-                            sounds['hit'].play()
+                            self.assets.sounds['hit'].play()
                         # TODO: Crashes here?
                         self.world.bullets.remove(b)
 
@@ -137,13 +125,6 @@ class PewPew(object):
                     # TODO: Crashes here occasionally?
                     self.world.bullets.remove(b)
 
-
-            #if frame_counter >= self.ADD_MONSTER:
-            #    # Trigger a new monster
-            #    frame_counter = 0
-            #    m = monster.Monster(self.screen_size, self.image_set)
-            #    self.world.monsters.append(m)
-
             for m in self.world.monsters[:]:
                 m.update(time)
 
@@ -152,11 +133,10 @@ class PewPew(object):
                     self.world.hero.set_status('injured', time, 50)
                     self.world.hero.damage(m.strength)
                     self.world.monsters.remove(m)
-                    self.world.explosions.append(explosion.Explosion(m,
-                         self.image_set['explosion']))
-                    sounds['explode'].play()
+                    self.world.add_explosion(m)
+                    self.assets.sounds['explode'].play()
                     if not self.world.hero.death:
-                        sounds['hit'].play()
+                        self.assets.sounds['hit'].play()
                         continue
 
                 if not win_rect.contains(m.rect):
@@ -165,10 +145,8 @@ class PewPew(object):
                     continue
 
             if self.world.hero.death:
-                e = explosion.Explosion(self.world.hero,
-                              self.image_set['explosion'])
-                self.world.explosions.append(e)
-                sounds['explode'].play()
+                self.world.add_explosion(m)
+                self.assets.sounds['explode'].play()
                 break # out of game loop
             else:
                 self.world.hero.update(time)
@@ -176,6 +154,7 @@ class PewPew(object):
                     if w.rect.colliderect(self.world.hero.rect):
                         self.world.hero.collide(w, 0.5, True)
 
+            # Move to world update
             for e in self.world.explosions[:]:
                 e.update()
                 if e.complete:
@@ -184,6 +163,9 @@ class PewPew(object):
             self.renderer.render()
 
             fps_clock.tick(self.FPS)
+            self.renderer.plot_fps(fps_clock.get_fps())
+
+            pygame.display.update()
 
         if self.world.hero.death:
             self.game_over()

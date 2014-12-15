@@ -14,19 +14,34 @@ def extract_base_no_ext(filename):
 
 
 class AssetLoader(object):
+    """
+    AssetLoader loads images and sounds, turning them into
+    pygame objects (like Surface and Sound) where possible,
+    accessible by dictionary key of 'name'. Additional information
+    can be defined in attribute JSON files.
+
+    """
 
     def __init__(self, folder=None):
+        """ If a folder is defined, look there, else we'll assume. """
         if folder is not None:
             self.root = folder
         else:
-            self.root = os.path.dirname(os.path.realpath(__file__))
+            self.root = os.path.join(
+                            os.path.dirname(os.path.realpath(__file__)),
+                            '..')
         self.images = self.load_images()
         self.sounds = self.load_sounds()
 
+    @property
+    def assets(self):
+        """ Return an (images, sounds) tuple. """
+        return self.images, self.sounds
+
     def load_images(self):
         """ Load images from all sub-dirs in root. """
-        folder = os.path.join(self.root, '..', 'images')
-        attrib_data = self.load_attrs(folder)
+        folder = os.path.join(self.root, 'images')
+        attrib_data = self.__load_attrs(folder)
 
         images = {}
         for f in os.listdir(folder):
@@ -56,8 +71,8 @@ class AssetLoader(object):
 
     def load_sounds(self):
         """ Load sounds from all sub-dirs in root. """
-        folder = os.path.join(self.root, '..', 'sounds')
-        attrib_data = self.load_attrs(folder)
+        folder = os.path.join(self.root, 'sounds')
+        attrib_data = self.__load_attrs(folder)
 
         pygame.mixer.set_num_channels(12)
 
@@ -87,7 +102,7 @@ class AssetLoader(object):
 
         return sounds
 
-    def load_attrs(self, folder):
+    def __load_attrs(self, folder):
         """ Load JSON attributes from the given folder. """
         f_name = os.path.join(folder, 'attrs.json')
         try:

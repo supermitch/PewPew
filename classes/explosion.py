@@ -1,28 +1,31 @@
+import math
+
 import pygame
-from pygame.locals import *
 
 class Explosion(object):
-    
-    def __init__(self, source, image_list):
 
-        self.explosion = image_list
-        self.frame = 0
+    def __init__(self, sprites, pos):
+
+        self.sprites = sprites
+        self.surf = self.sprites[0]
+
+        self.frame_count = 0
         self.complete = False
-        self.img = self.explosion[self.frame]
-        self.x = source.rect.centerx - self.img.get_width()/2
-        self.y = source.rect.centery - self.img.get_height()/2
-        self.rect = pygame.Rect(self.x, self.y, self.img.get_width(),
-                                 self.img.get_height())
-        self.rect.center = source.rect.center
+
+        self.x, self.y = pos
+        self.rect = pygame.Rect(self.x, self.y, self.surf.get_width(),
+                                 self.surf.get_height())
 
     def update(self):
-        self.frame += 1
-        if self.frame < 5:
-            self.img = self.explosion[self.frame]
+        # Only update half a frame every game update
+        self.frame_count += 1
+        frame = int(math.floor(self.frame_count))
+        if frame < 5:
+            self.surf = self.sprites[frame]
         else:
             self.complete = True
 
     def draw(self):
         """ Return an (image, position) tuple. """
-        return self.img, self.rect.topleft
+        return self.surf, self.rect.topleft
 

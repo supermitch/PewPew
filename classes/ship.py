@@ -3,14 +3,12 @@ from pygame.locals import *
 
 class Ship(object):
 
-    def __init__(self, screen_size):
+    def __init__(self, surf, pos):
 
-        self.img = pygame.image.load('images/ship.png')
-        self.width = self.img.get_width()
-        self.height = self.img.get_height()
+        self.surf = surf
+        self.width, self.height = self.surf.get_size()
 
-        self.x = (screen_size[0] / 2) - (self.width / 2)
-        self.y = screen_size[1] - (self.height * 2)
+        self.x, self.y = pos
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
         self.max_health = 50.0
@@ -98,7 +96,7 @@ class Ship(object):
 
     def draw(self):
         """ Return an (image, position) tuple. """
-        return self.img, self.rect.topleft
+        return self.surf, self.rect.topleft
 
     def set_status(self, status, time, duration):
         self.status[status] = (time, duration)
