@@ -31,24 +31,26 @@ class AssetLoader(object):
         images = {}
         for f in os.listdir(folder):
             if f.lower().endswith(IMAGE_EXTENSIONS):
+                f_name = extract_base_no_ext(f)
                 f_full = os.path.join(folder, f)
-                attrs = attrib_data.get(f_name, None)
-                if attrs is not None:
-                    kind = attrs.get('kind', 'sprite')
-                    name = attrs.get('name', f_name)
-                    coords = attrs.get('coords', None)
+
+                attrs = attrib_data.get(f_name, {})
+                # Extract default values from attributes for this file
+                kind = attrs.get('kind', 'sprite')
+                name = attrs.get('name', f_name)
+                coords = attrs.get('coords', None)
+
                 if kind == 'sprite':
                     sprite = pygame.image.load(f_full).convert_alpha()
-                    size = surface.get_size()  # (width, height)
+                    size = sprite.get_size()  # (width, height)
                 elif kind == 'spritesheet':
                     sheet = pygame.image.load(f_full).convert_alpha()
                     sprite = [sheet.subsurface(coord) for coord in coords]
-                    size = sprites[0].get_size()
+                    size = sprite[0].get_size()
 
-                key = extract_base_no_ext(f)
-                if key in images:
-                    print('Image asset name collision! {}'.format(key))
-                images[key] = (sprite, size)
+                if name in images:
+                    print('Image asset name collision! {}'.format(name))
+                images[name] = (sprite, size)
         return images
 
 
@@ -64,17 +66,18 @@ class AssetLoader(object):
             if f.lower().endswith(SOUND_EXTENSIONS):
                 f_name = extract_base_no_ext(f)
                 f_full = os.path.join(folder, f)
-                if f_name in sounds:
-                    print('Sound asset name collision! {}'.format(f_name))
-                attrs = attrib_data.get(f_name, None)
-                if attrs is not None:
-                    # Default is sound named after file w/ volume 1.0
-                    kind = attrs.get('kind', 'sound')
-                    name = attrs.get('name', f_name)
-                    volume = attrs.get('volume', 1.0)
-                    loops = attrs.get('loops', -1)
-                    start = attrs.get('start', 0.0)
 
+                attrs = attrib_data.get(f_name, {})
+                # Extract default attrs from attributes for this file
+                # Default is sound named after file w/ volume 1.0
+                kind = attrs.get('kind', 'sound')
+                name = attrs.get('name', f_name)
+                volume = attrs.get('volume', 1.0)
+                loops = attrs.get('loops', -1)
+                start = attrs.get('start', 0.0)
+
+                if name in sounds:
+                    print('Sound asset name collision! {}'.format(name))
                 if kind == 'sound':
                     sounds[name] = pygame.mixer.Sound(f_full)
                     sounds[name].set_volume(volume)
