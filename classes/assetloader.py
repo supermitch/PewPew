@@ -26,29 +26,31 @@ class AssetLoader(object):
     def load_images(self):
         """ Load images from all sub-dirs in root. """
         folder = os.path.join(self.root, '..', 'images')
-        attrs = self.load_attrs(folder)
+        attrib_data = self.load_attrs(folder)
 
         images = {}
         for f in os.listdir(folder):
             if f.lower().endswith(IMAGE_EXTENSIONS):
                 f_full = os.path.join(folder, f)
-                surface = pygame.image.load(f_full).convert_alpha()
-                size = surface.get_size()  # (width, height)
-          #      if name == 'explosion_1':
-       #         sprite_list = [
-       #             surf.subsurface((46,46,100,100)),
-       #             surf.subsurface((238,238,100,100)),
-       #             surf.subsurface((430,430,100,100)),
-       #             surf.subsurface((622,622,100,100)),
-       #             surf.subsurface((814,814,100,100)),
-       #         ]
-       #         self.images[name] = (sprite_list, size)
+                attrs = attrib_data.get(f_name, None)
+                if attrs is not None:
+                    kind = attrs.get('kind', 'sprite')
+                    name = attrs.get('name', f_name)
+                    coords = attrs.get('coords', None)
+                if kind == 'sprite':
+                    sprite = pygame.image.load(f_full).convert_alpha()
+                    size = surface.get_size()  # (width, height)
+                elif kind == 'spritesheet':
+                    sheet = pygame.image.load(f_full).convert_alpha()
+                    sprite = [sheet.subsurface(coord) for coord in coords]
+                    size = sprites[0].get_size()
 
                 key = extract_base_no_ext(f)
                 if key in images:
                     print('Image asset name collision! {}'.format(key))
-                images[key] = (surface, size)
+                images[key] = (sprite, size)
         return images
+
 
     def load_sounds(self):
         """ Load sounds from all sub-dirs in root. """
@@ -93,3 +95,4 @@ class AssetLoader(object):
         except AttributeError:
             print('Maybe bad JSON in attribs? {}'.format(f_name))
         return None
+
