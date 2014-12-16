@@ -54,13 +54,14 @@ class Renderer(object):
 
         for bullet in self.world.bullets:
             # Bullets are filled rects, for now.
-            pygame.draw.rect(self.surf, *bullet.draw())
+            self.surf.blit(*bullet.draw())
 
         # Text displays
         self.plot_stats(self.world.stats)
 
-        return None
+        pygame.display.flip()
 
+        return None
 
     def plot_stats(self, stats):
         """ Plots text statistics, but doesn't display them. """

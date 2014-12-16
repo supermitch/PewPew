@@ -5,6 +5,7 @@ import sys
 import pygame
 from pygame.locals import *
 
+from classes import collider
 from classes import ship
 from classes import monster
 from classes import bullet
@@ -36,6 +37,7 @@ class PewPew(object):
         self.assets = assetloader.AssetLoader()
         self.world = world.World(self.screen_size, self.assets)
         self.renderer.world = self.world
+        self.collider = collider.Collider(self.world)
 
     def run(self):
         """Run the actual game."""
@@ -52,11 +54,6 @@ class PewPew(object):
         level_screen = LevelScreen(1, self.renderer.surf, clock, self.FPS)
         level_screen.render()
         del level_screen
-
-        walls = [
-            wall.Wall(-50, self.W_HEIGHT),
-            wall.Wall(self.W_WIDTH, self.W_HEIGHT)
-        ]
 
         self.world.stats = {
             'fps': self.FPS,
@@ -99,56 +96,12 @@ class PewPew(object):
 
             self.world.update(time)
 
-            for b in self.world.bullets[:]:
-                # look for collisions with monsters
-                for m in self.world.monsters[:]:
-                    if m.rect.colliderect(b.trail_rect):
-                        self.world.stats['bullets_hit'] += 1
-                        m.damage(b.strength)
-                        m.set_status('injured', time, 50)
-                        if m.death:
-                            self.world.monsters.remove(m)
-                            self.world.stats['monsters_killed'] += 1
-                            self.world.add_explosion(m)
-                            self.assets.sounds['explode'].play(maxtime=350)
-                        else:
-                            self.assets.sounds['hit'].play()
-                        # TODO: Crashes here?
-                        self.world.bullets.remove(b)
+            self.collider.update()
 
-                if not self.renderer.surf.get_rect().contains(b.rect):
-                    # TODO: Crashes here occasionally?
-                    self.world.bullets.remove(b)
-
-            for m in self.world.monsters[:]:
-
-                if m.rect.colliderect(self.world.hero.rect):
-                    self.world.hero.collide(m, 1.0, False)
-                    self.world.hero.set_status('injured', time, 50)
-                    self.world.hero.damage(m.strength)
-                    self.world.monsters.remove(m)
-                    self.world.add_explosion(m)
-                    self.assets.sounds['explode'].play()
-                    if not self.world.hero.death:
-                        self.assets.sounds['hit'].play()
-                        continue
-
-                if not self.renderer.surf.get_rect().contains(m.rect):
-                    self.world.stats['monsters_missed'] += 1
-                    self.world.monsters.remove(m)
-                    continue
-
-            if self.world.hero.death:
-                self.world.add_explosion(m)
-                self.assets.sounds['explode'].play()
+            if self.world.hero.dead:
                 break # out of game loop
-            else:
-                for w in walls:
-                    if w.rect.colliderect(self.world.hero.rect):
-                        self.world.hero.collide(w, 0.5, True)
 
             self.renderer.render()
-            pygame.display.flip()
 
             clock.tick(self.FPS)
 

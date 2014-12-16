@@ -13,7 +13,7 @@ class Ship(object):
 
         self.max_health = 50.0
         self.health = 50.0
-        self.death = False
+        self.dead = False
 
         self.max_fuel = 400.0
         self.fuel_consumption = 0.1  # Lower is better
@@ -80,10 +80,14 @@ class Ship(object):
         """ Damage our object, kill it if zero health."""
         self.health = self.health - strength
         if self.health <= 0:
-            self.death = True
+            self.dead = True
 
     def collide(self, other, elasticity, reset):
         # this code assumes only some overlap, not total object crossing!
+        if other.strength > 0:
+            self.damage(other.strength)
+            #self.set_status('injured', time, 50)
+
         if reset:
             if other.rect.left < self.rect.left < other.rect.right:
                 self.rect.left = other.rect.right

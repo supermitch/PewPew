@@ -5,9 +5,12 @@ class Bullet(object):
 
     def __init__(self, shooter):
 
-        self.width = 4
-        self.height = 4
-        self.color = (250, 255, 255)
+        self.width = 3
+        self.height = 3
+        color = (220, 255, 255)
+
+        self.surf = pygame.Surface((self.width, self.height))
+        self.surf.fill(color)
 
         self.strength = 10
 
@@ -18,6 +21,7 @@ class Bullet(object):
         self.speed_y = 40
         self.speed_x = shooter.speed
 
+        self.dead = False
         self.mv = {'up': True}
 
         # inherit shooter's left & right velocity
@@ -43,7 +47,9 @@ class Bullet(object):
 
     def draw(self):
         """ Return an (image, position) tuple. """
-        # Slightly different for now, because it's a filled rect
-        # not an image!
-        return self.color, self.rect
+        return self.surf, self.rect.topleft
+
+    def collide(self, obj):
+        # TODO: Persistent bullet types won't die!
+        self.dead = True
 

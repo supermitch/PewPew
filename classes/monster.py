@@ -26,13 +26,18 @@ class Monster(object):
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
         self.status = {}
-        self.death = False
+        self.dead = False
 
         self.mv = {'left':False, 'right':False, 'up':False, 'down':True}
 
     def update(self, time):
         self.check_status(time)
         self.move()
+
+    def collide(self, obj):
+        """ Collide with an object. """
+        self.damage(obj.strength)
+        #self.set_status('injured', time, 50)
 
     def move(self):
         """ Move our rectangle. """
@@ -49,7 +54,7 @@ class Monster(object):
         """ Damage our object, kill it if zero health. """
         self.health = self.health - strength
         if self.health <= 0:
-            self.death = True
+            self.dead = True
 
     def draw(self):
         """ Return an (image, position) tuple. """
