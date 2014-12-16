@@ -41,15 +41,17 @@ class PewPew(object):
         """Run the actual game."""
 
         # Initialize framerate clock
-        fps_clock = pygame.time.Clock()
+        clock = pygame.time.Clock()
 
         # Display Start Screen
-        start_screen = StartScreen(self.renderer.surf, fps_clock, self.FPS)
+        start_screen = StartScreen(self.renderer.surf, clock, self.FPS)
         start_screen.render()
+        del start_screen
 
         #Display Level 1 Screen
-        level_screen = LevelScreen(1, self.renderer.surf, fps_clock, self.FPS)
+        level_screen = LevelScreen(1, self.renderer.surf, clock, self.FPS)
         level_screen.render()
+        del level_screen
 
         walls = [
             wall.Wall(-50, self.W_HEIGHT),
@@ -57,6 +59,7 @@ class PewPew(object):
         ]
 
         self.world.stats = {
+            'fps': self.FPS,
             'bullets_fired': 0,
             'bullets_hit': 0,
             'monsters_killed': 0,
@@ -66,6 +69,7 @@ class PewPew(object):
         while True:  # Game loop
 
             time = pygame.time.get_ticks()
+            self.world.stats['fps'] = clock.get_fps()
 
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -112,7 +116,6 @@ class PewPew(object):
                         # TODO: Crashes here?
                         self.world.bullets.remove(b)
 
-            for b in self.world.bullets[:]:
                 if not self.renderer.surf.get_rect().contains(b.rect):
                     # TODO: Crashes here occasionally?
                     self.world.bullets.remove(b)
@@ -145,18 +148,15 @@ class PewPew(object):
                         self.world.hero.collide(w, 0.5, True)
 
             self.renderer.render()
+            pygame.display.flip()
 
-            fps_clock.tick(self.FPS)
-            self.renderer.plot_fps(fps_clock.get_fps())
-
-            pygame.display.update()
+            clock.tick(self.FPS)
 
         if self.world.hero.death:
             self.game_over()
 
 
     def game_over(self):
-        fps_clock = pygame.time.Clock()
         print("Game over!")
         print("Do you want to play again? (y/n)")
         waiting_for_answer = True
@@ -171,11 +171,10 @@ class PewPew(object):
                         self.terminate()
                     elif event.key == K_y:
                         waiting_for_answer = False
-            pygame.time.Clock().tick(self.FPS)
         self.run()  # Recursion idiocy here.
 
     def pause_game(self):
-        fps_clock = pygame.time.Clock()
+        print('paused!')
 
         text = pygame.font.Font(None, 60)
         surf = text.render("Paused!", True, (0,0,255))
@@ -187,8 +186,7 @@ class PewPew(object):
                                   self.W_HEIGHT/2 - surf.get_height()/2 + 60))
         pygame.display.update()
 
-        paused = True
-        while paused:
+        while True:
             for event in pygame.event.get():
                 if event.type == QUIT:
                     terminate()
@@ -196,8 +194,8 @@ class PewPew(object):
                     if event.key in (K_ESCAPE, K_q):
                         self.terminate()
                     elif event.key == K_SPACE:
-                        paused = False
-            fps_clock.tick(self.FPS)
+                        break
+        return False
 
     def terminate(self):
         """ Shut 'er down. """

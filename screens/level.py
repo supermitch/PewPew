@@ -9,8 +9,6 @@ class LevelScreen(object):
         self.level = level
         self.win_surf = win_surf
         self.win_width, self.win_height = self.win_surf.get_size()
-        self.fps_clock = fps_clock
-        self.FPS = FPS
 
     def render(self):
         # TODO: This is all very ugly
@@ -40,6 +38,5 @@ class LevelScreen(object):
                         self.terminate()
                     elif event.key == K_SPACE:
                         return None
-            self.fps_clock.tick(self.FPS)
 
 

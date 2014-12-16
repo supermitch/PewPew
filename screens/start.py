@@ -34,6 +34,5 @@ class StartScreen(object):
                         self.terminate()
                     elif event.key == K_SPACE:
                         return None
-            self.fps_clock.tick(self.FPS)
 
 

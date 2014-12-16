@@ -67,7 +67,7 @@ class Renderer(object):
         left = 20
 
         try:
-            accuracy = float(stats['bullets_hit']) / stats['bullets_fired'] * 100
+            accuracy = float(stats['bullets_hit']) / stats['bullets_fired']
         except ZeroDivisionError:
             accuracy = 0.0
 
@@ -91,8 +91,7 @@ class Renderer(object):
                                 True, self.text_colour, self.BG_COLOR)
         self.surf.blit(surf, (left, 140))
 
-    def plot_fps(self, fps):
-        surf = self.text.render('FPS: {:.1f}'.format(fps), True, self.text_colour,
+        surf = self.text.render('FPS: {:.1f}'.format(stats['fps']), True, self.text_colour,
                                 self.BG_COLOR)
         self.surf.blit(surf, (20, 160))
 
