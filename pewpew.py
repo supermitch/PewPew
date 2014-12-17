@@ -6,7 +6,7 @@ import pygame
 from pygame.locals import *
 
 from classes import collider
-from classes import ship
+from classes import hero
 from classes import monster
 from classes import bullet
 from classes import wall
@@ -105,7 +105,7 @@ class PewPew(object):
 
             clock.tick(self.FPS)
 
-        if self.world.hero.death:
+        if self.world.hero.dead:
             self.game_over()
 
 

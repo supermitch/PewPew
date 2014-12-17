@@ -11,6 +11,7 @@ class Ship(object):
         self.x, self.y = pos
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
+        self.strength = 50
         self.max_health = 50.0
         self.health = 50.0
         self.dead = False

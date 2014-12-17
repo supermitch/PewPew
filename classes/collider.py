@@ -20,7 +20,7 @@ class Collider(object):
                 m.collide(h)
                 self.world.add_explosion(m)
                 if not h.dead:
-                    self.assets.sounds['hit'].play()
+                    self.world.assets.sounds['hit'].play()
 
             # Monster versus Bullets
             for b in self.world.bullets:
@@ -30,9 +30,9 @@ class Collider(object):
                     b.collide(m)
                     if m.dead:
                         self.world.stats['monsters_killed'] += 1
-                        self.world.add_exposion(m)
+                        self.world.add_explosion(m)
                     else:
-                        self.assets.sounds['hit'].play()
+                        self.world.assets.sounds['hit'].play()
                     break  # Can only hit one bullet at a time
 
             # Monster versus Walls
@@ -43,6 +43,6 @@ class Collider(object):
 
         # Bullets versus Walls
         for b in self.world.bullets:
-            if b.rect.bottom > 0:  # Off screen
+            if b.rect.bottom < 0:  # Off screen
                 b.dead = True
 

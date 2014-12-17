@@ -51,5 +51,6 @@ class Bullet(object):
 
     def collide(self, obj):
         # TODO: Persistent bullet types won't die!
+        # Any collision kills the bullet
         self.dead = True
 
