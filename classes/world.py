@@ -61,27 +61,27 @@ class World(object):
 
     def update(self, time):
 
-        self.hero.update(time)
 
         if self.hero.dead:
             self.add_explosion(m)
             self.assets.sounds['explode'].play()
+        self.hero.update(time)
 
+        self.bullets = [b for b in self.bullets if not b.dead]
         for b in self.bullets:
             b.update()
-        self.bullets = [b for b in self.bullets if not b.dead]
 
         if (time - self.last_add) >= self.ADD_MONSTER:
             self.last_add = time
             self.__add_monster(self.screen_size)
 
+        self.monsters = [m for m in self.monsters if not m.dead]
         for m in self.monsters:
             m.update(time)
-        self.monsters = [m for m in self.monsters if not m.dead]
 
+        self.explosions = [e for e in self.explosions if not e.complete]
         for e in self.explosions:
             e.update()
-        self.explosions = [e for e in self.explosions if not e.complete]
 
 
     def hero_shoot(self):
