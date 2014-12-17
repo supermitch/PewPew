@@ -105,26 +105,8 @@ class PewPew(object):
 
             clock.tick(self.FPS)
 
-        if self.world.hero.dead:
-            self.game_over()
+        return 'dead'
 
-
-    def game_over(self):
-        print("Game over!")
-        print("Do you want to play again? (y/n)")
-        waiting_for_answer = True
-        while waiting_for_answer:
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    terminate()
-                elif event.type == KEYDOWN:
-                    if event.key in (K_ESCAPE, K_q):
-                        self.terminate()
-                    elif event.key == K_n:
-                        self.terminate()
-                    elif event.key == K_y:
-                        waiting_for_answer = False
-        self.run()  # Recursion idiocy here.
 
     def pause_game(self):
         print('paused!')
@@ -158,5 +140,23 @@ class PewPew(object):
 
 if __name__ == "__main__":
     app = PewPew()  # Instantiate new app
-    app.run()
+
+    while True:
+        result = app.run()
+        if result == 'dead':
+            print("Game over!")
+            print("Do you want to play again? (y/n)")
+            waiting = True
+            while waiting:
+                for event in pygame.event.get():
+                    if event.type == QUIT:
+                        sys.exit('Goodbye.')
+                    elif event.type == KEYDOWN:
+                        if event.key in (K_ESCAPE, K_q):
+                            sys.exit('Goodbye.')
+                        elif event.key == K_n:
+                            sys.exit('Goodbye.')
+                        elif event.key == K_y:
+                            waiting = False
+
 
