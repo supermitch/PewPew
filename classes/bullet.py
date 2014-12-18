@@ -37,13 +37,20 @@ class Bullet(object):
 
     def move(self):
         if self.mv['up']:
-            old_bottom = self.rect.bottom
+            #old_bottom = self.rect.bottom
             self.rect.move_ip(0, -self.speed_y)
-            trail_height = (old_bottom - self.rect.top)
-            self.trail_rect = pygame.Rect(self.rect.topleft,
-                                        (self.rect.width, trail_height))
+            #trail_height = (old_bottom - self.rect.top)
+            #self.trail_rect = pygame.Rect(self.rect.topleft,
+            #                            (self.rect.width, trail_height))
         if self.mv['left'] or self.mv['right']:
             self.rect.move_ip(self.speed_x, 0)
+
+    @property
+    def next_rect(self):
+        """ Return the position we'll be next frame. """
+        top = self.rect.top - self.speed_y
+        return pygame.Rect((self.rect.left, top),
+                           (self.rect.width, self.speed_y))
 
     def draw(self):
         """ Return an (image, position) tuple. """

@@ -24,7 +24,8 @@ class Collider(object):
 
             # Monster versus Bullets
             for b in self.world.bullets:
-                if m.rect.colliderect(b.trail_rect):
+                if m.rect.colliderect(b.rect) \
+                    or m.rect.colliderect(b.next_rect):
                     self.world.stats['bullets_hit'] += 1
                     m.collide(b)
                     b.collide(m)

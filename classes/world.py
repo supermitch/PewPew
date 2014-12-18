@@ -61,7 +61,6 @@ class World(object):
 
     def update(self, time):
 
-
         if self.hero.dead:
             self.add_explosion(m)
             self.assets.sounds['explode'].play()
