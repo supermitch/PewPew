@@ -1,3 +1,4 @@
+from __future__ import division
 import random
 
 import bullet
@@ -25,6 +26,9 @@ class World(object):
 
         self.ADD_MONSTER = 2000
         self.last_add = 0
+        # TODO: Move to level object?
+        self.first_wave = False
+        self.second_wave = False
 
     def __add_hero(self, screen_size):
         """ Add our hero to bottom of the screen. """
@@ -33,9 +37,10 @@ class World(object):
         y = screen_size[1] - (size[1] * 2)
         return hero.Ship(surf, pos=(x, y))
 
-    def __add_monster(self, screen_size):
+    def __add_monster(self, screen_size, kind=None, left=None):
         """ Add a monster to the screen. """
-        kind = random.choice(['strong', 'fast'])
+        if kind is None:
+            kind = random.choice(['strong', 'fast'])
 
         if kind == 'strong':
             name = 'enemy_1'
@@ -44,7 +49,10 @@ class World(object):
         surf, size = self.assets.images[name]
 
         # Position somewhere along the top of the screen
-        x = random.randint(20 + size[0], screen_size[0] - (20 + size[0]))
+        if left is None:
+            x = random.randint(20 + size[0], screen_size[0] - (20 + size[0]))
+        else:
+            x = left
         y = 0
         self.monsters.append(monster.Monster(kind, surf, (x, y)))
 
@@ -70,7 +78,21 @@ class World(object):
         for b in self.bullets:
             b.update()
 
-        if (time - self.last_add) >= self.ADD_MONSTER:
+        if not self.first_wave and time/1000 > 5:
+            self.last_add = time  # Don't add another randomly too soon
+            print('sending 1st wave')
+            left = range(300, 500, 100)
+            for x in left:
+                self.__add_monster(self.screen_size, kind='fast', left=x)
+            self.first_wave = True
+        elif not self.second_wave and time/1000 > 10:
+            self.last_add = time
+            print('sending 2nd wave')
+            left = range(200, 600, 100)
+            for x in left:
+                self.__add_monster(self.screen_size, kind='strong', left=x)
+            self.second_wave = True
+        elif (time - self.last_add) >= self.ADD_MONSTER:
             self.last_add = time
             self.__add_monster(self.screen_size)
 
