@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import division
 import random
 import sys
 
@@ -65,7 +66,7 @@ class PewPew(object):
 
         while True:  # Game loop
 
-            time = pygame.time.get_ticks()
+            time = pygame.time.get_ticks() / 1000
             self.world.stats['fps'] = clock.get_fps()
 
             for event in pygame.event.get():

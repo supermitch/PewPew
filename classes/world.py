@@ -24,7 +24,7 @@ class World(object):
         self.monsters = []
         self.explosions = []
 
-        self.ADD_MONSTER = 2000
+        self.ADD_MONSTER = 2.5
         self.last_add = 0
         # TODO: Move to level object?
         self.first_wave = False
@@ -53,7 +53,7 @@ class World(object):
             x = random.randint(20 + size[0], screen_size[0] - (20 + size[0]))
         else:
             x = left
-        y = 0
+        y = -50
         self.monsters.append(monster.Monster(kind, surf, (x, y)))
 
     def add_explosion(self, source):
@@ -66,7 +66,6 @@ class World(object):
             self.explosions.append(explosion.Explosion(sprites, (x, y)))
             self.assets.sounds['explode'].play(maxtime=350)
 
-
     def update(self, time):
 
         if self.hero.dead:
@@ -78,16 +77,14 @@ class World(object):
         for b in self.bullets:
             b.update()
 
-        if not self.first_wave and time/1000 > 5:
+        if not self.first_wave and time > 5:
             self.last_add = time  # Don't add another randomly too soon
-            print('sending 1st wave')
-            left = range(300, 500, 100)
+            left = range(300, 401, 40)
             for x in left:
                 self.__add_monster(self.screen_size, kind='fast', left=x)
             self.first_wave = True
-        elif not self.second_wave and time/1000 > 10:
+        elif not self.second_wave and time > 10:
             self.last_add = time
-            print('sending 2nd wave')
             left = range(200, 600, 100)
             for x in left:
                 self.__add_monster(self.screen_size, kind='strong', left=x)
