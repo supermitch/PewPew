@@ -56,12 +56,49 @@ class Renderer(object):
             # Bullets are filled rects, for now.
             self.surf.blit(*bullet.draw())
 
+        self.surf.blit(*self.health_meter(self.world.hero.health_percentage))
         # Text displays
         self.plot_stats(self.world.stats)
 
         pygame.display.flip()
 
         return None
+
+    def health_meter(self, health):
+        """ Display our health meter. """
+
+        images = self.world.assets.images  # save typing
+
+        health = min(100, health)  # For the sake of life meter, cap it?
+        lost = int((100 - health) / 2)
+        remaining = int(health / 2)
+
+        # Create an list of all the sprites that make up the meter
+        # recall that images stores (surface, size) tuples
+        sprites = []
+        if health == 100:
+            sprites.append(images['hm_top_full'])
+        else:
+            sprites.append(images['hm_top_empty'])
+            for _ in range(lost):
+                sprites.append(images['hm_middle_empty'])
+            sprites.append(images['hm_cap'])
+        for _ in range(remaining):
+            sprites.append(images['hm_middle_full'])
+        if health > 2:
+            sprites.append(images['hm_bottom_full'])
+        else:
+            sprites.append(images['hm_bottom_empty'])
+
+        width = sprites[0][1][0]  # sprites is a list of img, size tuples
+        surf = pygame.Surface((width, 109))
+        y = 0
+        for sprite, size in sprites:
+            surf.blit(sprite, (0, y))
+            y += size[1]
+        pos = (750, 100)
+        return surf, pos
+
 
     def plot_stats(self, stats):
         """ Plots text statistics, but doesn't display them. """

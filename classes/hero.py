@@ -1,3 +1,5 @@
+from __future__ import division
+
 import pygame
 from pygame.locals import *
 
@@ -35,6 +37,10 @@ class Ship(object):
                        'north':True, 'south':False}
 
         self.status = {}
+
+    @property
+    def health_percentage(self):
+        return self.health / self.max_health * 100
 
     def update(self, time):
         self.check_status(time)
