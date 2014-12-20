@@ -7,6 +7,16 @@ import monster
 import hero
 import wall
 
+class Level(object):
+    def __init__(self):
+        self.waves = [
+            #(time, x-pos, type),
+            (5, range(300, 481, 40), 'green'),
+            (8, range(300, 421, 40), 'red'),
+            (11, range(200, 601, 100), 'purple'),
+            (16, range(100, 801, 100), 'blue'),
+        ]
+
 class World(object):
     """ A class to hold all the game elements. """
 
@@ -27,8 +37,8 @@ class World(object):
         self.ADD_MONSTER = 2.5
         self.last_add = 0
         # TODO: Move to level object?
-        self.first_wave = False
-        self.second_wave = False
+        self.level = Level()
+
 
     def __add_hero(self, screen_size):
         """ Add our hero to bottom of the screen. """
@@ -39,14 +49,16 @@ class World(object):
 
     def __add_monster(self, screen_size, kind=None, left=None):
         """ Add a monster to the screen. """
+        monster_names = {
+            'red': 'enemy_1',
+            'purple': 'enemy_2',
+            'green': 'enemy_3',
+            'blue': 'enemy_4',
+        }
         if kind is None:
-            kind = random.choice(['strong', 'fast'])
+            kind = random.choice(monster_names.keys())
 
-        if kind == 'strong':
-            name = 'enemy_1'
-        elif kind == 'fast':
-            name = 'enemy_2'
-        surf, size = self.assets.images[name]
+        surf, size = self.assets.images[monster_names[kind]]
 
         # Position somewhere along the top of the screen
         if left is None:
@@ -77,19 +89,15 @@ class World(object):
         for b in self.bullets:
             b.update()
 
-        if not self.first_wave and time > 5:
-            self.last_add = time  # Don't add another randomly too soon
-            left = range(300, 401, 40)
-            for x in left:
-                self.__add_monster(self.screen_size, kind='fast', left=x)
-            self.first_wave = True
-        elif not self.second_wave and time > 10:
-            self.last_add = time
-            left = range(200, 600, 100)
-            for x in left:
-                self.__add_monster(self.screen_size, kind='strong', left=x)
-            self.second_wave = True
-        elif (time - self.last_add) >= self.ADD_MONSTER:
+        if self.level.waves:
+            wave = self.level.waves[0]
+            if time > wave[0]:
+                for x in wave[1]:
+                    self.__add_monster(self.screen_size, kind=wave[2], left=x)
+                self.level.waves.pop(0)  # Get rid of it.
+                self.last_add = time  # Don't add randomly right after
+
+        if (time - self.last_add) >= self.ADD_MONSTER:
             self.last_add = time
             self.__add_monster(self.screen_size)
 

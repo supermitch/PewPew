@@ -7,12 +7,22 @@ class Monster(object):
     def __init__(self, kind, surf, pos):
         self.surf = surf
 
-        if kind == 'strong':
+        if kind == 'green':
+            self.speed_y = 2
+            self.strength = 5
+            self.health = 10
+            self.mass = 10
+        elif kind == 'red':
             self.speed_y = 1
             self.strength = 10
             self.health = 30
             self.mass = 20
-        elif kind == 'fast':
+        elif kind == 'purple':
+            self.speed_y = 3
+            self.strength = 2
+            self.health = 10
+            self.mass = 2
+        elif kind == 'blue':
             self.speed_y = 3
             self.strength = 2
             self.health = 10
