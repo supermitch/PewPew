@@ -116,14 +116,17 @@ class PewPew(object):
     def pause_game(self):
         """ Pauses the game. """
 
-        print('Paused!')
+        # Semi-transparent background
+        s = pygame.Surface(self.renderer.surf.get_size(), pygame.SRCALPHA)
+        s.fill((0, 0, 0, 200))
+        self.renderer.surf.blit(s, (0, 0))
 
         text = pygame.font.Font(None, 60)
-        surf = text.render("Paused!", True, (0,0,255))
+        surf = text.render("Paused!", True, Color('cornflowerblue'))
         self.renderer.surf.blit(surf, (self.W_WIDTH/2 - surf.get_width()/2,
                                   self.W_HEIGHT/2 - surf.get_height()/2))
         small_text = pygame.font.Font(None, 30)
-        surf = small_text.render("(Press spacebar to resume)", True, (0,0,255))
+        surf = small_text.render("(Press spacebar to resume)", True, Color('ivory'))
         self.renderer.surf.blit(surf, (self.W_WIDTH/2 - surf.get_width()/2,
                                   self.W_HEIGHT/2 - surf.get_height()/2 + 60))
         pygame.display.update()
@@ -143,7 +146,10 @@ class PewPew(object):
         center_x = self.W_WIDTH / 2
         center_y = self.W_HEIGHT / 2
 
-        self.renderer.surf.fill((0, 0, 0))
+        # Semi-transparent background
+        s = pygame.Surface(self.renderer.surf.get_size(), pygame.SRCALPHA)
+        s.fill((0, 0, 0, 200))
+        self.renderer.surf.blit(s, (0, 0))
 
         text = pygame.font.Font(None, 60)
         surf = text.render("Game Over!", True, Color('firebrick'))
