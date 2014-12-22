@@ -26,15 +26,16 @@ class Renderer(object):
         # Start with a blank screen
         self.surf.fill(self.BG_COLOR)
 
-        if 'injured' in self.world.hero.status:
-            surf, pos = self.world.hero.draw()
-            # don't fuck up original image
-            surf = surf.copy()
-            # Add red overlay
-            surf.fill((255, 0, 0), special_flags=BLEND_RGB_ADD)
-            self.surf.blit(surf, pos)
-        else:
-            self.surf.blit(*self.world.hero.draw())
+        if not self.world.hero.dead:
+            if 'injured' in self.world.hero.status:
+                surf, pos = self.world.hero.draw()
+                # don't fuck up original image
+                surf = surf.copy()
+                # Add red overlay
+                surf.fill((255, 0, 0), special_flags=BLEND_RGB_ADD)
+                self.surf.blit(surf, pos)
+            else:
+                self.surf.blit(*self.world.hero.draw())
 
         for monster in self.world.monsters:
             if 'injured' in monster.status:

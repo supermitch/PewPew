@@ -66,6 +66,7 @@ class PewPew(object):
         level_screen.render()
         del level_screen
 
+        time_of_death = None
         start_time = pygame.time.get_ticks() / 1000
         while True:  # Game loop
 
@@ -104,7 +105,11 @@ class PewPew(object):
             self.collider.update()
 
             if self.world.hero.dead:
-                break # out of game loop
+                if time_of_death is None:
+                    time_of_death = time
+                else:
+                    if time - time_of_death > 2:
+                        break # out of game loop
 
             self.renderer.render()
 

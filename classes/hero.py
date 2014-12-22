@@ -17,6 +17,7 @@ class Ship(object):
         self.max_health = 50.0
         self.health = 50.0
         self.dead = False
+        self.exploded = False
 
         self.max_fuel = 400.0
         self.fuel_consumption = 0.1  # Lower is better
@@ -43,8 +44,9 @@ class Ship(object):
         return self.health / self.max_health * 100
 
     def update(self, time):
-        self.check_status(time)
-        self.move()
+        if not self.dead:
+            self.check_status(time)
+            self.move()
 
     @property
     def friction(self):

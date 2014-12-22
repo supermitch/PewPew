@@ -69,7 +69,12 @@ class World(object):
         self.monsters.append(monster.Monster(kind, surf, (x, y)))
 
     def add_explosion(self, source):
-        """ Add an explosion to the screen. """
+        """
+        Add an explosion to the screen.
+
+        Source must have a .rect attribute.
+
+        """
         kind = 'default'
         if kind == 'default':
             sprites, size = self.assets.images['explode']
@@ -81,8 +86,9 @@ class World(object):
     def update(self, time):
 
         if self.hero.dead:
-            self.add_explosion(m)
-            self.assets.sounds['explode'].play()
+            if not self.hero.exploded:
+                self.hero.exploded = True
+                self.add_explosion(self.hero)
         self.hero.update(time)
 
         self.bullets = [b for b in self.bullets if not b.dead]
