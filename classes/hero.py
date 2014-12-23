@@ -112,9 +112,11 @@ class Ship(object):
         return self.surf, self.rect.topleft
 
     def set_status(self, status, time, duration):
+        """ Set a status at a given time, for a given duration. """
         self.status[status] = (time, duration)
 
     def check_status(self, current_time):
+        """ Check statuses to see if they have expired. """
         remove = []
         for key, (set_time, duration) in self.status.items():
             # If enough time has gone by, this status has ended
@@ -123,4 +125,6 @@ class Ship(object):
         for key in remove:
             del self.status[key]
 
-
+    def self_destruct(self):
+        """ Damage by remaining health value, and die. """
+        self.damage(self.health)

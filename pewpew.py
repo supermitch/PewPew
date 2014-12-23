@@ -82,8 +82,8 @@ class PewPew(object):
                         terminate()
                     elif event.key == K_p:
                         self.pause_game()
-                    elif event.key == K_x:  # Reset
-                        self.game_over()
+                    elif event.key == K_x:
+                        self.world.hero.self_destruct()
                     elif event.key in (K_h, K_LEFT):
                         self.world.hero.activate_thrusters('left')
                     elif event.key in (K_l, K_RIGHT):
