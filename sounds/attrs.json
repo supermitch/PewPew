@@ -18,6 +18,11 @@
         "kind": "sound",
         "name": "explode",
         "volume": 1.0
+    },
+    "explosion_longer": {
+        "kind": "sound",
+        "name": "hero-explode",
+        "volume": 1.2
     }
 }
 

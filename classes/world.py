@@ -68,27 +68,35 @@ class World(object):
         y = -50
         self.monsters.append(monster.Monster(kind, surf, (x, y)))
 
-    def add_explosion(self, source):
+    def add_explosion(self, source, kind='default'):
         """
         Add an explosion to the screen.
 
         Source must have a .rect attribute.
 
         """
-        kind = 'default'
+        image_name = {
+            # kind: asset (name attrib, or file)
+            'default': 'explode',
+            'hero': 'explode',
+        }[kind]
+        sprites, size = self.assets.images[image_name]
+        x = source.rect.centerx - size[0]/2
+        y = source.rect.centery - size[1]/2
+        self.explosions.append(explosion.Explosion(sprites, (x, y)))
+
+        # TODO: Sound manager!
         if kind == 'default':
-            sprites, size = self.assets.images['explode']
-            x = source.rect.centerx - size[0]/2
-            y = source.rect.centery - size[1]/2
-            self.explosions.append(explosion.Explosion(sprites, (x, y)))
             self.assets.sounds['explode'].play(maxtime=350)
+        elif kind == 'hero':
+            self.assets.sounds['hero-explode'].play()
 
     def update(self, time):
 
         if self.hero.dead:
             if not self.hero.exploded:
                 self.hero.exploded = True
-                self.add_explosion(self.hero)
+                self.add_explosion(self.hero, kind='hero')
         self.hero.update(time)
 
         self.bullets = [b for b in self.bullets if not b.dead]
