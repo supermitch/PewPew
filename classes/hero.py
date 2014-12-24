@@ -13,6 +13,7 @@ class Ship(object):
         self.x, self.y = pos
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
+        self.invincible = True  # Debug
         self.strength = 50
         self.max_health = 50.0
         self.health = 50.0
@@ -23,10 +24,9 @@ class Ship(object):
         self.fuel_consumption = 0.1  # Lower is better
         self.fuel = 400.0
         self.mass = 50.0
-        self.accel = 0.0
 
         self.thrust = 0  # Current thrust
-        self.thrust_max = 40  # Thrust capability
+        self.thrust_max = 80  # Thrust capability
 
         # TODO: Add anti-gravity, which allows frictionless sliding
 
@@ -48,46 +48,84 @@ class Ship(object):
             self.check_status(time)
             self.move()
 
-    @property
     def friction(self):
         """ Calculate force of friction. """
-        vector = 1 if self.speed > 0 else -1
-        mu = 0.05  # TODO: Function of surface and ship attribs!
-        g = 9.8  # m/s^2 TODO: Function of planet
-        if abs(self.speed) <= 0.001 * self.max_speed:
-            return 0
+        if self.speed > 0:
+            direction = -1
+        elif self.speed < 0:
+            direction = 1
         else:
-            return mu * self.mass * g * vector
+            if self.thrust > 0:
+                direction = -1
+            elif self.thrust < 0:
+                direction = 1
+            else:
+                direction = 0
+        mu = 0.16  # TODO: Function of surface and ship attribs
+        g = 9.8  # m/s^2 TODO: Function of planet
+        return mu * self.mass * g * direction
 
     @property
     def acceleration(self):
-        self.fuel -= abs(self.thrust) * self.fuel_consumption
-        return (self.thrust - self.friction) / self.mass
+        friction = self.friction()
+        # Can't have more friction than thrust:
+        if self.thrust > 0:
+            friction = max(-1 * self.thrust, friction)
+        elif self.thrust < 0:
+            friction = min(-1 * self.thrust, friction)
+        else:
+            if self.speed <> 0:
+                friction = self.friction()
+            else:
+                friction = 0
+
+        print('thrust: {}'.format(self.thrust))
+        print('+ friction: {}'.format(friction))
+        print('=: {}'.format(self.thrust + friction))
+        return (self.thrust + friction) / self.mass
 
     def activate_thrusters(self, direction):
         if direction == 'left':
             self.thrust = -1 * self.thrust_max
         elif direction == 'right':
             self.thrust = self.thrust_max
-        elif direction == 'off':
-            self.thrust = 0
         else:
-            self.thrust = 0  # log error: "Bad direction"
+            self.thrust = 0
+        self.fuel -= abs(self.thrust) * self.fuel_consumption
 
-    def set_speed(self, accel):
+
+    def set_speed(self, acceleration):
         """ Modify speed by acceleration. Limited to max_speed. """
-        self.speed += self.acceleration
+        if not self.thrust:
+            if self.speed > 0 and acceleration < 0:
+                self.speed = max(0, self.speed + acceleration)
+            elif self.speed < 0 and acceleration > 0:
+                self.speed = min(0, self.speed + acceleration)
+            else:
+                self.speed = 0
+        else:
+            self.speed += acceleration
+
         if abs(self.speed) >= self.max_speed:
             self.speed = self.speed / abs(self.speed) * self.max_speed
 
     def move(self):
         """ Update speed given acceleration and move ship accordingly. """
-        self.set_speed(self.accel)
-        self.rect.move_ip(self.speed, 0)
+        self.set_speed(self.acceleration)
+        # Save our position as a float to avoid integer step changes
+        # when only using rect for positioning.
+        self.x += self.speed
+        self.rect.centerx = self.x
 
     def damage(self, strength):
-        """ Damage our object, kill it if zero health."""
-        self.health = self.health - strength
+        """
+        Damage our object, kill it if zero health.
+
+        strength is attacker's damage strength.
+
+        """
+        if not self.invincible:
+            self.health -= strength
         if self.health <= 0:
             self.dead = True
 
