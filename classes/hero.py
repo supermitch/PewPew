@@ -84,7 +84,7 @@ class Ship(object):
             else:
                 direction = 0
 
-        mu = 0.1  # TODO: Function of surface and ship attribs
+        mu = 0.13  # TODO: Function of surface and ship attribs
         g = 9.8  # m/s^2 TODO: Function of planet
         return mu * self.mass * g * direction
 
@@ -97,9 +97,9 @@ class Ship(object):
         elif self.thrust < 0:
             friction = min(-1 * self.thrust, friction)
 
-        print('   T {}'.format(self.thrust))
-        print('+ Ff {}'.format(friction))
-        print('= Fn {}'.format(self.thrust + friction))
+        #print('   T {}'.format(self.thrust))
+        #print('+ Ff {}'.format(friction))
+        #print('= Fn {}'.format(self.thrust + friction))
         return (self.thrust + friction) / self.mass
 
 
@@ -152,14 +152,16 @@ class Ship(object):
             #self.set_status('injured', time, 50)
 
         if reset:
+            # Reset our position
             if other.rect.left < self.rect.left < other.rect.right:
                 self.rect.left = other.rect.right
             elif other.rect.right > self.rect.right > other.rect.left:
                 self.rect.right = other.rect.left
-        self.speed = (self.speed * (self.mass - other.mass) + \
-                     2 * other.mass * other.speed_x) / \
-                     (self.mass + other.mass)
-        self.speed *= elasticity    # scale by elasticity
+            self.x = self.rect.centerx  # Don't forget to update position, too!
+        # http://en.wikipedia.org/wiki/Inelastic_collision
+        self.speed = (0.9 * other.mass * (other.speed_x - self.speed) + \
+            (self.mass * self.speed) + (other.mass * other.speed_x)) \
+            / (self.mass + other.mass)
 
     def draw(self):
         """ Return an (image, position) tuple. """
