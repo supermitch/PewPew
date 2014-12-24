@@ -92,9 +92,9 @@ class PewPew(object):
                         self.world.hero_shoot()
                 elif event.type == KEYUP:
                     if event.key in (K_h, K_LEFT):
-                        self.world.hero.activate_thrusters('off')
+                        self.world.hero.deactivate_thrusters('left')
                     elif event.key in (K_l, K_RIGHT):
-                        self.world.hero.activate_thrusters('off')
+                        self.world.hero.deactivate_thrusters('right')
                     elif event.key == K_UP:
                         pass
                     elif event.key == K_DOWN:
