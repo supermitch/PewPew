@@ -41,7 +41,7 @@ class Monster(object):
         self.mv = {'left':False, 'right':False, 'up':False, 'down':True}
 
     def update(self, time):
-        self.check_status(time)
+        self.check_status()
         self.move()
 
     def collide(self, obj):
@@ -63,6 +63,7 @@ class Monster(object):
     def damage(self, strength):
         """ Damage our object, kill it if zero health. """
         self.health = self.health - strength
+        self.set_status('injured', 6)
         if self.health <= 0:
             self.dead = True
 
@@ -70,17 +71,13 @@ class Monster(object):
         """ Return an (image, position) tuple. """
         return self.surf, self.rect.topleft
 
-    def set_status(self, status, time, duration):
-        self.status[status] = (time, duration)
+    def set_status(self, status, frame_count):
+        """ Insert status for a certain number of frames. """
+        self.status[status] = frame_count
 
-    def check_status(self, current_time):
-        remove = []
-        for key, (set_time, duration) in self.status.items():
-            # If enough time has gone by, this status has ended
-            if (current_time - set_time) > duration:
-                remove.append(key)
-        for key in remove:
-            del self.status[key]
+    def check_status(self):
+        """ Remove expired statuses, update others. """
+        self.status = {k: v - 1 for k, v in self.status.items() if v > 0}
 
 
 

@@ -14,7 +14,7 @@ class Ship(object):
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
         # TODO: Cheat mode w/ args?
-        self.invincible = True  # Debug
+        self.invincible = False  # Debug
         self.strength = 50
         self.max_health = 50.0
         self.health = 50.0
@@ -63,7 +63,7 @@ class Ship(object):
 
     def update(self, time):
         if not self.dead:
-            self.check_status(time)
+            self.check_status()
             self.check_thrusters()
             self.move()
             self.fuel -= abs(self.thrust) * self.fuel_consumption
@@ -140,6 +140,8 @@ class Ship(object):
         strength is attacker's damage strength.
 
         """
+        if strength > 0:  # TODO: defence could counter strength
+            self.set_status('injured', 6)
         if not self.invincible:
             self.health -= strength
         if self.health <= 0:
@@ -149,7 +151,6 @@ class Ship(object):
         # this code assumes only some overlap, not total object crossing!
         if other.strength > 0:
             self.damage(other.strength)
-            #self.set_status('injured', time, 50)
 
         if reset:
             # Reset our position
@@ -167,20 +168,16 @@ class Ship(object):
         """ Return an (image, position) tuple. """
         return self.surf, self.rect.topleft
 
-    def set_status(self, status, time, duration):
-        """ Set a status at a given time, for a given duration. """
-        self.status[status] = (time, duration)
+    def set_status(self, status, frame_count):
+        """ Set a status for a given duration. """
+        self.status[status] = frame_count
 
-    def check_status(self, current_time):
+    def check_status(self):
         """ Check statuses to see if they have expired. """
-        remove = []
-        for key, (set_time, duration) in self.status.items():
-            # If enough time has gone by, this status has ended
-            if (current_time - set_time) > duration:
-                remove.append(key)
-        for key in remove:
-            del self.status[key]
+        expired = []
+        self.status = {k: v - 1 for k, v in self.status.items() if v > 0}
 
     def self_destruct(self):
         """ Damage by remaining health value, and die. """
         self.damage(self.health)
+
