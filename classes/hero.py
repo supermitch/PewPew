@@ -26,7 +26,7 @@ class Ship(object):
         self.fuel = 400.0
         self.mass = 50.0
 
-        self.thrusters = {'left': False, 'right': False}
+        self.thrusters = {'left': False, 'right': False, 'grav': False}
         self.thrust = 0  # Current thrust
         self.thrust_max = 80  # Thrust capability
 
@@ -51,10 +51,7 @@ class Ship(object):
 
     def activate_thrusters(self, direction, switch=True):
         """ Adjust our thrust according to button press or release. """
-        if direction == 'left':
-            self.thrusters['left'] = switch
-        elif direction == 'right':
-            self.thrusters['right'] = switch
+        self.thrusters[direction] = switch
 
     def check_thrusters(self):
         if self.thrusters['left'] and not self.thrusters['right']:
@@ -88,7 +85,10 @@ class Ship(object):
             else:
                 direction = 0
 
-        mu = 0.13  # TODO: Function of surface and ship attribs
+        if self.thrusters['grav']:  # Anti-grav is on
+            mu = 0.0
+        else:
+            mu = 0.13  # TODO: Function of surface and ship attribs
         g = 9.8  # m/s^2 TODO: Function of planet
         return mu * self.mass * g * direction
 
@@ -100,22 +100,17 @@ class Ship(object):
             friction = max(-1 * self.thrust, friction)
         elif self.thrust < 0:
             friction = min(-1 * self.thrust, friction)
-
-        #print('   T {}'.format(self.thrust))
-        #print('+ Ff {}'.format(friction))
-        #print('= Fn {}'.format(self.thrust + friction))
         return (self.thrust + friction) / self.mass
 
 
     def set_speed(self, acceleration):
         """ Modify speed by acceleration. Limited to max_speed. """
         if not self.thrust:
+            # Don't allow us to decelerate past a stop from friction
             if self.speed > 0 and acceleration < 0:
                 self.speed = max(0, self.speed + acceleration)
             elif self.speed < 0 and acceleration > 0:
                 self.speed = min(0, self.speed + acceleration)
-            else:
-                self.speed = 0
         else:
             new_speed = self.speed + acceleration
             if self.speed <> 0:

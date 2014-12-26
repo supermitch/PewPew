@@ -1,6 +1,7 @@
 from __future__ import division
 import random
 
+import antigrav
 import bullet
 import explosion
 import monster
@@ -30,6 +31,7 @@ class World(object):
         ]
 
         self.hero = self.__add_hero(self.screen_size)
+        self.antigrav = self.__add_antigrav()
         self.bullets = []
         self.monsters = []
         self.explosions = []
@@ -46,6 +48,11 @@ class World(object):
         x = (screen_size[0] / 2) - (size[0] / 2)
         y = screen_size[1] - (size[1] * 2)
         return hero.Ship(surf, pos=(x, y))
+
+    def __add_antigrav(self):
+        surf, size = self.assets.images['anti-grav']
+        pos = self.hero.rect.midbottom
+        return antigrav.Antigrav(surf, pos)
 
     def __add_monster(self, screen_size, kind=None, left=None):
         """ Add a monster to the screen. """
@@ -78,6 +85,7 @@ class World(object):
         image_name = {
             # kind: asset (name attrib, or file)
             'default': 'explode',
+            # TODO: different hero explosion
             'hero': 'explode',
         }[kind]
         sprites, size = self.assets.images[image_name]
@@ -98,6 +106,7 @@ class World(object):
                 self.hero.exploded = True
                 self.add_explosion(self.hero, kind='hero')
         self.hero.update(time)
+        self.antigrav.update(self.hero.rect.midbottom)
 
         self.bullets = [b for b in self.bullets if not b.dead]
         for b in self.bullets:

@@ -30,6 +30,10 @@ class Renderer(object):
         self.surf.fill(self.BG_COLOR)
 
         if not self.world.hero.dead:
+            if self.world.hero.thrusters['grav']:
+                surf, pos = self.world.antigrav.draw()
+                self.surf.blit(surf, pos)
+
             if 'injured' in self.world.hero.status:
                 surf, pos = self.world.hero.draw()
                 # don't fuck up original image

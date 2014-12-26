@@ -88,6 +88,8 @@ class PewPew(object):
                         self.world.hero.activate_thrusters('left')
                     elif event.key in (K_l, K_RIGHT):
                         self.world.hero.activate_thrusters('right')
+                    elif event.key in (K_j, K_DOWN):
+                        self.world.hero.activate_thrusters('grav')
                     elif event.key == K_SPACE:
                         self.world.hero_shoot()
                 elif event.type == KEYUP:
@@ -95,9 +97,9 @@ class PewPew(object):
                         self.world.hero.activate_thrusters('left', False)
                     elif event.key in (K_l, K_RIGHT):
                         self.world.hero.activate_thrusters('right', False)
+                    elif event.key in (K_j, K_DOWN):
+                        self.world.hero.activate_thrusters('grav', False)
                     elif event.key == K_UP:
-                        pass
-                    elif event.key == K_DOWN:
                         pass
 
             self.world.update(time)
