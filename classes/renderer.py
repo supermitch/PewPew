@@ -61,6 +61,7 @@ class Renderer(object):
             self.surf.blit(*bullet.draw())
 
         self.surf.blit(*self.health_meter(self.world.hero.health_percentage))
+        self.surf.blit(*self.fuel_meter(self.world.hero.fuel_percentage))
         # Text displays
         self.plot_stats(self.world.stats)
 
@@ -70,22 +71,39 @@ class Renderer(object):
 
     def health_meter(self, health):
         """ Display our health meter. """
+        health = min(100, health)  # For the sake of life meter, cap it?
+        # Add a block for each 10 % of life remaining
+        block_count = int(math.ceil(health/10.0))
 
         images = self.world.assets.images  # save typing
+        frame, frame_size = images['meter_frame']
+        surf = frame.copy()  # Don't blit onto original frame
+        block, block_size = images['health_block']
+        for i in range(block_count):
+            y = frame_size[1] - 4 - block_size[1] - (i * (block_size[1] - 2))
+            surf.blit(block, (4, y))
+        pos = (670, 100)
+        return surf, pos
 
-        health = min(100, health)  # For the sake of life meter, cap it?
+    def fuel_meter(self, fuel):
+        """ Display our health meter. """
+        fuel = min(100, fuel)  # For the sake of meter, cap it
+        # Add a block for each 10 % of life remaining
+        block_count = int(math.ceil(fuel/10.0))
+
+        images = self.world.assets.images  # save typing
 
         frame, frame_size = images['meter_frame']
         surf = frame.copy()  # Don't blit onto original frame
         block, block_size = images['health_block']
-        block_count = int(math.ceil(health/10.0))
-        # Add a block for each 10 % of life remaining
+        # Adjust color for fuel meter
+        block = block.copy()
+        block.fill((150, 200, 50), special_flags=BLEND_RGB_MULT)
         for i in range(block_count):
             y = frame_size[1] - 4 - block_size[1] - (i * (block_size[1] - 2))
             surf.blit(block, (4, y))
         pos = (720, 100)
         return surf, pos
-
 
     def plot_stats(self, stats):
         """ Plots text statistics, but doesn't display them. """

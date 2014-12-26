@@ -22,7 +22,7 @@ class Ship(object):
         self.exploded = False
 
         self.max_fuel = 400.0
-        self.fuel_consumption = 0.001  # Lower is better
+        self.fuel_consumption = 0.0025  # Lower is better
         self.fuel = 400.0
         self.mass = 50.0
 
@@ -43,7 +43,11 @@ class Ship(object):
 
     @property
     def health_percentage(self):
-        return self.health / self.max_health * 100
+        return self.health / self.max_health * 100.0
+
+    @property
+    def fuel_percentage(self):
+        return self.fuel / self.max_fuel * 100.0
 
     def activate_thrusters(self, direction, switch=True):
         """ Adjust our thrust according to button press or release. """
