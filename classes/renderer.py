@@ -1,3 +1,6 @@
+from __future__ import division
+import math
+
 import numpy
 import pygame
 from pygame.locals import *
@@ -71,34 +74,16 @@ class Renderer(object):
         images = self.world.assets.images  # save typing
 
         health = min(100, health)  # For the sake of life meter, cap it?
-        lost = int((100 - health) / 2)
-        remaining = int(health / 2)
 
-        # Create an list of all the sprites that make up the meter
-        # recall that images stores (surface, size) tuples
-        sprites = []
-        if health == 100:
-            sprites.append(images['hm_top_full'])
-        else:
-            sprites.append(images['hm_top_empty'])
-            for _ in range(lost):
-                sprites.append(images['hm_middle_empty'])
-            sprites.append(images['hm_cap'])
-        for _ in range(remaining):
-            sprites.append(images['hm_middle_full'])
-        if health > 2:
-            sprites.append(images['hm_bottom_full'])
-        else:
-            sprites.append(images['hm_bottom_empty'])
-
-        height = sum(size[1] for _, size in sprites)
-        width = sprites[0][1][0]  # sprites is a list of img, size tuples
-        surf = pygame.Surface((width, height))
-        y = 0
-        for sprite, size in sprites:
-            surf.blit(sprite, (0, y))
-            y += size[1]
-        pos = (750, 100)
+        frame, frame_size = images['meter_frame']
+        surf = frame.copy()  # Don't blit onto original frame
+        block, block_size = images['health_block']
+        block_count = int(math.ceil(health/10.0))
+        # Add a block for each 10 % of life remaining
+        for i in range(block_count):
+            y = frame_size[1] - 4 - block_size[1] - (i * (block_size[1] - 2))
+            surf.blit(block, (4, y))
+        pos = (720, 100)
         return surf, pos
 
 
