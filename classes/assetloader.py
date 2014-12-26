@@ -28,8 +28,7 @@ class AssetLoader(object):
             self.root = folder
         else:
             self.root = os.path.join(
-                            os.path.dirname(os.path.realpath(__file__)),
-                            '..')
+                            os.path.dirname(os.path.realpath(__file__)), '..')
         self.images = self.load_images()
         self.sounds = self.load_sounds()
 
@@ -57,11 +56,15 @@ class AssetLoader(object):
 
                 if kind == 'sprite':
                     sprite = pygame.image.load(f_full).convert_alpha()
-                    size = sprite.get_size()  # (width, height)
+                    size = tuple(int(x * 2) for x in sprite.get_size())
+                    sprite = pygame.transform.scale(sprite, size)
+
                 elif kind == 'spritesheet':
                     sheet = pygame.image.load(f_full).convert_alpha()
                     sprite = [sheet.subsurface(coord) for coord in coords]
-                    size = sprite[0].get_size()
+                    size = tuple(int(x * 2) for x in sprite[0].get_size())
+                    sprite = [pygame.transform.scale(x, size) for \
+                              x in sprite]
 
                 if name in images:
                     print('Image asset name collision! {}'.format(name))

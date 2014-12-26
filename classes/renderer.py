@@ -91,8 +91,9 @@ class Renderer(object):
         else:
             sprites.append(images['hm_bottom_empty'])
 
+        height = sum(size[1] for _, size in sprites)
         width = sprites[0][1][0]  # sprites is a list of img, size tuples
-        surf = pygame.Surface((width, 109))
+        surf = pygame.Surface((width, height))
         y = 0
         for sprite, size in sprites:
             surf.blit(sprite, (0, y))
