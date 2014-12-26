@@ -3,7 +3,8 @@
 PewPew is a Galaga inspired shooter.
 
 Written for Mac OSX 10.7 supplied python (Python 2.7.6), and the
-[corresponding version of Pygame](http://www.pygame.org/download.shtml)
+[corresponding version](http://www.pygame.org/ftp/pygame-1.9.2pre-py2.7-macosx10.7.mpkg.zip)
+of [Pygame](http://www.pygame.org/download.shtml)
 
 Simply type `python pewpew.py` to run.
 
