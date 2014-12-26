@@ -7,7 +7,18 @@ Written for Mac OSX 10.7 supplied python (Python 2.7.6), and the
 
 Simply type `python pewpew.py` to run.
 
+## Mission ##
+
+Kill the aliens before they take over the planet.
+
+Use anti-grav to avoid running out of fuel!
+
 ## Controls ##
 
-__Left__ & __Right__ arrows to move, __Spacebar__ to shoot. __Esc__ to exit.
+* __Left__ & __Right__ arrows to move
+* __Down__ arrow to activate anti-gravity
+* __Spacebar__ to Shoot
+* __x__ to Self-destruct
+* __p__ to Pause
+* __Esc__ or __q__ to Quit
 
