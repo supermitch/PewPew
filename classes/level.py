@@ -1,9 +1,15 @@
 class Level(object):
-    def __init__(self):
-        self.waves = []
+    """ Level base class. """
 
     def total_monsters(self):
+        """ Return the total number of monsters in this level. """
         return sum(1 for wave in self.waves for x in wave[1])
+
+    def end_time(self):
+        """ Return the time at which the level should be complete. """
+        # Time of last wave plus 5 seconds
+        return max(wave[0] for wave in self.waves) + 5
+
 
 class LevelOne(Level):
     def __init__(self):

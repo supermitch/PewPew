@@ -8,6 +8,7 @@ from pygame.locals import *
 from pygame import Color
 
 from classes import collider
+from classes import level
 from classes import world
 from classes import renderer
 from classes import assetloader
@@ -49,27 +50,45 @@ class PewPew(object):
         """Run the actual game."""
 
         # Initialize framerate clock
-        clock = pygame.time.Clock()
+        self.clock = pygame.time.Clock()
 
         # Display Start Screen
-        start_screen = StartScreen(self.renderer.surf, clock, self.FPS)
+        start_screen = StartScreen(self.renderer.surf, self.clock, self.FPS)
         start_screen.render()
         del start_screen
 
-        #Display Level 1 Screen
-        level_screen = LevelScreen(1, self.renderer.surf, clock, self.FPS)
-        level_screen.render()
-        del level_screen
+        for level_number, lvl in enumerate(level.levels, start=1):
 
-        self.world.load_level(2)
+            self.world.clear()
+            self.world.level = lvl
+            self.goal = lvl.end_time()
 
+            #Display Level N Screen
+            level_screen = LevelScreen(level_number, self.renderer.surf,
+                                       self.clock, self.FPS)
+            level_screen.render()
+            del level_screen
+
+            result = self.game_loop()
+
+            if result == 'died':
+                return 'died'
+
+        return 'won'
+
+    def game_loop(self):
+        """ Run the game loop. """
         time_of_death = None
         start_time = pygame.time.get_ticks() / 1000
         while True:  # Game loop
 
             time = (pygame.time.get_ticks() / 1000) - start_time
+
+            if time > self.goal:
+                return 'level complete'
+
             # TODO: Remove some day
-            self.stats['fps'] = clock.get_fps()
+            self.stats['fps'] = self.clock.get_fps()
 
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -108,13 +127,12 @@ class PewPew(object):
                     time_of_death = time
                 else:
                     if time - time_of_death > 2:
-                        break # out of game loop
+                        return 'died'
 
             self.renderer.render()
 
-            clock.tick(self.FPS)
+            self.clock.tick(self.FPS)
 
-        return 'dead'
 
 
     def pause_game(self):
@@ -196,11 +214,13 @@ def main():
         pygame.init()   # Initialize pygame
         app = PewPew()  # Instantiate new app
         result = app.run()
-        if result == 'dead':
+        if result == 'died':
             if app.game_over():  #  Prompt to continue
                 continue
             else:
                 terminate()
+        elif result == 'won':
+            print('You won!')
 
 if __name__ == "__main__":
     main()

@@ -32,9 +32,10 @@ class World(object):
 
         self.level = None
 
-    def load_level(self, level_number):
-        self.level = level.levels[level_number - 1]  # zero index
-        return self.level.total_monsters()
+    def clear(self):
+        self.bullets = []
+        self.monsters = []
+        self.explosions = []
 
     def __add_hero(self, screen_size):
         """ Add our hero to bottom of the screen. """
