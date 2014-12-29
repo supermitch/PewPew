@@ -7,16 +7,7 @@ import explosion
 import monster
 import hero
 import wall
-
-class Level(object):
-    def __init__(self):
-        self.waves = [
-            #(time, x-pos, type),
-            (5, range(300, 481, 40), 'green'),
-            (8, range(300, 421, 40), 'red'),
-            (11, range(200, 601, 100), 'purple'),
-            (16, range(100, 801, 100), 'blue'),
-        ]
+import level
 
 class World(object):
     """ A class to hold all the game elements. """
@@ -38,9 +29,12 @@ class World(object):
 
         self.ADD_MONSTER = 2.5
         self.last_add = 0
-        # TODO: Move to level object?
-        self.level = Level()
 
+        self.level = None
+
+    def load_level(self, level_number):
+        self.level = level.levels[level_number - 1]  # zero index
+        return self.level.total_monsters()
 
     def __add_hero(self, screen_size):
         """ Add our hero to bottom of the screen. """

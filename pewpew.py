@@ -8,11 +8,6 @@ from pygame.locals import *
 from pygame import Color
 
 from classes import collider
-from classes import hero
-from classes import monster
-from classes import bullet
-from classes import wall
-from classes import explosion
 from classes import world
 from classes import renderer
 from classes import assetloader
@@ -65,6 +60,8 @@ class PewPew(object):
         level_screen = LevelScreen(1, self.renderer.surf, clock, self.FPS)
         level_screen.render()
         del level_screen
+
+        self.world.load_level(2)
 
         time_of_death = None
         start_time = pygame.time.get_ticks() / 1000
