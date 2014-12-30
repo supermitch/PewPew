@@ -60,7 +60,7 @@ class PewPew(object):
         for level_number, lvl in enumerate(level.levels, start=1):
 
             self.world.clear()
-            self.world.level = lvl
+            self.world.set_level(lvl)
             self.goal = lvl.end_time()
 
             #Display Level N Screen
@@ -73,6 +73,8 @@ class PewPew(object):
 
             if result == 'died':
                 return 'died'
+            else:
+                print('Level {} complete!'.format(level_number))
 
         return 'won'
 

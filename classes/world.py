@@ -30,7 +30,8 @@ class World(object):
         self.ADD_MONSTER = 2.5
         self.last_add = 0
 
-        self.level = None
+        self.level = None  # The level instance
+        self.waves = []  # We store a copy of level waves
 
     def clear(self):
         self.bullets = []
@@ -94,6 +95,11 @@ class World(object):
         elif kind == 'hero':
             self.assets.sounds['hero-explode'].play()
 
+    def set_level(self, lvl):
+        self.level = lvl
+        # Make a copy so we don't pop waves out of our original level
+        self.waves = list(lvl.waves)
+
     def update(self, time):
 
         if self.hero.dead:
@@ -107,12 +113,12 @@ class World(object):
         for b in self.bullets:
             b.update()
 
-        if self.level.waves:
-            wave = self.level.waves[0]
+        if self.waves:
+            wave = self.waves[0]
             if time > wave[0]:
                 for x in wave[1]:
                     self.__add_monster(self.screen_size, kind=wave[2], left=x)
-                self.level.waves.pop(0)  # Get rid of it.
+                self.waves.pop(0)  # Get rid of it.
                 self.last_add = time  # Don't add randomly right after
 
         if (time - self.last_add) >= self.ADD_MONSTER:
