@@ -40,14 +40,13 @@ class Monster(object):
 
         self.mv = {'left':False, 'right':False, 'up':False, 'down':True}
 
-    def update(self, time):
+    def update(self):
         self.check_status()
         self.move()
 
     def collide(self, obj):
         """ Collide with an object. """
         self.damage(obj.strength)
-        #self.set_status('injured', time, 50)
 
     def move(self):
         """ Move our rectangle. """

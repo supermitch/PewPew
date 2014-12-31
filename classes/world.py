@@ -4,10 +4,11 @@ import random
 import antigrav
 import bullet
 import explosion
-import monster
 import hero
-import wall
 import level
+import monster
+import obstacle
+import wall
 
 class World(object):
     """ A class to hold all the game elements. """
@@ -71,6 +72,14 @@ class World(object):
         y = -50
         self.monsters.append(monster.Monster(kind, surf, (x, y)))
 
+
+    def __add_obstacle(self):
+        surf, size = self.assets.images['debris']
+        x, y = self.hero.rect.midbottom
+        pos = x + 200, y
+        self.monsters.append(obstacle.Obstacle('debris', surf, pos))
+
+
     def add_explosion(self, source, kind='default'):
         """
         Add an explosion to the screen.
@@ -124,10 +133,12 @@ class World(object):
         if (time - self.last_add) >= self.ADD_MONSTER:
             self.last_add = time
             self.__add_monster(self.screen_size)
+            if random.random() > 0.4:
+                self.__add_obstacle()
 
         self.monsters = [m for m in self.monsters if not m.dead]
         for m in self.monsters:
-            m.update(time)
+            m.update()
 
         self.explosions = [e for e in self.explosions if not e.complete]
         for e in self.explosions:
