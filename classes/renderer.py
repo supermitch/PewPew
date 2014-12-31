@@ -1,16 +1,8 @@
 from __future__ import division
 import math
 
-import numpy
 import pygame
 from pygame.locals import *
-
-def color_surface(surface, red, green, blue):
-    """ Modify R, G or B channels to new values. """
-    arr = pygame.surfarray.pixels3d(surface)
-    arr[:, :, 0] = red
-    arr[:, :, 1] = green
-    arr[:, :, 2] = blue
 
 class Renderer(object):
     """ Render the world. """
@@ -36,8 +28,7 @@ class Renderer(object):
 
             if 'injured' in self.world.hero.status:
                 surf, pos = self.world.hero.draw()
-                # don't fuck up original image
-                surf = surf.copy()
+                surf = surf.copy()  # Don't modify original
                 # Add red overlay
                 surf.fill((255, 0, 0), special_flags=BLEND_RGB_ADD)
                 self.surf.blit(surf, pos)
@@ -46,13 +37,10 @@ class Renderer(object):
 
         for monster in self.world.monsters:
             if 'injured' in monster.status:
-                # Get original monster surface
                 surf, pos = monster.draw()
-                # don't fuck up original image
-                surf = surf.copy()
+                surf = surf.copy()  # Don't modify original
                 # Add red overlay
                 surf.fill((255, 0, 0), special_flags=BLEND_RGB_ADD)
-                # Now blit the result
                 self.surf.blit(surf, pos)
             else:
                 self.surf.blit(*monster.draw())
@@ -61,17 +49,16 @@ class Renderer(object):
             self.surf.blit(*explosion.draw())
 
         for bullet in self.world.bullets:
-            # Bullets are filled rects, for now.
             self.surf.blit(*bullet.draw())
 
         self.surf.blit(*self.health_meter(self.world.hero.health_percentage))
         self.surf.blit(*self.fuel_meter(self.world.hero.fuel_percentage))
+
         # Text displays
         self.plot_stats(self.world.stats)
 
         pygame.display.flip()
 
-        return None
 
     def health_meter(self, health):
         """ Display our health meter. """
@@ -128,17 +115,7 @@ class Renderer(object):
                                     self.BG_COLOR)
             self.surf.blit(surf, (left, y))
 
-        # === FUEL stats
-        surf = self.text.render("Fuel remaining: %0.2f" % self.world.hero.fuel,
-                                True, self.text_colour, self.BG_COLOR)
-        self.surf.blit(surf, (left, 100))
-
-        # === HEALTH info
-        surf = self.text.render('Remaining: %0.2f' % self.world.hero.health,
-                                True, self.text_colour, self.BG_COLOR)
-        self.surf.blit(surf, (left, 140))
-
-        surf = self.text.render('FPS: {:.1f}'.format(stats['fps']), True, self.text_colour,
-                                self.BG_COLOR)
+        surf = self.text.render('FPS: {:.1f}'.format(stats['fps']), True,
+                                self.text_colour, self.BG_COLOR)
         self.surf.blit(surf, (20, 160))
 
