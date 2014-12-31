@@ -15,6 +15,7 @@ class Obstacle(object):
 
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
+        self.speed_x = 0.0
         self.status = {}
         self.dead = False
 
