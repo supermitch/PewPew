@@ -62,7 +62,7 @@ class Ship(object):
             # Both thrusters cancel each other out
             self.thrust = 0
 
-    def update(self, time):
+    def update(self):
         if not self.dead:
             self.check_status()
             self.check_thrusters()

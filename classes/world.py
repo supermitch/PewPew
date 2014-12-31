@@ -132,7 +132,7 @@ class World(object):
             if random.random() > 0.4:
                 self.__add_obstacle()
 
-    def update(self, time):
+    def update(self):
         """ Once per frame, update all the world's objects. """
         self.remove_dead_objects()
         self.add_new_objects()
@@ -141,7 +141,7 @@ class World(object):
             if not self.hero.exploded:
                 self.hero.exploded = True
                 self.add_explosion(self.hero, kind='hero')
-        self.hero.update(time)
+        self.hero.update()
 
         self.antigrav.update(self.hero.rect.midbottom)
 
