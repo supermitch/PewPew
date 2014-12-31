@@ -28,8 +28,8 @@ class World(object):
         self.monsters = []
         self.explosions = []
 
-        self.ADD_MONSTER = 2.5
-        self.last_add = 0
+        self.add_monster_trigger = 200  # frames
+        self.add_count = 0
 
         self.level = None  # The level instance
         self.waves = []  # We store a copy of level waves
@@ -108,41 +108,51 @@ class World(object):
         # Make a copy so we don't pop waves out of our original level
         self.waves = list(lvl.waves)
 
+    def removed_unwanted_objects(self):
+        """ Update our contents to drop dead or completed objects. """
+        self.bullets = [b for b in self.bullets if not b.dead]
+        self.explosions = [e for e in self.explosions if not e.complete]
+        self.monsters = [m for m in self.monsters if not m.dead]
+
+    def add_new_object(self):
+        """ Add monsters or whatever. """
+        if self.waves:
+            wave = self.waves[0]
+            if time > wave[0]:
+                for x in wave[1]:
+                    self.__add_monster(self.screen_size, kind=wave[2], left=x)
+                self.waves.pop(0)  # Get rid of it
+                self.last_add = time  # Don't add randomly right after
+
+        self.add_count = (self.add_count + 1) % self.add_monster_trigger
+        if self.add_count == self.add_monster_trigger - 1:
+            self.__add_monster(self.screen_size)
+
+            # TODO: Fix this
+            if random.random() > 0.4:
+                self.__add_obstacle()
+
     def update(self, time):
+        """ Once per frame, update all the world's objects. """
+        self.remove_dead_objects()
+        self.add_new_objects()
 
         if self.hero.dead:
             if not self.hero.exploded:
                 self.hero.exploded = True
                 self.add_explosion(self.hero, kind='hero')
         self.hero.update(time)
+
         self.antigrav.update(self.hero.rect.midbottom)
 
-        self.bullets = [b for b in self.bullets if not b.dead]
         for b in self.bullets:
             b.update()
 
-        if self.waves:
-            wave = self.waves[0]
-            if time > wave[0]:
-                for x in wave[1]:
-                    self.__add_monster(self.screen_size, kind=wave[2], left=x)
-                self.waves.pop(0)  # Get rid of it.
-                self.last_add = time  # Don't add randomly right after
-
-        if (time - self.last_add) >= self.ADD_MONSTER:
-            self.last_add = time
-            self.__add_monster(self.screen_size)
-            if random.random() > 0.4:
-                self.__add_obstacle()
-
-        self.monsters = [m for m in self.monsters if not m.dead]
         for m in self.monsters:
             m.update()
 
-        self.explosions = [e for e in self.explosions if not e.complete]
         for e in self.explosions:
             e.update()
-
 
     def hero_shoot(self):
         # Limit firing rate, should be done by hero?
