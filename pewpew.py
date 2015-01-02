@@ -79,16 +79,20 @@ class PewPew(object):
             # TODO: Remove some day
             self.stats['fps'] = self.clock.get_fps()
 
-            if time > self.goal:
+            if time > self.goal and self.current_level:
                 if self.current_level == len(level.levels):
                     return 'won'
                 self.world.stage_clear = True
-                if time > self.goal + 3:
-                    self.current_level += 1
-                    self.world.clear()
-                    self.world.set_level(level.levels[self.current_level - 1])
-                    self.goal = self.world.level.end_time()
-                    level_start = time  # Reset it
+                self.assets.sounds['level-success'].play()
+                self.current_level = None
+
+            if time > self.goal + 3:
+                self.world.stage_clear = False
+                self.current_level = self.world.level.number + 1
+                self.world.clear()
+                self.world.set_level(level.levels[self.current_level - 1])
+                self.goal = self.world.level.end_time()
+                level_start = time  # Reset it
 
             for event in pygame.event.get():
                 if event.type == QUIT:

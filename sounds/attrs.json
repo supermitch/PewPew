@@ -23,6 +23,10 @@
         "kind": "sound",
         "name": "hero-explode",
         "volume": 1.2
+    },
+    "grunz_success": {
+        "name": "level-success",
+        "volume": 0.5
     }
 }
 

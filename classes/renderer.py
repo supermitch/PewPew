@@ -3,6 +3,7 @@ import math
 
 import pygame
 from pygame.locals import *
+from pygame import Color
 
 class Renderer(object):
     """ Render the world. """
@@ -14,6 +15,7 @@ class Renderer(object):
         self.BG_COLOR = (10, 10, 10)
 
         self.text = pygame.font.Font(None, 16)
+        self.normal_text = pygame.font.Font(None, 30)
         self.text_colour = (200, 200, 255)
 
 
@@ -125,7 +127,7 @@ class Renderer(object):
 
     def stage_clear(self, stage):
         """ Display a 'stage clear' message overlay. """
-        surf = self.text.render('Stage {} cleared!'.format(stage), True,
-                                self.text_colour, self.BG_COLOR)
+        surf = self.normal_text.render('Stage {} cleared!'.format(stage),
+                                       True, Color('ivory'))
         self.surf.blit(surf, (300, 250))
 
