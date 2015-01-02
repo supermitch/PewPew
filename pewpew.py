@@ -58,7 +58,7 @@ class PewPew(object):
         del start_screen
 
         self.current_level = 1
-        self.world.set_level(level.levels[self.current_level])
+        self.world.set_level(level.levels[self.current_level - 1])
         self.goal = self.world.level.end_time()
 
         result = self.game_loop()
@@ -71,25 +71,24 @@ class PewPew(object):
     def game_loop(self):
         """ Run the game loop. """
         time_of_death = None
-        start_time = pygame.time.get_ticks() / 1000
-        level_time = start_time
+        level_start = pygame.time.get_ticks() / 1000
 
         while True:  # Game loop
 
-            time = (pygame.time.get_ticks() / 1000) - start_time
-
+            time = (pygame.time.get_ticks() / 1000) - level_start
             # TODO: Remove some day
             self.stats['fps'] = self.clock.get_fps()
 
-            if level_time > self.goal:
-                print('Level {} complete!'.format(self.current_level))
+            if time > self.goal:
+                if self.current_level == len(level.levels):
+                    return 'won'
                 self.world.stage_clear = True
-                if level_time > self.goal + 3:
+                if time > self.goal + 3:
                     self.current_level += 1
                     self.world.clear()
-                    self.world.set_level(level.levels[self.current_level])
+                    self.world.set_level(level.levels[self.current_level - 1])
                     self.goal = self.world.level.end_time()
-                    level_time = time  # Reset it
+                    level_start = time  # Reset it
 
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -119,7 +118,7 @@ class PewPew(object):
                     elif event.key == K_UP:
                         pass
 
-            self.world.update(level_time)
+            self.world.update(time)
 
             self.collider.update()
 
