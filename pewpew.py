@@ -57,40 +57,39 @@ class PewPew(object):
         start_screen.render()
         del start_screen
 
-        for level_number, lvl in enumerate(level.levels, start=1):
+        self.current_level = 1
+        self.world.set_level(level.levels[self.current_level])
+        self.goal = self.world.level.end_time()
 
-            self.world.clear()
-            self.world.set_level(lvl)
-            self.goal = lvl.end_time()
+        result = self.game_loop()
 
-            #Display Level N Screen
-            level_screen = LevelScreen(level_number, self.renderer.surf,
-                                       self.clock, self.FPS)
-            level_screen.render()
-            del level_screen
-
-            result = self.game_loop()
-
-            if result == 'died':
-                return 'died'
-            else:
-                print('Level {} complete!'.format(level_number))
-
-        return 'won'
+        if result == 'died':
+            return 'died'
+        else:
+            return 'won'
 
     def game_loop(self):
         """ Run the game loop. """
         time_of_death = None
         start_time = pygame.time.get_ticks() / 1000
+        level_time = start_time
+
         while True:  # Game loop
 
             time = (pygame.time.get_ticks() / 1000) - start_time
 
-            if time > self.goal:
-                return 'level complete'
-
             # TODO: Remove some day
             self.stats['fps'] = self.clock.get_fps()
+
+            if level_time > self.goal:
+                print('Level {} complete!'.format(self.current_level))
+                self.world.stage_clear = True
+                if level_time > self.goal + 3:
+                    self.current_level += 1
+                    self.world.clear()
+                    self.world.set_level(level.levels[self.current_level])
+                    self.goal = self.world.level.end_time()
+                    level_time = time  # Reset it
 
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -120,7 +119,7 @@ class PewPew(object):
                     elif event.key == K_UP:
                         pass
 
-            self.world.update(time)
+            self.world.update(level_time)
 
             self.collider.update()
 

@@ -1,5 +1,8 @@
 class Level(object):
     """ Level base class. """
+    def __init__(self):
+        self.waves = []
+        self.number = None
 
     def total_monsters(self):
         """ Return the total number of monsters in this level. """
@@ -20,6 +23,7 @@ class LevelOne(Level):
             (7, range(300, 481, 40), 'green'),
             (8, range(300, 481, 40), 'green'),
         ]
+        self.number = 1
 
 class LevelTwo(Level):
     def __init__(self):
@@ -30,6 +34,7 @@ class LevelTwo(Level):
             (11, range(200, 601, 100), 'purple'),
             (16, [200 + 50 * i for i in range(8)], 'blue'),
         ]
+        self.number = 2
 
 levels = [LevelOne(), LevelTwo()]
 

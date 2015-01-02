@@ -31,10 +31,12 @@ class World(object):
         self.add_monster_trigger = 200  # frames
         self.add_count = 0
 
+        self.stage_clear = False
         self.level = None  # The level instance
         self.waves = []  # We store a copy of level waves
 
     def clear(self):
+        self.stage_clear = False
         self.bullets = []
         self.monsters = []
         self.explosions = []
@@ -108,13 +110,13 @@ class World(object):
         # Make a copy so we don't pop waves out of our original level
         self.waves = list(lvl.waves)
 
-    def removed_unwanted_objects(self):
+    def remove_dead_objects(self):
         """ Update our contents to drop dead or completed objects. """
         self.bullets = [b for b in self.bullets if not b.dead]
         self.explosions = [e for e in self.explosions if not e.complete]
         self.monsters = [m for m in self.monsters if not m.dead]
 
-    def add_new_object(self):
+    def add_new_objects(self, time):
         """ Add monsters or whatever. """
         if self.waves:
             wave = self.waves[0]
@@ -132,10 +134,10 @@ class World(object):
             if random.random() > 0.4:
                 self.__add_obstacle()
 
-    def update(self):
+    def update(self, level_time):
         """ Once per frame, update all the world's objects. """
         self.remove_dead_objects()
-        self.add_new_objects()
+        self.add_new_objects(level_time)
 
         if self.hero.dead:
             if not self.hero.exploded:
