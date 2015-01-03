@@ -1,3 +1,4 @@
+import math
 import random
 
 import pygame
@@ -8,26 +9,31 @@ class Monster(object):
         self.surf = surf
 
         if kind == 'green':
-            self.speed_y = 2
+            self.speed_x = 0
+            self.speed_y = 1
             self.strength = 5
             self.health = 10
             self.mass = 10
         elif kind == 'red':
-            self.speed_y = 1
+            self.speed_x = 0
+            self.speed_y = 0.8
             self.strength = 10
             self.health = 30
             self.mass = 20
         elif kind == 'purple':
+            self.speed_x = 0
             self.speed_y = 3
             self.strength = 2
             self.health = 10
             self.mass = 2
         elif kind == 'blue':
-            self.speed_y = 3
-            self.strength = 2
+            self.speed_x = 0
+            self.speed_y = 4
+            self.strength = 1
             self.health = 10
             self.mass = 2
-        self.speed_x = 0
+            self.rads = 0
+            self.motion = sin_motion
 
         self.width, self.height = self.surf.get_size()
 
@@ -38,10 +44,10 @@ class Monster(object):
         self.status = {}
         self.dead = False
 
-        self.mv = {'left':False, 'right':False, 'up':False, 'down':True}
-
     def update(self):
         self.check_status()
+        if hasattr(self, 'motion'):
+            self.motion(self)
         self.move()
 
     def collide(self, obj):
@@ -50,14 +56,7 @@ class Monster(object):
 
     def move(self):
         """ Move our rectangle. """
-        if self.mv['left']:
-            self.rect.move_ip(-self.speed_x, 0)
-        elif self.mv['right']:
-            self.rect.move_ip(self.speed_x, 0)
-        if self.mv['up']:
-            self.rect.move_ip(0, -self.speed_y)
-        elif self.mv['down']:
-            self.rect.move_ip(0, self.speed_y)
+        self.rect.move_ip(self.speed_x, self.speed_y)
 
     def damage(self, strength):
         """ Damage our object, kill it if zero health. """
@@ -78,5 +77,7 @@ class Monster(object):
         """ Remove expired statuses, update others. """
         self.status = {k: v - 1 for k, v in self.status.items() if v > 0}
 
-
+def sin_motion(self):
+    self.rads = (self.rads + 0.1) % (2 * math.pi)
+    self.speed_x = math.sin(self.rads) * 4
 
