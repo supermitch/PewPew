@@ -77,8 +77,8 @@ class World(object):
 
     def __add_obstacle(self):
         surf, size = self.assets.images['debris']
-        pos = random.randint(0, 800 - size[1]), self.hero.rect.top
-        self.monsters.append(obstacle.Obstacle('debris', surf, pos))
+        pos = random.randint(0, 800 - size[1]), -50
+        self.monsters.append(monster.Monster('debris', surf, pos))
 
 
     def add_explosion(self, source, kind='default'):

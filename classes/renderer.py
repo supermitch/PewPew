@@ -38,14 +38,21 @@ class Renderer(object):
                 self.surf.blit(*self.world.hero.draw())
 
         for monster in self.world.monsters:
+            surf, pos = monster.draw()
             if 'injured' in monster.status:
-                surf, pos = monster.draw()
                 surf = surf.copy()  # Don't modify original
                 # Add red overlay
                 surf.fill((255, 0, 0), special_flags=BLEND_RGB_ADD)
-                self.surf.blit(surf, pos)
-            else:
-                self.surf.blit(*monster.draw())
+            if hasattr(monster, 'rotation'):
+                degrees = math.degrees(monster.theta)
+                width, height = surf.get_size()
+                surf = pygame.transform.rotate(surf, degrees)
+                new_width, new_height = surf.get_size()
+                x, y = pos
+                new_x = x - (new_width/2.0 - width/2.0)
+                new_y = y - (new_height/2.0 - height/2.0)
+                pos = new_x, new_y
+            self.surf.blit(surf, pos)
 
         for explosion in self.world.explosions:
             self.surf.blit(*explosion.draw())

@@ -1,3 +1,4 @@
+from __future__ import division
 import math
 import random
 
@@ -34,6 +35,17 @@ class Monster(object):
             self.mass = 2
             self.rads = 0
             self.motion = sin_motion
+        elif kind == 'debris':
+            self.obstacle = True
+            self.speed_x = 0
+            self.speed_y = 2
+            self.strength = 5
+            self.health = 20
+            self.mass = 20
+            self.rads_per_frame = random.choice((-1, 1)) * \
+                                  random.randint(5, 10)/100
+            self.theta = random.random() * 2 * math.pi
+            self.rotation = rotation
 
         self.width, self.height = self.surf.get_size()
 
@@ -48,6 +60,8 @@ class Monster(object):
         self.check_status()
         if hasattr(self, 'motion'):
             self.motion(self)
+        if hasattr(self, 'rotation'):
+            self.rotation(self)
         self.move()
 
     def collide(self, obj):
@@ -78,6 +92,11 @@ class Monster(object):
         self.status = {k: v - 1 for k, v in self.status.items() if v > 0}
 
 def sin_motion(self):
+    """ Wave-like left & right motion. """
     self.rads = (self.rads + 0.1) % (2 * math.pi)
     self.speed_x = math.sin(self.rads) * 4
+
+def rotation(self):
+    """ Rotation. """
+    self.theta = (self.theta + self.rads_per_frame) % (2.0 * math.pi)
 
