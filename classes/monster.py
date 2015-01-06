@@ -4,10 +4,13 @@ import random
 
 import pygame
 
+from planet import Planet
+
 class Monster(object):
 
     def __init__(self, kind, surf, pos):
         self.surf = surf
+        self.obstacle = False
 
         if kind == 'green':
             self.speed_x = 0
@@ -66,7 +69,16 @@ class Monster(object):
 
     def collide(self, obj):
         """ Collide with an object. """
-        self.damage(obj.strength)
+        if isinstance(obj, Planet):
+            if self.obstacle:
+                # We've touched down
+                self.speed_x = 0
+                self.speed_y = 0
+                self.rads_per_frame = 0
+            else:
+                self.dead = True
+        else:
+            self.damage(obj.strength)
 
     def move(self):
         """ Move our rectangle. """

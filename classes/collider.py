@@ -36,10 +36,9 @@ class Collider(object):
                         self.world.assets.sounds['hit'].play()
                     break  # Can only hit one bullet at a time
 
-            # Monster versus Walls
-            if m.rect.top >= self.world.screen_size[1]:
+            if m.rect.colliderect(self.world.planet):
+                m.collide(self.world.planet)
                 self.world.stats['monsters_missed'] += 1
-                m.dead = True
 
 
         # Bullets versus Walls
