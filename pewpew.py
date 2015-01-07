@@ -76,23 +76,22 @@ class PewPew(object):
         while True:  # Game loop
 
             time = (pygame.time.get_ticks() / 1000) - level_start
+
             # TODO: Remove some day
             self.stats['fps'] = self.clock.get_fps()
 
-            if time > self.goal and self.current_level:
-                if self.current_level == len(level.levels):
-                    return 'won'
+            if time > self.goal + 3:
+                self.world.set_level(level.levels[self.world.level.number])
+                self.goal = self.world.level.end_time()
+                level_start = pygame.time.get_ticks() / 1000  # Reset timer
+                continue
+
+            if time > self.goal and not self.world.stage_clear:
+                if self.world.level.number == len(level.levels):
+                    return 'won'  # Beat the last level
                 self.world.stage_clear = True
                 self.assets.sounds['level-success'].play()
-                self.current_level = None
 
-            if time > self.goal + 3:
-                self.world.stage_clear = False
-                self.current_level = self.world.level.number + 1
-                self.world.clear()
-                self.world.set_level(level.levels[self.current_level - 1])
-                self.goal = self.world.level.end_time()
-                level_start = time  # Reset it
 
             for event in pygame.event.get():
                 if event.type == QUIT:

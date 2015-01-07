@@ -37,12 +37,6 @@ class World(object):
         self.level = None  # The level instance
         self.waves = []  # We store a copy of level waves
 
-    def clear(self):
-        self.stage_clear = False
-        self.bullets = []
-        self.monsters = []
-        self.explosions = []
-
     def __add_hero(self, screen_size):
         """ Add our hero to bottom of the screen. """
         surf, size = self.assets.images['ship']
@@ -108,6 +102,7 @@ class World(object):
             self.assets.sounds['hero-explode'].play()
 
     def set_level(self, lvl):
+        self.stage_clear = False
         self.level = lvl
         # Make a copy so we don't pop waves out of our original level
         self.waves = list(lvl.waves)
