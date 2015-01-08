@@ -110,7 +110,7 @@ class PewPew(object):
                     elif event.key in (K_j, K_DOWN):
                         self.world.hero.activate_thrusters('grav')
                     elif event.key == K_SPACE:
-                        self.world.hero_shoot()
+                        self.world.hero.shooting = True
                 elif event.type == KEYUP:
                     if event.key in (K_h, K_LEFT):
                         self.world.hero.activate_thrusters('left', False)
@@ -120,6 +120,8 @@ class PewPew(object):
                         self.world.hero.activate_thrusters('grav', False)
                     elif event.key == K_UP:
                         pass
+                    elif event.key == K_SPACE:
+                        self.world.hero.shooting = False
 
             self.world.update(time)
 

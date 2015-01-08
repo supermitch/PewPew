@@ -140,6 +140,8 @@ class World(object):
             if not self.hero.exploded:
                 self.hero.exploded = True
                 self.add_explosion(self.hero, kind='hero')
+        if self.hero.shooting:
+            self.hero_shoot()
         self.hero.update()
 
         self.antigrav.update(self.hero.rect.midbottom)

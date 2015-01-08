@@ -39,6 +39,7 @@ class Ship(object):
         self.facing = {'west':False, 'east':False,
                        'north':True, 'south':False}
 
+        self.shooting = False
         self.status = {}
 
     @property
