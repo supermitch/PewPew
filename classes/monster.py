@@ -10,7 +10,9 @@ class Monster(object):
 
     def __init__(self, kind, surf, pos):
         self.surf = surf
-        self.obstacle = False
+        self.obstacle = False  # Doesn't persist as an obstacle
+        self.landed = False  # Hasn't already landed
+        self.infectious = True  # By default, can infect humans
 
         if kind == 'green':
             self.speed_x = 0
@@ -49,6 +51,7 @@ class Monster(object):
                                   random.randint(5, 10)/100
             self.theta = random.random() * 2 * math.pi
             self.rotation = rotation
+            self.infectious = False
 
         self.width, self.height = self.surf.get_size()
 

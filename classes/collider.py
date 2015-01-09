@@ -36,9 +36,11 @@ class Collider(object):
                         self.world.assets.sounds['hit'].play()
                     break  # Can only hit one bullet at a time
 
-            if m.rect.colliderect(self.world.planet):
+            if m.rect.colliderect(self.world.planet) and not m.landed:
                 m.collide(self.world.planet)
-                self.world.stats['monsters_missed'] += 1
+                if m.infectious:
+                    self.world.stats['monsters_missed'] += 1
+                m.landed = True
 
 
         # Bullets versus Walls
