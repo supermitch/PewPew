@@ -85,7 +85,9 @@ class Monster(object):
 
     def move(self):
         """ Move our rectangle. """
-        self.rect.move_ip(self.speed_x, self.speed_y)
+        # Update first so we can keep non-integer positions
+        self.x, self.y = self.x + self.speed_x, self.y + self.speed_y
+        self.rect.topleft = (self.x, self.y)
 
     def damage(self, strength):
         """ Damage our object, kill it if zero health. """
