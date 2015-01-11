@@ -13,6 +13,7 @@ class Monster(object):
         self.obstacle = False  # Doesn't persist as an obstacle
         self.landed = False  # Hasn't already landed
         self.infectious = True  # By default, can infect humans
+        self.kind = kind
 
         if kind == 'green':
             self.speed_x = 0
@@ -22,7 +23,7 @@ class Monster(object):
             self.mass = 10
         elif kind == 'red':
             self.speed_x = 0
-            self.speed_y = 0.8
+            self.speed_y = 0.5
             self.strength = 10
             self.health = 30
             self.mass = 20
