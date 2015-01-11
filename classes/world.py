@@ -157,7 +157,8 @@ class World(object):
 
     def hero_shoot(self):
         # Limit firing rate, should be done by hero?
-        if len(self.bullets) < 2:
+        if 'reloading' not in self.hero.status:
+            self.hero.set_status('reloading', 10)
             self.assets.sounds['shot'].play()
             self.bullets.append(bullet.Bullet(self.hero))
             self.stats['bullets_fired'] += 1
