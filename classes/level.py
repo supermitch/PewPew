@@ -11,7 +11,7 @@ class Level(object):
     def end_time(self):
         """ Return the time at which the level should be complete. """
         # Time of last wave plus 5 seconds
-        return max(wave[0] for wave in self.waves) + 7
+        return max(wave[0] for wave in self.waves) + 10
 
 class LevelOne(Level):
     def __init__(self):
@@ -49,5 +49,6 @@ class LevelThree(Level):
             (10, [200 + 50 * i for i in range(8)], 'blue'),
         ]
 
-levels = [LevelOne(), LevelTwo(), LevelThree()]
+def get_levels():
+    return [LevelOne(), LevelTwo(), LevelThree()]
 
