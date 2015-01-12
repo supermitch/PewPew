@@ -126,6 +126,9 @@ class PewPew(object):
 
             self.world.update(time)
 
+            if self.world.infection >= 100:
+                return 'infected'
+
             self.collider.update()
 
             if self.world.hero.dead:
@@ -134,7 +137,6 @@ class PewPew(object):
                 else:
                     if time - time_of_death > 2:
                         return 'died'
-
             self.renderer.render()
 
             self.clock.tick(self.FPS)
@@ -263,6 +265,12 @@ def main():
         result = app.run()
 
         if result == 'died':
+            if app.game_over():  #  Prompt to continue
+                continue
+            else:
+                terminate()
+        elif result == 'infected':
+            print('The outbreak grew too large to contain...')
             if app.game_over():  #  Prompt to continue
                 continue
             else:

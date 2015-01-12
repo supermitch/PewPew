@@ -21,18 +21,21 @@ class Monster(object):
             self.strength = 5
             self.health = 10
             self.mass = 10
+            self.infection = 2
         elif kind == 'red':
             self.speed_x = 0
             self.speed_y = 0.5
             self.strength = 10
             self.health = 30
             self.mass = 20
+            self.infection = 20
         elif kind == 'purple':
             self.speed_x = 0
             self.speed_y = 3
             self.strength = 2
             self.health = 10
             self.mass = 2
+            self.infection = 5
         elif kind == 'blue':
             self.speed_x = 0
             self.speed_y = 4
@@ -40,6 +43,7 @@ class Monster(object):
             self.health = 10
             self.mass = 2
             self.rads = 0
+            self.infection = 1
             self.motion = sin_motion
         elif kind == 'debris':
             self.obstacle = True
@@ -48,6 +52,7 @@ class Monster(object):
             self.strength = 5
             self.health = 20
             self.mass = 20
+            self.infection = 0
             self.rads_per_frame = random.choice((-1, 1)) * \
                                   random.randint(5, 10)/100
             self.theta = random.random() * 2 * math.pi

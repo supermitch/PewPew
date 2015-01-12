@@ -62,6 +62,7 @@ class Renderer(object):
 
         self.surf.blit(*self.health_meter(self.world.hero.health_percentage))
         self.surf.blit(*self.fuel_meter(self.world.hero.fuel_percentage))
+        self.surf.blit(*self.infection_meter(self.world.infection))
 
         # Text displays
         self.plot_stats(self.world.stats)
@@ -108,6 +109,27 @@ class Renderer(object):
             surf.blit(block, (4, y))
         pos = (720, 100)
         return surf, pos
+
+    def infection_meter(self, infection):
+        """ Display our infection meter. """
+        infection = min(100, infection)  # For the sake of meter, cap it
+        # Add a block for each 10 % of life remaining
+        block_count = int(math.ceil(infection/10.0))
+
+        images = self.world.assets.images  # save typing
+
+        frame, frame_size = images['meter_frame']
+        surf = frame.copy()  # Don't blit onto original frame
+        block, block_size = images['health_block']
+        # Adjust color for fuel meter
+        block = block.copy()
+        block.fill((255, 0, 0), special_flags=BLEND_RGB_ADD)
+        for i in range(block_count):
+            y = frame_size[1] - 4 - block_size[1] - (i * (block_size[1] - 2))
+            surf.blit(block, (4, y))
+        pos = (620, 100)
+        return surf, pos
+
 
     def plot_stats(self, stats):
         """ Plots text statistics, but doesn't display them. """

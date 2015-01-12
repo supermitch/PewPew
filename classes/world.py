@@ -37,6 +37,8 @@ class World(object):
         self.level = None  # The level instance
         self.waves = []  # We store a copy of level waves
 
+        self.infection = 0.0
+
     def __add_hero(self, screen_size):
         """ Add our hero to bottom of the screen. """
         surf, size = self.assets.images['ship']
@@ -154,6 +156,9 @@ class World(object):
 
         for e in self.explosions:
             e.update()
+
+        # Infection goes down slowly over time
+        self.infection = max(0, self.infection - 0.01)
 
     def hero_shoot(self):
         # Limit firing rate, should be done by hero?
