@@ -58,6 +58,7 @@ class World(object):
             'purple': 'enemy_2',
             'green': 'enemy_3',
             'blue': 'enemy_4',
+            'boulder': 'debris',
         }
         if kind is None:
             kind = random.choice(monster_names.keys())
@@ -76,7 +77,7 @@ class World(object):
     def __add_obstacle(self):
         surf, size = self.assets.images['debris']
         pos = random.randint(0, 800 - size[1]), -50
-        self.monsters.append(monster.Monster('debris', surf, pos))
+        self.monsters.append(monster.Monster('boulder', surf, pos))
 
 
     def add_explosion(self, source, kind='default'):

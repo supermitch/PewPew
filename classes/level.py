@@ -49,6 +49,55 @@ class LevelThree(Level):
             (10, [200 + 50 * i for i in range(8)], 'blue'),
         ]
 
+class LevelFour(Level):
+    def __init__(self):
+        self.number = 4
+        self.waves = [
+            #(time, x-pos, type),
+            (4, range(300, 481, 20), 'purple'),
+            (5, range(320, 501, 20), 'purple'),
+            (6, range(200, 601, 50), 'boulder'),
+            (7, range(300, 481, 20), 'purple'),
+            (8, range(320, 501, 20), 'purple'),
+            (9, range(200, 601, 50), 'boulder'),
+            (10, range(200, 601, 50), 'red'),
+        ]
+
+class LevelFive(Level):
+    def __init__(self):
+        self.number = 5
+        self.waves = [
+            #(time, x-pos, type),
+            (4, range(300, 481, 40), 'purple'),
+            (5, range(300, 421, 40), 'red'),
+            (6, range(200, 601, 100), 'purple'),
+            (7, range(300, 421, 40), 'red'),
+            (8, range(200, 601, 100), 'purple'),
+            (9, range(300, 421, 40), 'red'),
+            (10, [200 + 50 * i for i in range(8)], 'blue'),
+        ]
+
+class LevelSix(Level):
+    def __init__(self):
+        self.number = 6
+        self.waves = [
+            #(time, x-pos, type),
+            (4, range(300, 481, 40), 'purple'),
+            (5, range(300, 421, 40), 'red'),
+            (6, range(200, 601, 100), 'purple'),
+            (7, range(300, 421, 40), 'red'),
+            (8, range(200, 601, 100), 'purple'),
+            (9, range(300, 421, 40), 'red'),
+            (10, [200 + 50 * i for i in range(8)], 'blue'),
+        ]
+
 def get_levels():
-    return [LevelOne(), LevelTwo(), LevelThree()]
+    return [
+        LevelOne(),
+        LevelTwo(),
+        LevelThree(),
+        LevelFour(),
+        LevelFive(),
+        LevelSix(),
+    ]
 

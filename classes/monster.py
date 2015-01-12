@@ -45,7 +45,7 @@ class Monster(object):
             self.rads = 0
             self.infection = 1
             self.motion = sin_motion
-        elif kind == 'debris':
+        elif kind == 'boulder':
             self.obstacle = True
             self.speed_x = 0
             self.speed_y = 2
