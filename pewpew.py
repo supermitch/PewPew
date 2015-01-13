@@ -53,8 +53,8 @@ class PewPew(object):
         self.clock = pygame.time.Clock()
 
         # Display Start Screen
-        start_screen = StartScreen(self.renderer.surf, self.clock, self.FPS)
-        start_screen.render()
+        start_screen = StartScreen(self.renderer.surf, self.FPS)
+        start_screen.run()
         del start_screen
 
         self.current_level = 1
