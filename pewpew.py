@@ -13,7 +13,7 @@ from classes import world
 from classes import renderer
 from classes import assetloader
 
-from scenes.start import StartScene, VictoryScene
+from scenes.scenes import StartScene, VictoryScene, GameOverScene
 from screens.level import LevelScreen
 
 
@@ -63,8 +63,9 @@ class PewPew(object):
 
         result = self.game_loop()
 
-        if result == 'died':
-            return 'died'
+        if result in ('infected', 'died'):
+            gameover_scene = GameOverScene(self.renderer.surf, self.FPS)
+            return gameover_scene.run()
         else:
             victory_scene = VictoryScene(self.renderer.surf, self.FPS)
             return victory_scene.run()

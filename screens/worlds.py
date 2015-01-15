@@ -45,3 +45,34 @@ class VictoryWorld(object):
         pos = (center_x - text_w/2, center_y - text_h/2 + 100)
         self.surfaces.append((surf, pos))
 
+
+class GameOverWorld(object):
+    """ The surfaces of the Game Over scene. """
+
+    def __init__(self, size):
+        center_x = size[0] / 2
+        center_y = size[1] / 2
+
+        self.surfaces = []
+
+        # Semi-transparent background
+        surf = pygame.Surface(size, pygame.SRCALPHA)
+        surf.fill((0, 0, 0, 200))
+        pos = (0, 0)
+        self.surfaces.append((surf, pos))
+
+        surf = large.render("Game Over!", True, colors.fail)
+        text_w, text_h = surf.get_size()
+        pos = (center_x - text_w/2, center_y - text_h/2)
+        self.surfaces.append((surf, pos))
+
+        surf = medium.render("Play again?", True, colors.plain)
+        text_w, text_h = surf.get_size()
+        pos = (center_x - text_w/2, center_y - text_h/2 + 60)
+        self.surfaces.append((surf, pos))
+
+        surf = medium.render("(Y)es         (N)o", True, colors.plain)
+        text_w, text_h = surf.get_size()
+        pos = (center_x - text_w/2, center_y - text_h/2 + 100)
+        self.surfaces.append((surf, pos))
+

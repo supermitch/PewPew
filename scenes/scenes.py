@@ -1,8 +1,7 @@
 import pygame
 from pygame.locals import *
 
-from screens.start import StartWorld
-from screens.start import VictoryWorld
+from screens.worlds import StartWorld, VictoryWorld, GameOverWorld
 
 class BaseScene(object):
     """ Base Scene class with basic run, update and render methods. """
@@ -34,37 +33,6 @@ class BaseScene(object):
 
         pygame.display.update()
 
-
-class StartScene(BaseScene):
-    """ Game intro screen. """
-
-    def __init__(self, win_surf, FPS):
-        super(StartScene, self).__init__(win_surf, FPS)
-        self.surf = win_surf
-        self.width, self.height = self.surf.get_size()
-        self.FPS = FPS
-        self.surfaces = StartWorld(self.surf.get_size()).surfaces
-
-    def handle_events(self):
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                return 'quit'
-            elif event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    return 'quit'
-                elif event.key == K_SPACE:
-                    return 'continue'
-
-class VictoryScene(BaseScene):
-    """ You won the game scene. """
-
-    def __init__(self, win_surf, FPS):
-        super(VictoryScene, self).__init__(win_surf, FPS)
-        self.surf = win_surf
-        self.width, self.height = self.surf.get_size()
-        self.FPS = FPS
-        self.surfaces = VictoryWorld(self.surf.get_size()).surfaces
-
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -74,4 +42,26 @@ class VictoryScene(BaseScene):
                     return 'quit'
                 elif event.key in (K_SPACE, K_y):
                     return 'continue'
+
+
+class StartScene(BaseScene):
+    """ Game intro screen. """
+
+    def __init__(self, win_surf, FPS):
+        super(StartScene, self).__init__(win_surf, FPS)
+        self.surfaces = StartWorld(self.surf.get_size()).surfaces
+
+class VictoryScene(BaseScene):
+    """ You won the game scene. """
+
+    def __init__(self, win_surf, FPS):
+        super(VictoryScene, self).__init__(win_surf, FPS)
+        self.surfaces = VictoryWorld(self.surf.get_size()).surfaces
+
+class GameOverScene(BaseScene):
+    """ You died, or planet was infected. Game over. """
+
+    def __init__(self, win_surf, FPS):
+        super(GameOverScene, self).__init__(win_surf, FPS)
+        self.surfaces = GameOverWorld(self.surf.get_size()).surfaces
 
