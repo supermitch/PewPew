@@ -13,8 +13,7 @@ from classes import world
 from classes import renderer
 from classes import assetloader
 
-from screens.start import StartScreen
-from scenes.start import StartScene
+from scenes.start import StartScene, VictoryScene
 from screens.level import LevelScreen
 
 
@@ -56,9 +55,8 @@ class PewPew(object):
         # Display Start Screen
         start_scene = StartScene(self.renderer.surf, self.FPS)
         start_scene.run()
-        del start_scene
 
-        self.current_level = 1
+        self.current_level = 4
         self.world.levels = level.get_levels()
         self.world.set_level(self.world.levels[self.current_level - 1])
         self.goal = self.world.level.end_time()
@@ -68,7 +66,9 @@ class PewPew(object):
         if result == 'died':
             return 'died'
         else:
-            return 'won'
+            victory_scene = VictoryScene(self.renderer.surf, self.FPS)
+            return victory_scene.run()
+
 
     def game_loop(self):
         """ Run the game loop. """
@@ -281,6 +281,10 @@ def main():
                 continue
             else:
                 terminate()
+        elif result == 'quit':
+            terminate()
+        elif result == 'continue':
+            continue
 
 if __name__ == "__main__":
     main()
