@@ -12,7 +12,7 @@ class StartScene(object):
         self.width, self.height = self.surf.get_size()
         self.clock = pygame.time.Clock()
         self.FPS = FPS
-        self.surfaces = StartScreen().surfaces
+        self.surfaces = StartScreen(self.surf.get_size()).surfaces
 
     def run(self):
         while True:
@@ -29,7 +29,7 @@ class StartScene(object):
         pass
 
     def render(self):
-        self.surf.fill(pygame.Colors('black'))
+        self.surf.fill(pygame.Color('black'))
         for surf, pos in self.surfaces:
             self.surf.blit(surf, pos)
 

@@ -1,10 +1,30 @@
+"""
+This module loads our basic fonts and styles for easy use
+in other code.
+
+"""
+from collections import namedtuple
+
 import pygame
 
-large = pygame.font.Font(None, 60)
-medium = pygame.font.Font(None, 30)
+pygame.font.init()
 
-COLOR = {
-    'ivory': pygame.Color('Ivory'),
-    'white': pygame.Color('White'),
+# Fonts
+small = pygame.font.Font(None, 15)
+medium = pygame.font.Font(None, 30)
+large = pygame.font.Font(None, 60)
+
+# Colors
+
+COLORS = {
+    'plain': pygame.Color('ivory'),
+    'bright': pygame.Color('white'),
+    'bg': pygame.Color('black'),
+    'fail': pygame.Color('firebrick'),
+    'success': pygame.Color('cornflowerblue'),
 }
+
+Colors = namedtuple('Colors', COLORS.keys())
+colors = Colors(**COLORS)
+
 

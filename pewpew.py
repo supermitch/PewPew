@@ -14,6 +14,7 @@ from classes import renderer
 from classes import assetloader
 
 from screens.start import StartScreen
+from scenes.start import StartScene
 from screens.level import LevelScreen
 
 
@@ -53,9 +54,9 @@ class PewPew(object):
         self.clock = pygame.time.Clock()
 
         # Display Start Screen
-        start_screen = StartScreen(self.renderer.surf, self.FPS)
-        start_screen.run()
-        del start_screen
+        start_scene = StartScene(self.renderer.surf, self.FPS)
+        start_scene.run()
+        del start_scene
 
         self.current_level = 1
         self.world.levels = level.get_levels()
