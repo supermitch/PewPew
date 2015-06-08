@@ -7,11 +7,7 @@ import pygame
 from pygame.locals import *
 from pygame import Color
 
-from classes import collider
-from classes import level
-from classes import world
-from classes import renderer
-from classes import assetloader
+from classes import (collider, level, world, renderer, assetloader)
 
 from scenes.scenes import StartScene, VictoryScene, GameOverScene
 from screens.level import LevelScreen
@@ -95,7 +91,6 @@ class PewPew(object):
                 self.world.stage_clear = True
                 self.assets.sounds['level-success'].play()
 
-
             for event in pygame.event.get():
                 if event.type == QUIT:
                     terminate()
@@ -173,85 +168,6 @@ class PewPew(object):
                     elif event.key == K_SPACE:
                         return True
 
-    def game_over(self):
-        """ Game over scene. """
-        center_x = self.W_WIDTH / 2
-        center_y = self.W_HEIGHT / 2
-
-        # Semi-transparent background
-        s = pygame.Surface(self.renderer.surf.get_size(), pygame.SRCALPHA)
-        s.fill((0, 0, 0, 200))
-        self.renderer.surf.blit(s, (0, 0))
-
-        text = pygame.font.Font(None, 60)
-        surf = text.render("Game Over!", True, Color('firebrick'))
-        pos = (center_x - surf.get_width()/2, center_y - surf.get_height()/2)
-        self.renderer.surf.blit(surf, pos)
-
-        small_text = pygame.font.Font(None, 30)
-        surf = small_text.render("Play again?", True, Color('ivory'))
-        pos = (center_x - surf.get_width()/2, center_y - surf.get_height()/2 + 60)
-        self.renderer.surf.blit(surf, pos)
-
-        surf = small_text.render("(Y)es         (N)o", True, Color('ivory'))
-        pos = (center_x - surf.get_width()/2, center_y - surf.get_height()/2+ 100)
-        self.renderer.surf.blit(surf, pos)
-
-        pygame.display.update()
-
-        while True:
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    terminate()
-                elif event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
-                        terminate()
-                    elif event.key in [K_SPACE, K_y]:
-                        return True
-                    elif event.key in [K_n]:
-                        return False
-        return False
-
-    def victory(self):
-        """ Game ending screen & credits. """
-        center_x = self.W_WIDTH / 2
-        center_y = self.W_HEIGHT / 2
-
-        # Semi-transparent background
-        s = pygame.Surface(self.renderer.surf.get_size(), pygame.SRCALPHA)
-        s.fill((0, 0, 0, 200))
-        self.renderer.surf.blit(s, (0, 0))
-
-        text = pygame.font.Font(None, 60)
-        surf = text.render("You won!", True, Color('MediumSpringGreen'))
-        pos = (center_x - surf.get_width()/2, center_y - surf.get_height()/2)
-        self.renderer.surf.blit(surf, pos)
-
-        small_text = pygame.font.Font(None, 30)
-        surf = small_text.render("Play again?", True, Color('ivory'))
-        pos = (center_x - surf.get_width()/2, center_y - surf.get_height()/2 + 60)
-        self.renderer.surf.blit(surf, pos)
-
-        surf = small_text.render("(Y)es         (N)o", True, Color('ivory'))
-        pos = (center_x - surf.get_width()/2, center_y - surf.get_height()/2+ 100)
-        self.renderer.surf.blit(surf, pos)
-
-        pygame.display.update()
-
-        while True:
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    terminate()
-                elif event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
-                        terminate()
-                    elif event.key in [K_SPACE, K_y]:
-                        return True
-                    elif event.key in [K_n]:
-                        return False
-        return False
-
-
 def terminate():
     """ Shut 'er down. """
     pygame.quit()   # uninitialize
@@ -263,26 +179,11 @@ def main():
         print('Initalizing PyGame...')
         pygame.init()   # Initialize pygame
         print('Done.')
+
         app = PewPew()  # Instantiate new app
         result = app.run()
 
-        if result == 'died':
-            if app.game_over():  #  Prompt to continue
-                continue
-            else:
-                terminate()
-        elif result == 'infected':
-            print('The outbreak grew too large to contain...')
-            if app.game_over():  #  Prompt to continue
-                continue
-            else:
-                terminate()
-        elif result == 'won':
-            if app.victory():  #  Prompt to continue
-                continue
-            else:
-                terminate()
-        elif result == 'quit':
+        if result == 'quit':
             terminate()
         elif result == 'continue':
             continue
