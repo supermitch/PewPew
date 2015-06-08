@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from __future__ import division
+import argparse
 import random
 import sys
 
@@ -17,9 +18,9 @@ class PewPew(object):
     """ Primary game object. Not sure this is the best way,
     saw it in someone's game... """
 
-    def __init__(self):
+    def __init__(self, level):
         """Initalize some game constants."""
-
+        self.current_level = level
         self.FPS = 60
 
         self.W_WIDTH = 800
@@ -52,7 +53,6 @@ class PewPew(object):
         start_scene = StartScene(self.renderer.surf, self.FPS)
         start_scene.run()
 
-        self.current_level = 4
         self.world.levels = level.get_levels()
         self.world.set_level(self.world.levels[self.current_level - 1])
         self.goal = self.world.level.end_time()
@@ -173,14 +173,23 @@ def terminate():
     pygame.quit()   # uninitialize
     sys.exit("Thanks for playing!")
 
+def setup_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-l', '--level', type=int, default=1,
+            help='Starting level (default 1)')
+    args = parser.parse_args()
+    return args
+
 def main():
     """ Run the game. """
+    args = setup_args()
+
     while True:
         print('Initalizing PyGame...')
         pygame.init()   # Initialize pygame
         print('Done.')
 
-        app = PewPew()  # Instantiate new app
+        app = PewPew(level=args.level)  # Instantiate new app
         result = app.run()
 
         if result == 'quit':
