@@ -34,6 +34,7 @@ class World(object):
         self.add_count = 0
 
         self.stage_clear = False
+        self.stage_start = False
         self.level = None  # The level instance
         self.waves = []  # We store a copy of level waves
 

@@ -79,6 +79,12 @@ class PewPew(object):
             # TODO: Remove some day
             self.stats['fps'] = self.clock.get_fps()
 
+            if time < 3 and not self.world.stage_start:
+                self.world.stage_start = True
+                self.assets.sounds['level-success'].play()
+            elif time > 3:
+                self.world.stage_start = False
+
             if time > self.goal + 3:
                 self.world.set_level(self.world.levels[self.world.level.number])
                 self.goal = self.world.level.end_time()
@@ -87,7 +93,7 @@ class PewPew(object):
 
             if time > self.goal and not self.world.stage_clear:
                 if self.world.level.number == len(self.world.levels):
-                    return 'won'  # Beat the last level
+                    return 'won'  # Beat the final level
                 self.world.stage_clear = True
                 self.assets.sounds['level-success'].play()
 

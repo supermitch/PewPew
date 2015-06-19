@@ -67,6 +67,10 @@ class Renderer(object):
         # Text displays
         self.plot_stats(self.world.stats)
 
+        # Show stage start message
+        if self.world.stage_start:
+            self.stage_start(self.world.level.number)
+
         # Show stage clear message
         if self.world.stage_clear:
             self.stage_clear(self.world.level.number)
@@ -153,6 +157,12 @@ class Renderer(object):
         surf = self.text.render('FPS: {:.1f}'.format(stats['fps']), True,
                                 self.text_colour, self.BG_COLOR)
         self.surf.blit(surf, (20, 160))
+
+    def stage_start(self, stage):
+        """ Display a 'stage start' message overlay. """
+        surf = self.normal_text.render('Wave {} inbound!'.format(stage),
+                                       True, Color('ivory'))
+        self.surf.blit(surf, (300, 250))
 
     def stage_clear(self, stage):
         """ Display a 'stage clear' message overlay. """
