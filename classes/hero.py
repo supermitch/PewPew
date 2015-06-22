@@ -181,3 +181,27 @@ class Ship(object):
         """ Damage by remaining health value, and die. """
         self.damage(self.health)
 
+    def receive_message(self, event_type, event_key):
+        """ Handle incoming events. """
+        if event_type == KEYDOWN:
+            if event_key == K_x:
+                self.self_destruct()
+            elif event_key in (K_h, K_LEFT):
+                self.activate_thrusters('left')
+            elif event_key in (K_l, K_RIGHT):
+                self.activate_thrusters('right')
+            elif event_key in (K_j, K_DOWN):
+                self.activate_thrusters('grav')
+            elif event_key == K_SPACE:
+                self.shooting = True
+        elif event_type == KEYUP:
+            if event_key in (K_h, K_LEFT):
+                self.activate_thrusters('left', False)
+            elif event_key in (K_l, K_RIGHT):
+                self.activate_thrusters('right', False)
+            elif event_key in (K_j, K_DOWN):
+                self.activate_thrusters('grav', False)
+            elif event_key == K_UP:
+                pass
+            elif event_key == K_SPACE:
+                self.shooting = False

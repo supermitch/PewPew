@@ -100,32 +100,12 @@ class PewPew(object):
             for event in pygame.event.get():
                 if event.type == QUIT:
                     terminate()
-                elif event.type == KEYDOWN:
+                elif event.type in (KEYUP, KEYDOWN):
+                    self.world.hero.receive_message(event.type, event.key)
                     if event.key in (K_q, K_ESCAPE):
                         terminate()
                     elif event.key == K_p:
                         self.pause_game()
-                    elif event.key == K_x:
-                        self.world.hero.self_destruct()
-                    elif event.key in (K_h, K_LEFT):
-                        self.world.hero.activate_thrusters('left')
-                    elif event.key in (K_l, K_RIGHT):
-                        self.world.hero.activate_thrusters('right')
-                    elif event.key in (K_j, K_DOWN):
-                        self.world.hero.activate_thrusters('grav')
-                    elif event.key == K_SPACE:
-                        self.world.hero.shooting = True
-                elif event.type == KEYUP:
-                    if event.key in (K_h, K_LEFT):
-                        self.world.hero.activate_thrusters('left', False)
-                    elif event.key in (K_l, K_RIGHT):
-                        self.world.hero.activate_thrusters('right', False)
-                    elif event.key in (K_j, K_DOWN):
-                        self.world.hero.activate_thrusters('grav', False)
-                    elif event.key == K_UP:
-                        pass
-                    elif event.key == K_SPACE:
-                        self.world.hero.shooting = False
 
             self.world.update(time)
 
