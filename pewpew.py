@@ -18,13 +18,13 @@ class PewPew(object):
     """ Primary game object. Not sure this is the best way,
     saw it in someone's game... """
 
-    def __init__(self, level):
+    def __init__(self, level, width=800, height=600):
         """Initalize some game constants."""
         self.current_level = level
         self.FPS = 60
 
-        self.W_WIDTH = 800
-        self.W_HEIGHT = 600
+        self.W_WIDTH = width
+        self.W_HEIGHT = height
         self.screen_size = (self.W_WIDTH, self.W_HEIGHT)
 
         self.renderer = renderer.Renderer(self.screen_size)
@@ -156,8 +156,8 @@ class PewPew(object):
 
 def terminate():
     """ Shut 'er down. """
-    pygame.quit()   # uninitialize
-    sys.exit("Thanks for playing!")
+    pygame.quit()  # uninitialize
+    sys.exit('Thanks for playing!')
 
 def setup_args():
     parser = argparse.ArgumentParser()
