@@ -60,6 +60,10 @@ class Renderer(object):
         for bullet in self.world.bullets:
             self.surf.blit(*bullet.draw())
 
+        self.surf.blit(self.world.assets.images['biohazard'][0], (617, 60))
+        self.surf.blit(self.world.assets.images['heart'][0], (667, 60))
+        self.surf.blit(self.world.assets.images['fuel'][0], (717, 60))
+
         self.surf.blit(*self.health_meter(self.world.hero.health_percentage))
         self.surf.blit(*self.fuel_meter(self.world.hero.fuel_percentage))
         self.surf.blit(*self.infection_meter(self.world.infection))
