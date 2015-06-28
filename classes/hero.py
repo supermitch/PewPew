@@ -138,7 +138,6 @@ class Ship(object):
         Damage our object, kill it if zero health.
 
         strength is attacker's damage strength.
-
         """
         if strength > 0:  # TODO: defence could counter strength
             self.set_status('injured', 6)
@@ -205,3 +204,4 @@ class Ship(object):
                 pass
             elif event_key == K_SPACE:
                 self.shooting = False
+
