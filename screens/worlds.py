@@ -22,6 +22,12 @@ class StartWorld(object):
         pos = (w/2 - text_w/2, h/2 - text_h/2 + 60)
         self.surfaces.append((surf, pos))
 
+
+class GameWorld(object):
+    """ Game play contents """
+    pass
+
+
 class VictoryWorld(object):
     """ Game victory surfaces. """
 
