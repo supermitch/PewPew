@@ -13,10 +13,8 @@ from screens.level import LevelScreen
 
 def setup_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-l', '--level', type=int, default=1,
-                        help='Starting level (default 1)')
-    args = parser.parse_args()
-    return args
+    parser.add_argument('-l', '--level', type=int, default=1, help='Starting level (default 1)')
+    return parser.parse_args()
 
 
 class PewPew(object):
@@ -44,9 +42,11 @@ class PewPew(object):
         if result in ('infected', 'died'):
             gameover_scene = GameOverScene(self.renderer.surf, self.FPS)
             return gameover_scene.run()
-        else:
+        elif result in ('victory'):
             victory_scene = VictoryScene(self.renderer.surf, self.FPS)
             return victory_scene.run()
+        else:
+            return result
 
 
 def main():
@@ -56,11 +56,12 @@ def main():
     print('Initalizing PyGame... please wait.')
     pygame.init()  # Initialize pygame
 
-    app = PewPew()  # Instantiate new app
+    app = PewPew()
     app.run(level=args.level)
 
-    pygame.quit()  # uninitialize
+    pygame.quit()  # Uninitialize
     sys.exit('Thanks for playing!')
+
 
 if __name__ == "__main__":
     main()
