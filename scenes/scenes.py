@@ -65,6 +65,28 @@ class GameScene(BaseScene):
         self.world.set_level(self.world.levels[self.current_level])
         self.goal = self.world.level.end_time()
 
+        """ Initalize some game constants """
+        self.FPS = 60
+
+        self.W_WIDTH = width
+        self.W_HEIGHT = height
+        self.screen_size = (self.W_WIDTH, self.W_HEIGHT)
+
+        self.renderer = renderer.Renderer(self.screen_size)
+        self.assets = assetloader.AssetLoader()
+        self.renderer.world = self.world
+        self.collider = collider.Collider(self.world)
+
+        self.stats = {
+            'fps': self.FPS,
+            'bullets_fired': 0,
+            'bullets_hit': 0,
+            'monsters_killed': 0,
+            'monsters_missed': 0,
+            'score': 0,
+        }
+        self.world.stats = self.stats
+
         result = self.game_loop()
 
     def set_level(level_number):
