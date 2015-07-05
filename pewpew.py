@@ -5,10 +5,9 @@ import random
 import sys
 
 import pygame
-from pygame.locals import *
 
+from classes import renderer
 from scenes.scenes import StartScene, VictoryScene, GameOverScene
-from screens.level import LevelScreen
 
 
 def setup_args():
@@ -21,7 +20,7 @@ class PewPew(object):
     """ Primary game object """
 
     def __init__(self):
-        pass
+        self.renderer = renderer.Renderer(self.screen_size)
 
     def run(self, level):
         """ Run the actual game """
@@ -31,19 +30,19 @@ class PewPew(object):
 
     def play(self, level):
         # Display intro screen
-        start_scene = StartScene(self.renderer.surf, self.FPS)
+        start_scene = StartScene(self.renderer)
         start_scene.run()
 
         # Display the main game screen
-        game_scene = GameScene(self.renderer.surf, self.FPS)
+        game_scene = GameScene(self.renderer)
         game_scene.set_level(level - 1)
         result = game_scene.run()
 
         if result in ('infected', 'died'):
-            gameover_scene = GameOverScene(self.renderer.surf, self.FPS)
+            gameover_scene = GameOverScene(self.renderer)
             return gameover_scene.run()
         elif result in ('victory'):
-            victory_scene = VictoryScene(self.renderer.surf, self.FPS)
+            victory_scene = VictoryScene(self.renderer)
             return victory_scene.run()
         else:
             return result

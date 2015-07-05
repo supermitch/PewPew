@@ -1,13 +1,8 @@
 class GameScene(BaseScene):
     """ Play the game """
-    def __init__(self, win_surf, FPS):
-        super(StartScene, self).__init__(win_surf, FPS)
-        self.surfaces = GameWorld(self.surf.get_size()).surfaces
-
-        self.world = world.World(self.screen_size, self.assets)
-        self.world.levels = level.get_levels()
-        self.world.set_level(self.world.levels[self.current_level])
-        self.goal = self.world.level.end_time()
+    def __init__(self, renderer):
+        self.renderer = renderer
+        super(StartScene, self).__init__(self.renderer.surf, self.renderer.FPS)
 
         """ Initalize some game constants """
         self.FPS = 60
@@ -15,8 +10,13 @@ class GameScene(BaseScene):
         self.W_WIDTH = width
         self.W_HEIGHT = height
         self.screen_size = (self.W_WIDTH, self.W_HEIGHT)
+        self.surfaces = GameWorld(self.surf.get_size()).surfaces
 
-        self.renderer = renderer.Renderer(self.screen_size)
+        self.world = world.World(self.screen_size, self.assets)
+        self.world.levels = level.get_levels()
+        self.world.set_level(self.world.levels[self.current_level])
+        self.goal = self.world.level.end_time()
+
         self.assets = assetloader.AssetLoader()
         self.renderer.world = self.world
         self.collider = collider.Collider(self.world)
