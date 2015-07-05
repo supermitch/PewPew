@@ -11,6 +11,7 @@ class Renderer(object):
     def __init__(self, screen_size):
         self.screen_size = screen_size
         self.surf = pygame.display.set_mode(self.screen_size, RESIZABLE)
+        self.fps = 60
         pygame.display.set_caption('Pew Pew 1.0')
         self.BG_COLOR = (10, 10, 10)
 
