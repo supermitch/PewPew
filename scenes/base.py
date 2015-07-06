@@ -1,3 +1,5 @@
+import pygame
+
 class BaseScene(object):
     """ Base Scene class with basic run, update and render methods. """
     def __init__(self, win_surf, FPS):
