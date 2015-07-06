@@ -1,4 +1,5 @@
 import pygame
+from pygame.locals import *
 
 class BaseScene(object):
     """ Base Scene class with basic run, update and render methods. """

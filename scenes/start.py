@@ -1,4 +1,5 @@
 from base import BaseScene
+from screens.worlds import StartWorld
 
 class StartScene(BaseScene):
     """ Game intro screen. """

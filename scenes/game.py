@@ -1,30 +1,29 @@
+import pygame
+from pygame.locals import *
+
 from base import BaseScene
+from classes import assetloader, collider, world
+from screens.worlds import GameWorld
 
 class GameScene(BaseScene):
     """ Play the game """
     def __init__(self, renderer):
         self.renderer = renderer
-        super(StartScene, self).__init__(self.renderer.surf, self.renderer.FPS)
+        super(GameScene, self).__init__(self.renderer.surf, self.renderer.fps)
 
-        """ Initalize some game constants """
-        self.FPS = 60
-
-        self.W_WIDTH = width
-        self.W_HEIGHT = height
-        self.screen_size = (self.W_WIDTH, self.W_HEIGHT)
+        self.assets = assetloader.AssetLoader()
         self.surfaces = GameWorld(self.surf.get_size()).surfaces
 
-        self.world = world.World(self.screen_size, self.assets)
+        self.world = world.World(self.renderer.screen_size, self.assets)
         self.world.levels = level.get_levels()
         self.world.set_level(self.world.levels[self.current_level])
         self.goal = self.world.level.end_time()
 
-        self.assets = assetloader.AssetLoader()
         self.renderer.world = self.world
         self.collider = collider.Collider(self.world)
 
         self.stats = {
-            'fps': self.FPS,
+            'fps': self.renderer.fps,
             'bullets_fired': 0,
             'bullets_hit': 0,
             'monsters_killed': 0,
@@ -93,7 +92,7 @@ class GameScene(BaseScene):
                         return 'died'
             self.renderer.render()
 
-            self.clock.tick(self.FPS)
+            self.clock.tick(self.renderer.FPS)
 
     def pause_game(self):
         """ Pauses the game. """
