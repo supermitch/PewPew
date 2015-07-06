@@ -1,4 +1,4 @@
-from . import BaseScene
+from base import BaseScene
 
 class GameOverScene(BaseScene):
     """ You died, or planet was infected. Game over. """

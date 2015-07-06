@@ -1,3 +1,5 @@
+from base import BaseScene
+
 class GameScene(BaseScene):
     """ Play the game """
     def __init__(self, renderer):

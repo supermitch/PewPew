@@ -7,7 +7,7 @@ import sys
 import pygame
 
 from classes import renderer
-from scenes.scenes import StartScene, VictoryScene, GameOverScene
+from scenes import StartScene, GameScene, VictoryScene, GameOverScene
 
 
 def setup_args():

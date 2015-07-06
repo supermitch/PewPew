@@ -1,4 +1,4 @@
-from .base import BaseScene
+from base import BaseScene
 
 class VictoryScene(BaseScene):
     """ You won the game scene. """
