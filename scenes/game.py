@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 
 from base import BaseScene
-from classes import assetloader, collider, world
+from classes import assetloader, collider, world, level
 from screens.worlds import GameWorld
 
 class GameScene(BaseScene):
@@ -16,7 +16,7 @@ class GameScene(BaseScene):
 
         self.world = world.World(self.renderer.screen_size, self.assets)
         self.world.levels = level.get_levels()
-        self.world.set_level(self.world.levels[self.current_level])
+        self.world.set_level(self.world.levels[0])
         self.goal = self.world.level.end_time()
 
         self.renderer.world = self.world
@@ -92,7 +92,7 @@ class GameScene(BaseScene):
                         return 'died'
             self.renderer.render()
 
-            self.clock.tick(self.renderer.FPS)
+            self.clock.tick(self.renderer.fps)
 
     def pause_game(self):
         """ Pauses the game. """
