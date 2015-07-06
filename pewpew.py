@@ -20,7 +20,8 @@ class PewPew(object):
     """ Primary game object """
 
     def __init__(self):
-        self.renderer = renderer.Renderer(self.screen_size)
+        screen_size = (800, 600)
+        self.renderer = renderer.Renderer(screen_size)
 
     def run(self, level):
         """ Run the actual game """
