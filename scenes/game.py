@@ -32,12 +32,11 @@ class GameScene(BaseScene):
         }
         self.world.stats = self.stats
 
-        result = self.game_loop()
 
     def set_level(self, level_number):
         self.current_level = level_number
 
-    def game_loop(self):
+    def run(self):
         """ Run the game loop """
         time_of_death = None
         level_start = pygame.time.get_ticks() / 1000
