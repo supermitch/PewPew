@@ -34,7 +34,7 @@ class GameScene(BaseScene):
 
         result = self.game_loop()
 
-    def set_level(level_number):
+    def set_level(self, level_number):
         self.current_level = level_number
 
     def game_loop(self):
