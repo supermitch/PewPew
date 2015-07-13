@@ -62,7 +62,7 @@ class GameScene(BaseScene):
 
             if time > self.goal and not self.world.stage_clear:
                 if self.world.level.number == len(self.world.levels):
-                    return 'won'  # Beat the final level
+                    return 'victory'  # Beat the final level
                 self.world.stage_clear = True
                 self.assets.sounds['level-success'].play()
 
