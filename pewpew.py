@@ -32,12 +32,13 @@ class PewPew(object):
     def play(self, level):
         # Display intro screen
         start_scene = StartScene(self.renderer)
-        start_scene.run()
+        result = start_scene.run()
 
-        # Display the main game screen
-        game_scene = GameScene(self.renderer)
-        game_scene.set_level(level - 1)
-        result = game_scene.run()
+        if result not in ('quit'):
+            # Display the main game screen
+            game_scene = GameScene(self.renderer)
+            game_scene.set_level(level - 1)
+            result = game_scene.run()
 
         if result in ('infected', 'died'):
             gameover_scene = GameOverScene(self.renderer)
