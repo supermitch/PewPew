@@ -27,6 +27,10 @@
     "grunz_success": {
         "name": "level-success",
         "volume": 0.5
+    },
+    "33725__jobro__1-alarm-long-c": {
+        "name": "incoming-alarm",
+        "volume": 1.0
     }
 }
 

@@ -49,9 +49,9 @@ class GameScene(BaseScene):
             # TODO: Remove some day
             self.stats['fps'] = self.clock.get_fps()
 
-            if time < 3 and not self.world.stage_start:
+            if time > 1 and time < 3 and not self.world.stage_start:
                 self.world.stage_start = True
-                self.assets.sounds['level-success'].play()
+                self.assets.sounds['incoming-alarm'].play()
             elif time > 3:
                 self.world.stage_start = False
 
@@ -103,11 +103,11 @@ class GameScene(BaseScene):
         self.renderer.surf.blit(s, (0, 0))
 
         text = pygame.font.Font(None, 60)
-        surf = text.render("Paused!", True, Color('cornflowerblue'))
+        surf = text.render('Paused!', True, Color('cornflowerblue'))
         self.renderer.surf.blit(surf, (self.W_WIDTH/2 - surf.get_width()/2,
                                   self.W_HEIGHT/2 - surf.get_height()/2))
         small_text = pygame.font.Font(None, 30)
-        surf = small_text.render("(Press spacebar to resume)", True, Color('ivory'))
+        surf = small_text.render('(Press spacebar to resume)', True, Color('ivory'))
         self.renderer.surf.blit(surf, (self.W_WIDTH/2 - surf.get_width()/2,
                                   self.W_HEIGHT/2 - surf.get_height()/2 + 60))
         pygame.display.update()
