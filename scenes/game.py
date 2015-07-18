@@ -69,11 +69,11 @@ class GameScene(BaseScene):
 
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    terminate()
+                    return 'quit'
                 elif event.type in (KEYUP, KEYDOWN):
                     self.world.hero.receive_message(event.type, event.key)
                     if event.key in (K_q, K_ESCAPE):
-                        terminate()
+                        return 'quit'
                     elif event.key == K_p:
                         self.pause_game()
 
@@ -121,5 +121,4 @@ class GameScene(BaseScene):
                         terminate()
                     elif event.key == K_SPACE:
                         return True
-
 
