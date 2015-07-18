@@ -16,8 +16,6 @@ class GameScene(BaseScene):
 
         self.world = world.World(self.renderer.screen_size, self.assets)
         self.world.levels = level.get_levels()
-        self.world.set_level(self.world.levels[0])
-        self.goal = self.world.level.end_time()
 
         self.renderer.world = self.world
         self.collider = collider.Collider(self.world)
@@ -36,8 +34,11 @@ class GameScene(BaseScene):
     def set_level(self, level_number):
         self.current_level = level_number
 
-    def run(self):
+    def run(self, start_level):
         """ Run the game loop """
+        self.world.set_level(self.world.levels[start_level])
+        self.goal = self.world.level.end_time()
+
         time_of_death = None
         level_start = pygame.time.get_ticks() / 1000
 

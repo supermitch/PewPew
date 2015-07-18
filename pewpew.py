@@ -37,8 +37,7 @@ class PewPew(object):
         if result not in ('quit'):
             # Display the main game screen
             game_scene = GameScene(self.renderer)
-            game_scene.set_level(level - 1)
-            result = game_scene.run()
+            result = game_scene.run(level - 1)
 
         if result in ('infected', 'died'):
             gameover_scene = GameOverScene(self.renderer)
