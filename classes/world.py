@@ -146,6 +146,9 @@ class World(object):
                 self.add_explosion(self.hero, kind='hero')
         if self.hero.shooting:
             self.hero_shoot()
+        if True in self.hero.lateral_firing.values():
+            self.hero_fire_laterally()
+
         self.hero.update()
 
         self.antigrav.update(self.hero.rect.midbottom)
@@ -167,6 +170,12 @@ class World(object):
         if 'reloading' not in self.hero.status:
             self.hero.set_status('reloading', 10)
             self.assets.sounds['shot'].play()
-            self.bullets.append(bullet.Bullet(self.hero))
+            self.bullets.append(bullet.Bullet(self.hero, direction='up'))
+            self.stats['bullets_fired'] += 1
+
+    def hero_fire_laterally(self):
+        for direction in self.hero.lateral_firing:
+            self.assets.sounds['shot'].play()
+            self.bullets.append(bullet.Bullet(self.hero, direction=direction))
             self.stats['bullets_fired'] += 1
 

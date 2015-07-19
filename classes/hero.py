@@ -40,6 +40,7 @@ class Ship(object):
                        'north':True, 'south':False}
 
         self.shooting = False
+        self.lateral_firing = {'left': False, 'right': False}
         self.status = {}
 
     @property
@@ -49,6 +50,13 @@ class Ship(object):
     @property
     def fuel_percentage(self):
         return self.fuel / self.max_fuel * 100.0
+
+    def lateral_fire(self, direction):
+        if not self.lateral_firing[direction]:
+            self.lateral_firing[direction] = True
+
+    def reload_lateral_fire(self, direction):
+        self.lateral_firing[direction] = False
 
     def activate_thrusters(self, direction, switch=True):
         """ Adjust our thrust according to button press or release. """
@@ -190,7 +198,11 @@ class Ship(object):
             elif event_key in (K_l, K_RIGHT):
                 self.activate_thrusters('right')
             elif event_key in (K_j, K_DOWN):
-                self.activate_thrusters('grav')
+                pass
+            elif event_key in (K_a,):
+                self.lateral_fire('left')
+            elif event_key in (K_d,):
+                self.lateral_fire('right')
             elif event_key == K_SPACE:
                 self.shooting = True
         elif event_type == KEYUP:
@@ -199,7 +211,7 @@ class Ship(object):
             elif event_key in (K_l, K_RIGHT):
                 self.activate_thrusters('right', False)
             elif event_key in (K_j, K_DOWN):
-                self.activate_thrusters('grav', False)
+                pass
             elif event_key == K_UP:
                 pass
             elif event_key == K_SPACE:
