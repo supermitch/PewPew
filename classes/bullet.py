@@ -11,7 +11,7 @@ class Bullet(object):
             color = (220, 255, 255)
             self.strength = 10
         else:
-            color = (220, 50, 50)
+            color = (220, 100, 100)
             self.width = 5
             self.height = 5
             self.strength = 15
@@ -21,38 +21,32 @@ class Bullet(object):
 
         self.x = shooter.rect.midtop[0] - (self.width / 2)
         self.y = shooter.rect.midtop[1]
+        if direction != 'up':
+            self.y = shooter.rect.center[1]
+
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
         if direction == 'up':
             self.speed_y = 40
-            self.speed_x = shooter.speed
+            sign = 1 if shooter.speed > 0 else -1
+            self.speed_x = sign * shooter.speed
         else:
             self.speed_y = 0
-            sign = {'left': -1, 'right': 1}[direction]
-            self.speed_x = sign * 20 + shooter.speed
+            sign = -1 if direction == 'left' else 1
+            self.speed_x = int(sign * 15 + shooter.speed)
 
         self.dead = False
-        self.mv = {'up': True}
-
-        # inherit shooter's left & right velocity
-        self.mv['right'] = False
-        self.mv['left'] = False
-        if shooter.speed > 0:
-            self.mv['right'] = True
-        elif shooter.speed < 0:
-            self.mv['left'] = True
 
     def update(self):
         self.move()
 
     def move(self):
-        if self.mv['up']:
             #old_bottom = self.rect.bottom
-            self.rect.move_ip(0, -self.speed_y)
+        self.rect.move_ip(0, -self.speed_y)
             #trail_height = (old_bottom - self.rect.top)
             #self.trail_rect = pygame.Rect(self.rect.topleft,
             #                            (self.rect.width, trail_height))
-        if self.mv['left'] or self.mv['right']:
+        if self.speed_x != 0:
             self.rect.move_ip(self.speed_x, 0)
 
     @property

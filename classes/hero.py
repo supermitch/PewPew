@@ -55,9 +55,6 @@ class Ship(object):
         if not self.lateral_firing[direction]:
             self.lateral_firing[direction] = True
 
-    def reload_lateral_fire(self, direction):
-        self.lateral_firing[direction] = False
-
     def activate_thrusters(self, direction, switch=True):
         """ Adjust our thrust according to button press or release. """
         self.thrusters[direction] = switch

@@ -168,14 +168,16 @@ class World(object):
     def hero_shoot(self):
         # Limit firing rate, should be done by hero?
         if 'reloading' not in self.hero.status:
-            self.hero.set_status('reloading', 10)
+            self.hero.set_status('reloading', 10)  # Limit firing rate
             self.assets.sounds['shot'].play()
             self.bullets.append(bullet.Bullet(self.hero, direction='up'))
             self.stats['bullets_fired'] += 1
 
     def hero_fire_laterally(self):
-        for direction in self.hero.lateral_firing:
-            self.assets.sounds['shot'].play()
-            self.bullets.append(bullet.Bullet(self.hero, direction=direction))
-            self.stats['bullets_fired'] += 1
+        for direction, active in self.hero.lateral_firing.items():
+            if active:
+                self.hero.lateral_firing[direction] = False
+                self.assets.sounds['shot'].play()
+                self.bullets.append(bullet.Bullet(self.hero, direction=direction))
+                self.stats['bullets_fired'] += 1
 
