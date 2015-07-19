@@ -103,14 +103,15 @@ class GameScene(BaseScene):
         s.fill((0, 0, 0, 200))
         self.renderer.surf.blit(s, (0, 0))
 
+        width, height = s.get_size()
         text = pygame.font.Font(None, 60)
         surf = text.render('Paused!', True, Color('cornflowerblue'))
-        self.renderer.surf.blit(surf, (self.W_WIDTH/2 - surf.get_width()/2,
-                                  self.W_HEIGHT/2 - surf.get_height()/2))
+        self.renderer.surf.blit(surf, (width/2 - surf.get_width()/2,
+                                  height/2 - surf.get_height()/2))
         small_text = pygame.font.Font(None, 30)
         surf = small_text.render('(Press spacebar to resume)', True, Color('ivory'))
-        self.renderer.surf.blit(surf, (self.W_WIDTH/2 - surf.get_width()/2,
-                                  self.W_HEIGHT/2 - surf.get_height()/2 + 60))
+        self.renderer.surf.blit(surf, (width/2 - surf.get_width()/2,
+                                  height/2 - surf.get_height()/2 + 60))
         pygame.display.update()
 
         while True:
