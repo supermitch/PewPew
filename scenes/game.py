@@ -75,7 +75,8 @@ class GameScene(BaseScene):
                     if event.key in (K_q, K_ESCAPE):
                         return 'quit'
                     elif event.key == K_p:
-                        self.pause_game()
+                        if self.pause_game() == 'quit':
+                            return 'quit'
 
             self.world.update(time)
 
@@ -115,10 +116,10 @@ class GameScene(BaseScene):
         while True:
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    terminate()
+                    return 'quit'
                 elif event.type == KEYDOWN:
                     if event.key in [K_ESCAPE, K_q]:
-                        terminate()
+                        return 'quit'
                     elif event.key == K_SPACE:
                         return True
 
