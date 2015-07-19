@@ -47,4 +47,7 @@ class Collider(object):
         for b in self.world.bullets:
             if b.rect.bottom < 0:  # Off screen
                 b.dead = True
+            for w in self.world.walls:
+                if b.rect.colliderect(w.rect):
+                    b.dead = True
 

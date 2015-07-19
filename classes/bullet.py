@@ -41,13 +41,7 @@ class Bullet(object):
         self.move()
 
     def move(self):
-            #old_bottom = self.rect.bottom
-        self.rect.move_ip(0, -self.speed_y)
-            #trail_height = (old_bottom - self.rect.top)
-            #self.trail_rect = pygame.Rect(self.rect.topleft,
-            #                            (self.rect.width, trail_height))
-        if self.speed_x != 0:
-            self.rect.move_ip(self.speed_x, 0)
+        self.rect.move_ip(self.speed_x, -self.speed_y)
 
     @property
     def next_rect(self):
