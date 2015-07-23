@@ -24,6 +24,8 @@ class Renderer(object):
         # Start with a blank screen
         self.surf.fill(self.BG_COLOR)
 
+        self.surf.blit(*self.world.background.draw())
+
         if not self.world.hero.dead:
             if self.world.hero.thrusters['grav']:
                 surf, pos = self.world.antigrav.draw()

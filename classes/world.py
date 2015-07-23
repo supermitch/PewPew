@@ -10,6 +10,7 @@ import monster
 import obstacle
 import wall
 import planet
+import background
 
 class World(object):
     """ A class to hold all the game elements. """
@@ -23,6 +24,7 @@ class World(object):
             wall.Wall(self.screen_size[0], self.screen_size[1]),
         ]
 
+        self.background = background.Background(self.screen_size)
         self.hero = self.__add_hero(self.screen_size)
         self.antigrav = self.__add_antigrav()
         self.planet = planet.Planet(self.screen_size)
