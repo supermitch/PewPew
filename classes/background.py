@@ -22,7 +22,7 @@ class Background(object):
             x = ri(5, self.width)
             y = ri(5, self.height)
             star_rect = pygame.Rect((x, y), (star_size, star_size))
-            colour = (ri(200, 255), ri(200, 255), ri(200, 255))
+            colour = (ri(150, 255), ri(150, 255), ri(150, 255))
             pygame.draw.rect(self.surf, colour, star_rect)
 
     def update(self):
