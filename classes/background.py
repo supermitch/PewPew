@@ -14,8 +14,16 @@ class Background(object):
         self._gen_stars()
 
     def _gen_stars(self):
-        star_rect = pygame.Rect((300, 300), (40, 40))
-        pygame.draw.rect(self.surf, (255, 100, 255), star_rect)
+        ri = random.randint
+        star_count = ri(50, 200)
+        # Place stars randomly on the grid
+        for _ in range(star_count):
+            star_size = ri(1, 4)
+            x = ri(5, self.width)
+            y = ri(5, self.height)
+            star_rect = pygame.Rect((x, y), (star_size, star_size))
+            colour = (ri(200, 255), ri(200, 255), ri(200, 255))
+            pygame.draw.rect(self.surf, colour, star_rect)
 
     def update(self):
         pass
