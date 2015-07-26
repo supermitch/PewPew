@@ -10,7 +10,7 @@ Simply type `python pewpew.py` to run.
 
 ## Mission ##
 
-Kill the aliens before they take over the planet.
+Kill the aliens before they infect the planet.
 
 Use anti-grav to avoid running out of fuel!
 
@@ -19,6 +19,7 @@ Use anti-grav to avoid running out of fuel!
 * __Left__ & __Right__ arrows to move
 * __Down__ arrow to activate anti-gravity
 * __Spacebar__ to Shoot
+* __A__ & __D__ to fire debris guns
 * __x__ to Self-destruct
 * __p__ to Pause
 * __Esc__ or __q__ to Quit
