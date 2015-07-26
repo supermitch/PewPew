@@ -2,8 +2,9 @@ import pygame
 from pygame.locals import *
 
 from base import BaseScene
-from classes import assetloader, collider, world, level
+from classes import assetloader, collider, level
 from screens.worlds import GameWorld
+from screens import world  # Is this redundant with GameWorld?
 
 class GameScene(BaseScene):
     """ Play the game """

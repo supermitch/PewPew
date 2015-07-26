@@ -1,16 +1,7 @@
 from __future__ import division
 import random
 
-import antigrav
-import bullet
-import explosion
-import hero
-import level
-import monster
-import obstacle
-import wall
-import planet
-import background
+from classes import antigrav, bullet, explosion, hero, level, monster, obstacle, wall, planet, background
 
 class World(object):
     """ A class to hold all the game elements. """

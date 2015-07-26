@@ -4,5 +4,4 @@ from . import monster
 from . import renderer
 from . import hero
 from . import wall
-from . import world
 
