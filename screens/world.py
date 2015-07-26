@@ -142,6 +142,8 @@ class World(object):
         if True in self.hero.lateral_firing.values():
             self.hero_fire_laterally()
 
+        self.background.update()
+
         self.hero.update()
 
         self.antigrav.update(self.hero.rect.midbottom)
