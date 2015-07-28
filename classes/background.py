@@ -13,7 +13,18 @@ class Star(object):
         width = ri(1, 4)
         size = (width, width)
         self.rect = pygame.Rect(pos, size)
-        self.color = (ri(150, 255), ri(150, 255), ri(150, 255))
+        self.color = (ri(100, 255), ri(100, 255), ri(100, 255))
+
+        self.degrees = ri(0, 360)
+        self.frequency = ri(0, 10)
+        self.depth = ri(10, 50)
+
+    def flicker(self):
+        self.degrees += self.frequency
+        self.degrees = self.degrees % 360
+        variation = math.sin(math.radians(self.degrees))
+        new_color = tuple([max(0, min(c + variation * self.depth, 255)) for c in self.color])
+        self.color = new_color
 
 
 class Background(object):
@@ -35,7 +46,7 @@ class Background(object):
         """ Flicker colour and size. """
         self.surf.fill((0, 0, 0))
         for star in self.stars:
-            # new_color = tuple([min(c + ri(-40, 40), 255) for c in colour])
+            star.flicker()
             pygame.draw.rect(self.surf, star.color, star.rect)
 
     def draw(self):
