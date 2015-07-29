@@ -1,6 +1,6 @@
 from __future__ import division
 import math
-from random import randint as ri
+from random import randint as ri, lognormvariate as lognorm
 
 import pygame
 
@@ -17,11 +17,14 @@ class Star(object):
 
         self.degrees = ri(0, 360)
         self.frequency = ri(0, 10)
-        self.depth = ri(10, 50)
+        self.depth = lognorm(1, 0) * 20
 
     def flicker(self):
         self.degrees += self.frequency
-        self.degrees = self.degrees % 360
+        if self.degrees % 360 == 0:
+            self.degrees = 0  # Reset counter
+            self.frequency = ri(0, 10)  # Random flicker rate
+            self.depth = lognorm(1, 0) * 20  # Random flicker depth
         variation = math.sin(math.radians(self.degrees))
         new_color = tuple([max(0, min(c + variation * self.depth, 255)) for c in self.color])
         self.color = new_color
