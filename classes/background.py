@@ -17,14 +17,14 @@ class Star(object):
         self.color = (ri(100, 255), ri(100, 255), ri(100, 255))
 
         self.degrees = ri(0, 360)
-        self.frequency = ri(0, 9)
-        self.depth = lognorm(1, 0) * 20
+        self.frequency = ri(0, 50)
+        self.depth = ri(1, 20)
 
     def flicker(self):
         self.degrees += self.frequency
         if min(self.degrees, 360) % 360 == 0:
             self.degrees = 0  # Reset counter
-            self.frequency = ri(0, 10)  # Random flicker rate
+            self.frequency = ri(0, 50)  # Random flicker rate
             self.depth = lognorm(1, 0) * 20  # Random flicker depth
         variation = math.sin(math.radians(self.degrees))
         new_color = tuple([max(0, min(c + variation * self.depth, 255)) for c in self.color])
