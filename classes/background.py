@@ -11,13 +11,13 @@ class Star(object):
         screen_width, screen_height = screen_size
         pos = ri(5, screen_width), ri(5, screen_height)
 
-        width = ri(1, 4)
+        width = ri(1, 3)
         size = (width, width)
         self.rect = pygame.Rect(pos, size)
         self.color = (ri(100, 255), ri(100, 255), ri(100, 255))
 
         self.degrees = ri(0, 360)
-        self.frequency = ri(0, 10)
+        self.frequency = ri(0, 9)
         self.depth = lognorm(1, 0) * 20
 
     def flicker(self):
@@ -40,7 +40,6 @@ class Background(object):
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.surf = pygame.Surface(screen_size)
         self.stars = self._gen_stars()
-        self.update()
 
     def _gen_stars(self):
         """ Place stars randomly on the screen. """
@@ -48,9 +47,9 @@ class Background(object):
 
     def update(self):
         """ Flicker colour and size. """
-        self.surf.fill((0, 0, 0))
         for star in self.stars:
-            star.flicker()
+            if star.frequency != 0:
+                star.flicker()
             pygame.draw.rect(self.surf, star.color, star.rect)
 
     def draw(self):
