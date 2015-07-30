@@ -20,14 +20,32 @@ class Star(object):
         self.frequency = ri(0, 50)
         self.depth = ri(1, 20)
 
+        self.frame_count = 0
+        self.flicker_delay = ri(1, 180)  # Frames
+        self.flickering = False
+
+    def update(self):
+        if not self.frequency:  # No flickering will occur anyway
+            return
+
+        if not self.flickering:
+            if self.frame_count % self.flicker_delay == 0:
+                self.flickering = True  # Start flickering
+                self.frame_count = 0  # Restart counter
+                self.flicker_delay = ri(1, 180)  # Different next time
+        else:
+            self.flicker()  # Update appearance
+        self.frame_count += 1
+
     def flicker(self):
         self.degrees += self.frequency
         if min(self.degrees, 360) % 360 == 0:
+            self.flickering = False  # Flicker complete
             self.degrees = 0  # Reset counter
             self.frequency = ri(0, 50)  # Random flicker rate
             self.depth = lognorm(1, 0) * 20  # Random flicker depth
-        variation = math.sin(math.radians(self.degrees))
         new_color = tuple([max(0, min(c + variation * self.depth, 255)) for c in self.color])
+        variation = math.cos(math.radians(self.degrees))
         self.color = new_color
 
 
@@ -48,8 +66,7 @@ class Background(object):
     def update(self):
         """ Flicker colour and size. """
         for star in self.stars:
-            if star.frequency != 0:
-                star.flicker()
+            star.update()
             pygame.draw.rect(self.surf, star.color, star.rect)
 
     def draw(self):
