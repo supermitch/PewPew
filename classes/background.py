@@ -4,6 +4,7 @@ from random import randint as ri, lognormvariate as lognorm
 
 import pygame
 
+
 class Star(object):
 
     def __init__(self, screen_size):
@@ -21,7 +22,7 @@ class Star(object):
 
     def flicker(self):
         self.degrees += self.frequency
-        if self.degrees % 360 == 0:
+        if min(self.degrees, 360) % 360 == 0:
             self.degrees = 0  # Reset counter
             self.frequency = ri(0, 10)  # Random flicker rate
             self.depth = lognorm(1, 0) * 20  # Random flicker depth
