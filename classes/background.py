@@ -14,7 +14,7 @@ class Star(object):
         width = ri(1, 3)
         size = (width, width)
         self.rect = pygame.Rect(pos, size)
-        self.color = (ri(100, 255), ri(100, 255), ri(100, 255))
+        self.color = (ri(100, 220), ri(100, 220), ri(100, 220))
 
         self.degrees = ri(0, 360)
         self.frequency = ri(0, 50)
@@ -44,8 +44,8 @@ class Star(object):
             self.degrees = 0  # Reset counter
             self.frequency = ri(0, 50)  # Random flicker rate
             self.depth = lognorm(1, 0) * 20  # Random flicker depth
-        new_color = tuple([max(0, min(c + variation * self.depth, 255)) for c in self.color])
         variation = math.cos(math.radians(self.degrees))
+        new_color = tuple([max(0, min(c + variation * self.depth, 220)) for c in self.color])
         self.color = new_color
 
 
