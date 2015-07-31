@@ -6,10 +6,15 @@ class Obstacle(object):
     def __init__(self, kind, surf, pos):
         self.surf = surf
         self.x, self.y = pos
-        if kind == 'debris':
-            self.strength = 5
-            self.health = 20
-            self.mass = 20
+        kinds = {
+            'debris': {'strength': 5, 'health': 20, 'mass': 20},
+            'meteor': {'strength': 15, 'health': 50, 'mass': 40},
+            'wall': {'strength': 5, 'health': 80, 'mass': 200},
+            'barrier': {'strength': 5, 'health': 200, 'mass': 800},
+            'shield': {'strength': 500, 'health': 2000, 'mass': 10000},
+        }
+        for property, value in kinds.get(kind).items():
+            setattr(self, property, value)
 
         self. width, self.height = self.surf.get_size()
 

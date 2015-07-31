@@ -56,10 +56,10 @@ class LevelFour(Level):
             #(time, x-pos, type),
             (4, range(300, 481, 20), 'purple'),
             (5, range(320, 501, 20), 'purple'),
-            (6, range(200, 601, 50), 'boulder'),
+            (6, range(200, 601, 50), 'debris'),
             (7, range(300, 481, 20), 'purple'),
             (8, range(320, 501, 20), 'purple'),
-            (9, range(200, 601, 50), 'boulder'),
+            (9, range(200, 601, 50), 'debris'),
             (10, range(200, 601, 50), 'red'),
         ]
 
@@ -74,7 +74,9 @@ class LevelFive(Level):
             (7, range(300, 421, 40), 'red'),
             (8, range(200, 601, 100), 'purple'),
             (9, range(300, 421, 40), 'red'),
-            (10, [200 + 50 * i for i in range(8)], 'blue'),
+            (10, range(200, 601, 50), 'debris'),
+            (11, [200 + 50 * i for i in range(8)], 'blue'),
+            (12, range(200, 601, 50), 'meteor'),
         ]
 
 class LevelSix(Level):

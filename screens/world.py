@@ -52,7 +52,8 @@ class World(object):
             'purple': 'enemy_2',
             'green': 'enemy_3',
             'blue': 'enemy_4',
-            'boulder': 'debris',
+            'debris': 'debris',
+            'meteor': 'meteor',
         }
         if kind is None:
             kind = random.choice(monster_names.keys())
@@ -71,15 +72,13 @@ class World(object):
     def __add_obstacle(self):
         surf, size = self.assets.images['debris']
         pos = random.randint(0, 800 - size[1]), -50
-        self.monsters.append(monster.Monster('boulder', surf, pos))
+        self.monsters.append(monster.Monster('debris', surf, pos))
 
 
     def add_explosion(self, source, kind='default'):
         """
         Add an explosion to the screen.
-
         Source must have a .rect attribute.
-
         """
         image_name = {
             # kind: asset (name attrib, or file)
@@ -117,7 +116,7 @@ class World(object):
             if time > wave[0]:
                 for x in wave[1]:
                     self.__add_monster(self.screen_size, kind=wave[2], left=x)
-                self.waves.pop(0)  # Get rid of it
+                self.waves.pop(0)  # Get rid of completed wave
                 self.last_add = time  # Don't add randomly right after
 
         self.add_count = (self.add_count + 1) % self.add_monster_trigger

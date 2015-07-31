@@ -45,7 +45,7 @@ class Monster(object):
             self.rads = 0
             self.infection = 1
             self.motion = sin_motion
-        elif kind == 'boulder':
+        elif kind == 'debris':
             self.obstacle = True
             self.speed_x = 0
             self.speed_y = 2
@@ -57,6 +57,15 @@ class Monster(object):
                                   random.randint(5, 10)/100
             self.theta = random.random() * 2 * math.pi
             self.rotation = rotation
+            self.infectious = False
+        elif kind == 'meteor':
+            self.obstacle = True
+            self.speed_x = 0
+            self.speed_y = 5
+            self.strength = 10
+            self.health = 50
+            self.mass = 50
+            self.infection = 0
             self.infectious = False
 
         self.width, self.height = self.surf.get_size()
