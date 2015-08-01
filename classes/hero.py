@@ -30,8 +30,6 @@ class Ship(object):
         self.thrust = 0  # Current thrust
         self.thrust_max = 80  # Thrust capability
 
-        # TODO: Add anti-gravity, which allows frictionless sliding
-
         self.speed = 0.0  # Current speed
         self.max_speed = 12.0  # Speed capability
 
@@ -39,9 +37,35 @@ class Ship(object):
         self.facing = {'west':False, 'east':False,
                        'north':True, 'south':False}
 
-        self.shooting = False
+        self.gun_firing = False
+        self.gun_reloading = False
+        self.lateral_reloading = False
         self.lateral_firing = {'left': False, 'right': False}
         self.status = {}
+
+        self.reload_lateral_frame_count = 0
+        self.reload_lateral_duration = 60
+        self.reload_gun_frame_count = 0
+        self.reload_gun_duration = 50
+
+    def update(self):
+        if self.dead:
+            return
+
+        self.check_status()
+        self.check_thrusters()
+        self.move()
+        self.fuel -= abs(self.thrust) * self.fuel_consumption
+
+        self.reload_lateral_frame_count += 1
+        self.reload_gun_frame_count += 1
+
+        if self.reload_lateral_frame_count % self.reload_lateral_duration == 0:
+            self.lateral_reloading = False
+            self.reload_lateral_frame_count = 0
+        if self.reload_gun_frame_count % self.reload_gun_duration == 0:
+            self.gun_reloading = False
+            self.reload_gun_frame_count = 0
 
     @property
     def health_percentage(self):
@@ -51,9 +75,28 @@ class Ship(object):
     def fuel_percentage(self):
         return self.fuel / self.max_fuel * 100.0
 
+    @property
+    def shooting(self):
+        if not self.gun_reloading:
+            return self.gun_firing
+        else:
+            return False
+
+    def reload_lateral(self):
+        self.lateral_reloading = True
+        self.reload_lateral_frame_count = 0
+
+    def reload_gun(self):
+        self.gun_reloading = True
+        self.reload_gun_frame_count = 0
+
     def lateral_fire(self, direction):
+        if self.lateral_reloading:
+            return
         if not self.lateral_firing[direction]:
             self.lateral_firing[direction] = True
+            self.reload_gun()
+            self.reload_lateral()
 
     def activate_thrusters(self, direction, switch=True):
         """ Adjust our thrust according to button press or release. """
@@ -67,13 +110,6 @@ class Ship(object):
         else:
             # Both thrusters cancel each other out
             self.thrust = 0
-
-    def update(self):
-        if not self.dead:
-            self.check_status()
-            self.check_thrusters()
-            self.move()
-            self.fuel -= abs(self.thrust) * self.fuel_consumption
 
     def friction(self):
         """ Calculate force of friction. """
@@ -107,7 +143,6 @@ class Ship(object):
         elif self.thrust < 0:
             friction = min(-1 * self.thrust, friction)
         return (self.thrust + friction) / self.mass
-
 
     def set_speed(self, acceleration):
         """ Modify speed by acceleration. Limited to max_speed. """
@@ -201,7 +236,7 @@ class Ship(object):
             elif event_key in (K_d,):
                 self.lateral_fire('right')
             elif event_key == K_SPACE:
-                self.shooting = True
+                self.gun_firing = True
         elif event_type == KEYUP:
             if event_key in (K_h, K_LEFT):
                 self.activate_thrusters('left', False)
@@ -212,5 +247,5 @@ class Ship(object):
             elif event_key == K_UP:
                 pass
             elif event_key == K_SPACE:
-                self.shooting = False
+                self.gun_firing = False
 
