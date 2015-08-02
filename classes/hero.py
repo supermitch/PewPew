@@ -98,6 +98,11 @@ class Ship(object):
             self.reload_gun()
             self.reload_lateral()
 
+    def drop_bomb(self):
+        if self.bomb_reloading:
+            return
+        self.bomb_firing = True
+
     def activate_thrusters(self, direction, switch=True):
         """ Adjust our thrust according to button press or release. """
         self.thrusters[direction] = switch
@@ -243,7 +248,7 @@ class Ship(object):
             elif event_key in (K_l, K_RIGHT):
                 self.activate_thrusters('right', False)
             elif event_key in (K_j, K_DOWN):
-                pass
+                self.drop_bomb()
             elif event_key == K_UP:
                 pass
             elif event_key == K_SPACE:

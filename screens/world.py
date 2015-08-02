@@ -20,6 +20,7 @@ class World(object):
         self.antigrav = self.__add_antigrav()
         self.planet = planet.Planet(self.screen_size)
         self.bullets = []
+        self.bombs = []
         self.monsters = []
         self.explosions = []
 
@@ -150,6 +151,9 @@ class World(object):
         for b in self.bullets:
             b.update()
 
+        for b in self.bombs:
+            b.update()
+
         for m in self.monsters:
             m.update()
 
@@ -174,4 +178,11 @@ class World(object):
                 self.assets.sounds['shot'].play()
                 self.bullets.append(bullet.Bullet(self.hero, direction=direction))
                 self.stats['bullets_fired'] += 1
+
+    def hero_drop_bomb(self):
+        self.assets.sounds['bomb_drop'].play()
+        self.hero.bomb_firing = False
+        self.bombs.append(bomb.Bomb(self.hero, direction=direction))
+        self.stats['bombs_dropped'] += 1
+
 
