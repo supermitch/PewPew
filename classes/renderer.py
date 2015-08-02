@@ -63,6 +63,9 @@ class Renderer(object):
         for bullet in self.world.bullets:
             self.surf.blit(*bullet.draw())
 
+        for bomb in self.world.bombs:
+            self.surf.blit(*bomb.draw())
+
         self.surf.blit(self.world.assets.images['biohazard'][0], (617, 60))
         self.surf.blit(self.world.assets.images['heart'][0], (667, 60))
         self.surf.blit(self.world.assets.images['fuel'][0], (717, 60))

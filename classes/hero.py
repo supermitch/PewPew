@@ -39,9 +39,10 @@ class Ship(object):
         self.facing = {'west':False, 'east':False,
                        'north':True, 'south':False}
 
-        self.gun_firing = False
         self.gun_reloading = False
+        self.bomb_reloading = False
         self.lateral_reloading = False
+        self.gun_firing = False
         self.lateral_firing = {'left': False, 'right': False}
         self.status = {}
 
