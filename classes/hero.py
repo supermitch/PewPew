@@ -33,6 +33,8 @@ class Ship(object):
         self.speed = 0.0  # Current speed
         self.max_speed = 12.0  # Speed capability
 
+        self.mu = 0.13  # Friction
+
         self.mv = {'left':False, 'right':False, 'up':False, 'down':False}
         self.facing = {'west':False, 'east':False,
                        'north':True, 'south':False}
@@ -118,26 +120,15 @@ class Ship(object):
 
     def friction(self):
         """ Calculate force of friction. """
-        # Friction always opposes movement
-        if self.speed > 0:
-            direction = -1
-        elif self.speed < 0:
-            direction = 1
+        # Friction always opposes movement or force
+        if self.speed != 0:
+            sign = -1 if self.speed > 0 else 1
         else:
-            # If we're not moving, we resist thrust
-            if self.thrust > 0:
-                direction = -1
-            elif self.thrust < 0:
-                direction = 1
-            else:
-                direction = 0
+            sign = -1 if self.thrust > 0 else 1 if self.thrust < 0 else 0
 
-        if self.thrusters['grav']:  # Anti-grav is on
-            mu = 0.0
-        else:
-            mu = 0.13  # TODO: Function of surface and ship attribs
+        mu = 0.0 if self.thrusters['grav'] else self.mu
         g = 9.8  # m/s^2 TODO: Function of planet
-        return mu * self.mass * g * direction
+        return mu * self.mass * g * sign
 
     @property
     def acceleration(self):
