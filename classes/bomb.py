@@ -3,11 +3,12 @@ from pygame.locals import *
 
 class Bomb(object):
 
-    def __init__(self, shooter, direction):
+    def __init__(self, shooter):
 
         self.width = 20
         self.height = 10
         self.strength = 15
+        self.mass = 15
 
         self.surf = pygame.Surface((self.width, self.height))
         color = (50, 50, 50)
@@ -18,9 +19,8 @@ class Bomb(object):
 
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
-        self.speed_y = 0
-        sign = -1 if direction == 'left' else 1
-        self.speed_x = int(sign * shooter.speed)
+        self.speed = shooter.speed
+        self.thrust = 0
         self.mu = 0.5
 
         self.dead = False
@@ -44,9 +44,8 @@ class Bomb(object):
         else:
             sign = -1 if self.thrust > 0 else 1 if self.thrust < 0 else 0
 
-        mu = 0.0 if self.thrusters['grav'] else self.mu
         g = 9.8  # m/s^2 TODO: Function of planet
-        return mu * self.mass * g * sign
+        return self.mu * self.mass * g * sign
 
     @property
     def acceleration(self):

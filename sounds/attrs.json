@@ -31,6 +31,10 @@
     "33725__jobro__1-alarm-long-c": {
         "name": "incoming-alarm",
         "volume": 1.0
+    },
+    "82563__indigosierra__drop": {
+        "name": "bomb-drop",
+        "volume": 1.0
     }
 }
 

@@ -43,6 +43,7 @@ class Ship(object):
         self.bomb_reloading = False
         self.lateral_reloading = False
         self.gun_firing = False
+        self.bomb_dropping = False
         self.lateral_firing = {'left': False, 'right': False}
         self.status = {}
 
@@ -104,7 +105,7 @@ class Ship(object):
     def drop_bomb(self):
         if self.bomb_reloading:
             return
-        self.bomb_firing = True
+        self.bomb_dropping = True
 
     def activate_thrusters(self, direction, switch=True):
         """ Adjust our thrust according to button press or release. """
@@ -228,10 +229,12 @@ class Ship(object):
                 self.activate_thrusters('right')
             elif event_key in (K_j, K_DOWN):
                 pass
-            elif event_key in (K_a,):
+            elif event_key in (K_s,):
                 self.lateral_fire('left')
-            elif event_key in (K_d,):
+            elif event_key in (K_f,):
                 self.lateral_fire('right')
+            elif event_key in (K_d,):
+                self.drop_bomb()
             elif event_key == K_SPACE:
                 self.gun_firing = True
         elif event_type == KEYUP:
@@ -239,8 +242,6 @@ class Ship(object):
                 self.activate_thrusters('left', False)
             elif event_key in (K_l, K_RIGHT):
                 self.activate_thrusters('right', False)
-            elif event_key in (K_j, K_DOWN):
-                self.drop_bomb()
             elif event_key == K_UP:
                 pass
             elif event_key == K_SPACE:

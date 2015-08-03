@@ -1,7 +1,8 @@
 from __future__ import division
 import random
 
-from classes import antigrav, bullet, explosion, hero, level, monster, obstacle, wall, planet, background
+from classes import (antigrav, bomb, bullet, explosion, hero, level, monster,
+                     obstacle, wall, planet, background)
 
 class World(object):
     """ A class to hold all the game elements. """
@@ -139,8 +140,12 @@ class World(object):
                 self.add_explosion(self.hero, kind='hero')
         if self.hero.shooting:
             self.hero_shoot()
+
         if True in self.hero.lateral_firing.values():
             self.hero_fire_laterally()
+
+        if self.hero.bomb_dropping:
+            self.hero_drop_bomb()
 
         self.background.update()
 
@@ -180,9 +185,9 @@ class World(object):
                 self.stats['bullets_fired'] += 1
 
     def hero_drop_bomb(self):
-        self.assets.sounds['bomb_drop'].play()
+        self.assets.sounds['bomb-drop'].play()
         self.hero.bomb_firing = False
-        self.bombs.append(bomb.Bomb(self.hero, direction=direction))
+        self.bombs.append(bomb.Bomb(self.hero))
         self.stats['bombs_dropped'] += 1
 
 

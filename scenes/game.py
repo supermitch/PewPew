@@ -23,6 +23,7 @@ class GameScene(BaseScene):
 
         self.stats = {
             'fps': self.renderer.fps,
+            'bombs_dropped': 0,
             'bullets_fired': 0,
             'bullets_hit': 0,
             'monsters_killed': 0,
