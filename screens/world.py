@@ -186,8 +186,9 @@ class World(object):
 
     def hero_drop_bomb(self):
         self.assets.sounds['bomb-drop'].play()
-        self.hero.bomb_firing = False
-        self.bombs.append(bomb.Bomb(self.hero))
+        self.hero.bomb_dropping = False
+        surf, size = self.assets.images['mine']
+        self.bombs.append(bomb.Bomb(surf, self.hero))
         self.stats['bombs_dropped'] += 1
 
 

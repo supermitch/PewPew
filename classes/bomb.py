@@ -3,19 +3,17 @@ from pygame.locals import *
 
 class Bomb(object):
 
-    def __init__(self, shooter):
+    def __init__(self, surf, shooter):
 
         self.width = 20
         self.height = 10
         self.strength = 15
         self.mass = 15
 
-        self.surf = pygame.Surface((self.width, self.height))
-        color = (50, 50, 50)
-        self.surf.fill(color)
+        self.surf = surf
 
-        self.x = shooter.rect.midtop[0] - (self.width / 2)
-        self.y = shooter.rect.midtop[1]
+        self.x = shooter.rect.midbottom[0] - (self.width / 2)
+        self.y = shooter.rect.midbottom[1]
 
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
