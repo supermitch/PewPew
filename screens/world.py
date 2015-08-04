@@ -108,6 +108,7 @@ class World(object):
     def remove_dead_objects(self):
         """ Update our contents to drop dead or completed objects. """
         self.bullets = [b for b in self.bullets if not b.dead]
+        self.bombs = [b for b in self.bombs if not b.dead]
         self.explosions = [e for e in self.explosions if not e.complete]
         self.monsters = [m for m in self.monsters if not m.dead]
 
