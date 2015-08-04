@@ -31,8 +31,7 @@ class Bomb(object):
         return self.surf, self.rect.topleft
 
     def collide(self, obj):
-        # TODO: Persistent bullet types won't die!
-        self.dead = True  # Any collision kills bullet
+        self.dead = True  # Any collision kills bomb
 
     def friction(self):
         """ Calculate force of friction. """

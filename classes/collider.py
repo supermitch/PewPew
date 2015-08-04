@@ -36,6 +36,19 @@ class Collider(object):
                         self.world.assets.sounds['hit'].play()
                     break  # Can only hit one bullet at a time
 
+            for b in self.world.bombs:
+                if m.rect.colliderect(b.rect):
+                    m.collide(b)
+                    b.collide(m)
+                    if m.dead:
+                        self.world.stats['monsters_killed'] += 1
+                        self.world.add_explosion(m)
+                    else:
+                        self.world.assets.sounds['hit'].play()
+                    if b.dead:
+                        self.world.add_explosion(b)
+
+            # Monster versus planet
             if m.rect.colliderect(self.world.planet) and not m.landed:
                 m.collide(self.world.planet)
                 self.world.stats['monsters_missed'] += 1
