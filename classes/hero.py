@@ -48,9 +48,11 @@ class Ship(object):
         self.status = {}
 
         self.reload_lateral_frame_count = 0
-        self.reload_lateral_duration = 60
+        self.reload_lateral_duration = 40
         self.reload_gun_frame_count = 0
-        self.reload_gun_duration = 50
+        self.reload_gun_duration = 15
+
+        self.bomb_count = 5
 
     def update(self):
         if self.dead:
@@ -103,9 +105,9 @@ class Ship(object):
             self.reload_lateral()
 
     def drop_bomb(self):
-        if self.bomb_reloading:
-            return
-        self.bomb_dropping = True
+        if self.bomb_count > 0 and not self.bomb_reloading:
+            self.bomb_dropping = True
+            self.bomb_count -= 1
 
     def activate_thrusters(self, direction, switch=True):
         """ Adjust our thrust according to button press or release. """
