@@ -55,7 +55,7 @@ class VictoryWorld(object):
 class GameOverWorld(object):
     """ The surfaces of the Game Over scene. """
 
-    def __init__(self, size):
+    def __init__(self, size, result):
         center_x = size[0] / 2
         center_y = size[1] / 2
 
@@ -72,13 +72,25 @@ class GameOverWorld(object):
         pos = (center_x - text_w/2, center_y - text_h/2)
         self.surfaces.append((surf, pos))
 
+        if result == 'infection':
+            message = "The planet was infected... humanity is lost..."
+        elif result == 'died':
+            message = "You died. Earth's last line of defense has fallen..."
+        else:
+            message = 'Weird. Game ended.'
+
+        surf = medium.render(message, True, colors.fail)
+        text_w, text_h = surf.get_size()
+        pos = (center_x - text_w/2, center_y - text_h/2 + 40)
+        self.surfaces.append((surf, pos))
+
         surf = medium.render("Play again?", True, colors.plain)
         text_w, text_h = surf.get_size()
-        pos = (center_x - text_w/2, center_y - text_h/2 + 60)
+        pos = (center_x - text_w/2, center_y - text_h/2 + 80)
         self.surfaces.append((surf, pos))
 
         surf = medium.render("(Y)es         (N)o", True, colors.plain)
         text_w, text_h = surf.get_size()
-        pos = (center_x - text_w/2, center_y - text_h/2 + 100)
+        pos = (center_x - text_w/2, center_y - text_h/2 + 120)
         self.surfaces.append((surf, pos))
 

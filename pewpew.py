@@ -40,7 +40,7 @@ class PewPew(object):
             result = game_scene.run(level - 1)
 
         if result in ('infected', 'died'):
-            gameover_scene = GameOverScene(self.renderer)
+            gameover_scene = GameOverScene(self.renderer, result)
             return gameover_scene.run()
         elif result in ('victory'):
             victory_scene = VictoryScene(self.renderer)
