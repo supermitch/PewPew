@@ -16,6 +16,7 @@ class Renderer(object):
         self.BG_COLOR = (10, 10, 10)
 
         self.text = pygame.font.Font(None, 16)
+        self.big_text = pygame.font.Font(None, 32)
         self.normal_text = pygame.font.Font(None, 30)
         self.text_colour = (200, 200, 255)
 
@@ -74,16 +75,15 @@ class Renderer(object):
         self.surf.blit(*self.fuel_meter(self.world.hero.fuel_percentage))
         self.surf.blit(*self.infection_meter(self.world.infection))
 
-        # Text displays
-        self.plot_stats(self.world.stats)
+        self.blit_bomb_inventory(self.world.hero.bomb_count)
 
-        # Show stage start message
+        self.plot_stats(self.world.stats)  # Text displays
+
         if self.world.stage_start:
-            self.stage_start(self.world.level.number)
+            self.stage_start(self.world.level.number)  # Stage start message
 
-        # Show stage clear message
         if self.world.stage_clear:
-            self.stage_clear(self.world.level.number)
+            self.stage_clear(self.world.level.number)  # Stage clear message
 
         pygame.display.flip()
 
@@ -143,6 +143,15 @@ class Renderer(object):
             surf.blit(block, (4, y))
         pos = (620, 100)
         return surf, pos
+
+    def blit_bomb_inventory(self, quantity):
+        """ Plot how many bombs in our inventory. """
+        bomb, bomb_size = self.world.assets.images['mine']
+        x, y = 650, 250
+        self.surf.blit(bomb, (x, y))
+        surf = self.big_text.render('x {}'.format(quantity), True,
+                                    self.text_colour, self.BG_COLOR)
+        self.surf.blit(surf, (x + 30, y - 5))
 
 
     def plot_stats(self, stats):
