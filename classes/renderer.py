@@ -22,8 +22,7 @@ class Renderer(object):
 
 
     def render(self):
-        # Start with a blank screen
-        self.surf.fill(self.BG_COLOR)
+        self.surf.fill(self.BG_COLOR)  # Start with a blank screen
 
         self.surf.blit(*self.world.background.draw())
 
@@ -35,8 +34,7 @@ class Renderer(object):
             if 'injured' in self.world.hero.status:
                 surf, pos = self.world.hero.draw()
                 surf = surf.copy()  # Don't modify original
-                # Add red overlay
-                surf.fill((255, 0, 0), special_flags=BLEND_RGB_ADD)
+                surf.fill((255, 0, 0), special_flags=BLEND_RGB_ADD)  # Red overlay
                 self.surf.blit(surf, pos)
             else:
                 self.surf.blit(*self.world.hero.draw())
@@ -45,8 +43,7 @@ class Renderer(object):
             surf, pos = monster.draw()
             if 'injured' in monster.status:
                 surf = surf.copy()  # Don't modify original
-                # Add red overlay
-                surf.fill((255, 0, 0), special_flags=BLEND_RGB_ADD)
+                surf.fill((255, 0, 0), special_flags=BLEND_RGB_ADD)  # Red overlay
             if hasattr(monster, 'rotation'):
                 degrees = math.degrees(monster.theta)
                 width, height = surf.get_size()
@@ -111,7 +108,6 @@ class Renderer(object):
         block_count = int(math.ceil(fuel/10.0))
 
         images = self.world.assets.images  # save typing
-
         frame, frame_size = images['meter_frame']
         surf = frame.copy()  # Don't blit onto original frame
         block, block_size = images['health_block']
@@ -131,11 +127,10 @@ class Renderer(object):
         block_count = int(math.ceil(infection/10.0))
 
         images = self.world.assets.images  # save typing
-
         frame, frame_size = images['meter_frame']
         surf = frame.copy()  # Don't blit onto original frame
-        block, block_size = images['health_block']
         # Adjust color for fuel meter
+        block, block_size = images['health_block']
         block = block.copy()
         block.fill((255, 0, 0), special_flags=BLEND_RGB_ADD)
         for i in range(block_count):
@@ -153,11 +148,8 @@ class Renderer(object):
                                     self.text_colour, self.BG_COLOR)
         self.surf.blit(surf, (x + 30, y - 5))
 
-
     def plot_stats(self, stats):
         """ Plots text statistics, but doesn't display them. """
-        left = 20
-
         try:
             accuracy = float(stats['bullets_hit']) / stats['bullets_fired']
         except ZeroDivisionError:
@@ -168,6 +160,7 @@ class Renderer(object):
             'Enemies killed: {}'.format(stats['monsters_killed']),
             'Enemies missed: {}'.format(stats['monsters_missed']),
         ]
+        left = 20
         for y, string in zip(range(40, 81, 20), strings):
             surf = self.text.render(string, True, self.text_colour,
                                     self.BG_COLOR)
@@ -175,7 +168,7 @@ class Renderer(object):
 
         surf = self.text.render('FPS: {:.1f}'.format(stats['fps']), True,
                                 self.text_colour, self.BG_COLOR)
-        self.surf.blit(surf, (20, 160))
+        self.surf.blit(surf, (left, 160))
 
     def stage_start(self, stage):
         """ Display a 'stage start' message overlay. """
