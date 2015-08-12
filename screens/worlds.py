@@ -72,7 +72,7 @@ class GameOverWorld(object):
         pos = (center_x - text_w/2, center_y - text_h/2)
         self.surfaces.append((surf, pos))
 
-        if result == 'infection':
+        if result == 'infected':
             message = "The planet was infected... humanity is lost..."
         elif result == 'died':
             message = "You died. Earth's last line of defense has fallen..."
