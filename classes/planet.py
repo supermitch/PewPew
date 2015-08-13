@@ -14,7 +14,7 @@ class Planet(object):
         self.speed_x = 0
         self.speed_y = 0
         self.surf = self._render_surface()
-        self.pos = (0, screen_size[1] - self.surf.get_height())
+        self.pos = (0, screen_size[1] - 50)
 
     def collide(self, obj):
         """ React to collision. """
@@ -25,12 +25,13 @@ class Planet(object):
         max_height = 8
         cols = self.rect.width
         surf = pygame.Surface((cols, max_height))
-        for col in range(cols, 2):
+        color = (100, 155, 133)
+        for col in range(0, cols, 2):
             height = random.randint(0, max_height + 1)
-            rect = pygame.Rect(col, 0, 2, max_height)
+            rect = pygame.Rect(col, max_height - height, 2, height)
             surf.fill(color, rect)
         return surf
 
-    def render(self):
+    def draw(self):
         return self.surf, self.pos
 

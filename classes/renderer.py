@@ -25,7 +25,7 @@ class Renderer(object):
         self.surf.fill(self.BG_COLOR)  # Start with a blank screen
 
         self.surf.blit(*self.world.background.draw())
-        self.surf.blit(*self.world.background.draw())
+        self.surf.blit(*self.world.planet.draw())
 
         if not self.world.hero.dead:
             if self.world.hero.thrusters['grav']:
