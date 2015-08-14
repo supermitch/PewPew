@@ -5,14 +5,13 @@ class Bomb(object):
 
     def __init__(self, surf, shooter):
 
-        self.width = 20
-        self.height = 10
+        self.surf = surf
+        self.width, self.height = self.surf.get_size()
+
         self.strength = 15
         self.mass = 15
 
-        self.surf = surf
-
-        self.x = shooter.rect.midbottom[0] - (self.width / 2)
+        self.x = shooter.rect.centerx
         self.y = shooter.rect.midbottom[1]
 
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
