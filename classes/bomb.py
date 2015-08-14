@@ -11,6 +11,7 @@ class Bomb(object):
         self.strength = 15
         self.mass = 15
 
+        # TODO: Is there a positioning / rect bug here? Why is centerx our x?
         self.x = shooter.rect.centerx
         self.y = shooter.rect.midbottom[1]
 
