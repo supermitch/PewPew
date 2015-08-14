@@ -28,7 +28,8 @@ class Bomb(object):
 
     def update(self):
         self.move()
-        self.explode()
+        if self.exploding:
+            self.explode()
 
     def draw(self):
         """ Return an (image, position) tuple. """
@@ -36,16 +37,17 @@ class Bomb(object):
 
     def explode(self):
         """ Expand then rapidly contract blast radius on collision. """
-        if self.exploding and self.blast_radius < self.max_blast_radius:
+        if self.expanding and self.blast_radius < self.max_blast_radius:
             self.blast_radius += 5  # Slower expansion
         else:
-            self.exploding = False
-            self.blast_radius -= 30  # Rapid collapse
+            self.expanding = False
+            self.blast_radius -= 40  # Rapid collapse
             if self.blast_radius < 0:
                 self.dead = True  # Fully collapsed
 
     def collide(self, obj):
         self.exploding = True
+        self.expanding = True
 
     def friction(self):
         """ Calculate force of friction. """
