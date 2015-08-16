@@ -1,4 +1,22 @@
 
+
+def collide_rect_circle(rect, circle):
+    # First wrap rect in a circle
+    x1, y1 = rect.centerx, rect.centery
+    r2 = math.sqrt((rect.height / 2) ^ 2 + (rect.width / 2) ^ 2)
+
+    # Then check circle overlap
+    x2, y2 = circle.x, circle.y
+    r2 = circle.radius
+
+
+    # If distance from center to center < r1 + r2
+    if distance < (r1 + r2):
+        return True
+    else:
+        return False
+
+
 class Collider(object):
     def __init__(self, world):
         self.world = world
@@ -37,7 +55,12 @@ class Collider(object):
                     break  # Can only hit one bullet at a time
 
             for b in self.world.bombs:
-                if m.rect.colliderect(b.rect):
+                if not b.exploding:
+                    collision = m.rect.colliderect(b.rect)
+                else:
+                    collision = collide_rect_circle(m.rect, b.blast_radius)
+
+                if collision:
                     m.collide(b)
                     b.collide(m)
                     if m.dead:
