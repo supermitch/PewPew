@@ -1,17 +1,22 @@
+import math
 
 
 def collide_rect_circle(rect, circle):
-    # First wrap rect in a circle
-    x1, y1 = rect.centerx, rect.centery
-    r2 = math.sqrt((rect.height / 2) ^ 2 + (rect.width / 2) ^ 2)
+    """
+    Return True if a rect and a circle are overlapping.
 
-    # Then check circle overlap
+    We actually wrap the rect in a circle and do circle-circle collision,
+    so it's a bit conservative.
+    """
+    # First wrap rect in a circle of radius r1
+    x1, y1 = rect.centerx, rect.centery
+    r1 = math.sqrt((rect.height / 2) ^ 2 + (rect.width / 2) ^ 2)
+
     x2, y2 = circle.x, circle.y
     r2 = circle.radius
 
-
-    # If distance from center to center < r1 + r2
-    if distance < (r1 + r2):
+    distance = math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
+    if distance < (r1 + r2):  # If distance from center to center < r1 + r2
         return True
     else:
         return False
