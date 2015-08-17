@@ -1,6 +1,22 @@
 import pygame
 from pygame.locals import *
 
+class Circle(object):
+    """
+    A circle with a center position & radius.
+    """
+    def __init__(self, x, y, radius):
+        """ Initialize position & radius. """
+        self.x = x
+        self.y = y
+        self.radius = radius
+
+    @property
+    def area(self):
+        import math
+        return math.pi * self.radius ^ 2
+
+
 class Bomb(object):
 
     def __init__(self, surf, shooter):
@@ -22,7 +38,7 @@ class Bomb(object):
         self.mu = 0.5
 
         self.exploding = False
-        self.blast_radius = 0
+        self.blast_radius = Circle(self.x, self.y, 0)  # 0 radius circle
         self.max_blast_radius = 100
         self.dead = False
 
@@ -37,12 +53,12 @@ class Bomb(object):
 
     def explode(self):
         """ Expand then rapidly contract blast radius on collision. """
-        if self.expanding and self.blast_radius < self.max_blast_radius:
-            self.blast_radius += 5  # Slower expansion
+        if self.expanding and self.blast_radius.radius < self.max_blast_radius:
+            self.blast_radius.radius += 5  # Slower expansion
         else:
             self.expanding = False
-            self.blast_radius -= 40  # Rapid collapse
-            if self.blast_radius < 0:
+            self.blast_radius.radius -= 40  # Rapid collapse
+            if self.blast_radius.radius < 0:
                 self.dead = True  # Fully collapsed
 
     def collide(self, obj):
