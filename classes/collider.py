@@ -15,7 +15,7 @@ def collide_rect_circle(rect, circle):
     x2, y2 = circle.x, circle.y
     r2 = circle.radius
 
-    distance = math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
+    distance = math.sqrt((abs(x2 - x1)) ^ 2 + (abs(y2 - y1)) ^ 2)
     if distance < (r1 + r2):  # If distance from center to center < r1 + r2
         return True
     else:
