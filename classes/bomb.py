@@ -54,7 +54,7 @@ class Bomb(object):
     def explode(self):
         """ Expand then rapidly contract blast radius on collision. """
         if self.expanding and self.blast_radius.radius < self.max_blast_radius:
-            self.blast_radius.radius += 5  # Slower expansion
+            self.blast_radius.radius += 10  # Slower expansion
         else:
             self.expanding = False
             self.blast_radius.radius -= 40  # Rapid collapse
