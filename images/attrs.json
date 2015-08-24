@@ -17,6 +17,15 @@
             [0, 0, 9, 6],
             [0, 6, 9, 6]
         ]
+    },
+    "driller_flying": {
+        "kind": "spritesheet",
+        "name": "driller-flying",
+        "coords": [
+            [0, 0, 17, 16],
+            [0, 16, 17, 16],
+            [0, 32, 17, 16]
+        ]
     }
 }
 
