@@ -84,6 +84,7 @@ class LevelSix(Level):
         self.number = 6
         self.waves = [
             #(time, x-pos, type),
+            (3, range(200, 601, 200), 'driller'),
             (4, range(300, 481, 40), 'purple'),
             (5, range(300, 421, 40), 'red'),
             (6, range(200, 601, 100), 'purple'),

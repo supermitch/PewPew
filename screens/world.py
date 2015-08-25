@@ -56,6 +56,7 @@ class World(object):
             'blue': 'enemy_4',
             'debris': 'debris',
             'meteor': 'meteor',
+            'driller': 'driller-flying',
         }
         if kind is None:
             kind = random.choice(monster_names.keys())
@@ -191,5 +192,4 @@ class World(object):
         surf, size = self.assets.images['mine']
         self.bombs.append(bomb.Bomb(surf, self.hero))
         self.stats['bombs_dropped'] += 1
-
 

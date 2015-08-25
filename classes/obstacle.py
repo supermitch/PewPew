@@ -9,8 +9,8 @@ class Obstacle(object):
         kinds = {
             'debris': {'strength': 5, 'health': 20, 'mass': 20},
             'meteor': {'strength': 15, 'health': 50, 'mass': 40},
-            'wall': {'strength': 5, 'health': 80, 'mass': 200},
-            'barrier': {'strength': 5, 'health': 200, 'mass': 800},
+            'driller': {'strength': 20, 'health': 80, 'mass': 200},
+            'barrier': {'strength': 50, 'health': 200, 'mass': 800},
             'shield': {'strength': 500, 'health': 2000, 'mass': 10000},
         }
         for property, value in kinds.get(kind).items():
