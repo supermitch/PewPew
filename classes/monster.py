@@ -15,29 +15,27 @@ class Monster(object):
         self.infectious = True  # By default, can infect humans
         self.kind = kind
 
+        self.speed_x = 0
+
         if kind == 'green':
-            self.speed_x = 0
             self.speed_y = 1
             self.strength = 5
             self.health = 10
             self.mass = 10
             self.infection = 2
         elif kind == 'red':
-            self.speed_x = 0
             self.speed_y = 0.5
             self.strength = 10
             self.health = 30
             self.mass = 20
             self.infection = 20
         elif kind == 'purple':
-            self.speed_x = 0
             self.speed_y = 3
             self.strength = 2
             self.health = 10
             self.mass = 2
             self.infection = 5
         elif kind == 'blue':
-            self.speed_x = 0
             self.speed_y = 4
             self.strength = 1
             self.health = 10
@@ -47,7 +45,6 @@ class Monster(object):
             self.motion = sin_motion
         elif kind == 'debris':
             self.obstacle = True
-            self.speed_x = 0
             self.speed_y = 2
             self.strength = 5
             self.health = 20
@@ -60,15 +57,22 @@ class Monster(object):
             self.infectious = False
         elif kind == 'meteor':
             self.obstacle = True
-            self.speed_x = 0
             self.speed_y = 5
             self.strength = 10
             self.health = 50
             self.mass = 50
             self.infection = 0
             self.infectious = False
+        elif kind == 'driller':
+            self.obstacle = True
+            self.speed_y = 2
+            self.strength = 10
+            self.health = 50
+            self.mass = 50
+            self.infection = 0
+            self.infectious = False
 
-        if isinstance(self.sprites, list):
+        if isinstance(sprites, list):
             self.sprites = sprites
         else:
             self.sprites = [sprites]  # Single frame
@@ -80,7 +84,7 @@ class Monster(object):
 
         self.frame = 0  # current animation frame
         self.frame_count = 0  # frame counter
-        self.frame_rate = 1  # 1 frame per loop
+        self.frame_rate = 25  # 1 frame per loop
 
         self.status = {}
         self.dead = False
@@ -122,12 +126,12 @@ class Monster(object):
             self.dead = True
 
     def increment_frame(self):
-        self.frame_count += 1 / self.frame_rate
+        self.frame_count += (1 / self.frame_rate)
         self.frame = int(math.floor(self.frame_count))
         if self.frame > len(self.sprites):
             self.frame = 0
             self.frame_count = 0
-        return frame
+        return self.frame
 
     @property
     def surf(self):
