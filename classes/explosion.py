@@ -7,23 +7,33 @@ class Explosion(object):
     def __init__(self, sprites, pos):
 
         self.sprites = sprites
-        self.surf = self.sprites[0]
-
-        self.frame_count = 0
-        self.complete = False
-
         self.x, self.y = pos
-        self.rect = pygame.Rect(self.x, self.y, self.surf.get_width(),
-                                 self.surf.get_height())
+
+        self.frame = 0
+        self.frame_count = 0
+        self.frame_rate = 1  # 1 frame per loop
+
+        surf = self.sprites[0]
+        self.rect = pygame.Rect(self.x, self.y, surf.get_width(), surf.get_height())
+
+        self.complete = False  # All done exploding
 
     def update(self):
-        # Only update half a frame every game update
-        self.frame_count += 1
-        frame = int(math.floor(self.frame_count))
-        if frame < 5:
-            self.surf = self.sprites[frame]
-        else:
+        self.increment_frame()
+        if self.frame >= 5:
             self.complete = True
+
+    def increment_frame(self):
+        self.frame_count += 1 / self.frame_rate
+        self.frame = int(math.floor(self.frame_count))
+        if self.frame > len(self.sprites):
+            self.frame = 0
+            self.frame_count = 0
+        return frame
+
+    @property
+    def surf(self):
+        return self.sprites[self.frame]
 
     def draw(self):
         """ Return an (image, position) tuple. """

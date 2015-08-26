@@ -8,8 +8,8 @@ from planet import Planet
 
 class Monster(object):
 
-    def __init__(self, kind, surf, pos):
-        self.surf = surf
+    def __init__(self, kind, sprites, pos):
+
         self.obstacle = False  # Doesn't persist as an obstacle
         self.landed = False  # Hasn't already landed
         self.infectious = True  # By default, can infect humans
@@ -68,16 +68,26 @@ class Monster(object):
             self.infection = 0
             self.infectious = False
 
-        self.width, self.height = self.surf.get_size()
+        if isinstance(self.sprites, list):
+            self.sprites = sprites
+        else:
+            self.sprites = [sprites]  # Single frame
+        self.width, self.height = self.sprites[0].get_size()
 
         self.x, self.y = pos
 
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
+        self.frame = 0  # current animation frame
+        self.frame_count = 0  # frame counter
+        self.frame_rate = 1  # 1 frame per loop
+
         self.status = {}
         self.dead = False
 
+
     def update(self):
+        self.increment_frame()
         self.check_status()
         if hasattr(self, 'motion'):
             self.motion(self)
@@ -110,6 +120,18 @@ class Monster(object):
         self.set_status('injured', 6)
         if self.health <= 0:
             self.dead = True
+
+    def increment_frame(self):
+        self.frame_count += 1 / self.frame_rate
+        self.frame = int(math.floor(self.frame_count))
+        if self.frame > len(self.sprites):
+            self.frame = 0
+            self.frame_count = 0
+        return frame
+
+    @property
+    def surf(self):
+        return self.sprites[self.frame]
 
     def draw(self):
         """ Return an (image, position) tuple. """
