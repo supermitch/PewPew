@@ -47,35 +47,52 @@ class World(object):
         pos = self.hero.rect.midbottom
         return antigrav.Antigrav(surf, pos)
 
-    def __add_monster(self, screen_size, kind=None, left=None):
+    def __add_monster(self, kind=None, left=None):
         """ Add a monster to the screen. """
-        monster_names = {
+        sprites = {
             'red': 'enemy_1',
             'purple': 'enemy_2',
             'green': 'enemy_3',
             'blue': 'enemy_4',
+        }
+        if kind not in sprites:
+            self.__add_obstacle(kind, left)
+            return
+
+        if kind is None:
+            kind = random.choice(sprites.keys())
+
+        sprite = sprites[kind]
+        surf, size = self.assets.images[sprite]
+
+        # Position somewhere along the top of the screen
+        if left is None:
+            x = random.randint(20 + size[0], self.screen_size[0] - (20 + size[0]))
+        else:
+            x = left
+        y = -50
+        monster_class = getattr(monster, kind.title())
+        self.monsters.append(monster_class(surf, (x, y)))
+
+    def __add_obstacle(self, kind=None, left=None):
+        sprites = {
             'debris': 'debris',
             'meteor': 'meteor',
             'driller': 'driller-flying',
         }
         if kind is None:
-            kind = random.choice(monster_names.keys())
+            kind = random.choice(sprites.keys())
 
-        surf, size = self.assets.images[monster_names[kind]]
+        sprite = sprites[kind]
+        surf, size = self.assets.images[sprite]
 
-        # Position somewhere along the top of the screen
         if left is None:
-            x = random.randint(20 + size[0], screen_size[0] - (20 + size[0]))
+            x = random.randint(20 + size[0], self.screen_size[0] - (20 + size[0]))
         else:
             x = left
         y = -50
-        self.monsters.append(monster.Monster(kind, surf, (x, y)))
-
-
-    def __add_obstacle(self):
-        surf, size = self.assets.images['debris']
-        pos = random.randint(0, 800 - size[1]), -50
-        self.monsters.append(monster.Monster('debris', surf, pos))
+        _class = getattr(obstacle, kind.title())
+        self.monsters.append(_class(surf, (x, y)))
 
 
     def add_explosion(self, source, kind='default'):
@@ -119,17 +136,16 @@ class World(object):
             wave = self.waves[0]
             if time > wave[0]:
                 for x in wave[1]:
-                    self.__add_monster(self.screen_size, kind=wave[2], left=x)
+                    self.__add_monster(kind=wave[2], left=x)
                 self.waves.pop(0)  # Get rid of completed wave
                 self.last_add = time  # Don't add randomly right after
 
         self.add_count = (self.add_count + 1) % self.add_monster_trigger
         if self.add_count == self.add_monster_trigger - 1:
-            self.__add_monster(self.screen_size)
-
-            # TODO: Fix this
             if random.random() > 0.4:
                 self.__add_obstacle()
+            else:
+                self.__add_monster()
 
     def update(self, level_time):
         """ Once per frame, update all the world's objects. """

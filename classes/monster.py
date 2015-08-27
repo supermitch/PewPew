@@ -6,72 +6,21 @@ import pygame
 
 from planet import Planet
 
+
+def sin_motion(self):
+    """ Wave-like left & right motion. """
+    self.rads = (self.rads + 0.1) % (2 * math.pi)
+    self.speed_x = math.sin(self.rads) * 4
+
+
+def rotation(self):
+    """ Rotation function """
+    self.theta = (self.theta + self.rads_per_frame) % (2.0 * math.pi)
+
+
 class Monster(object):
 
-    def __init__(self, kind, sprites, pos):
-
-        self.obstacle = False  # Doesn't persist as an obstacle
-        self.landed = False  # Hasn't already landed
-        self.infectious = True  # By default, can infect humans
-        self.kind = kind
-
-        self.speed_x = 0
-
-        if kind == 'green':
-            self.speed_y = 1
-            self.strength = 5
-            self.health = 10
-            self.mass = 10
-            self.infection = 2
-        elif kind == 'red':
-            self.speed_y = 0.5
-            self.strength = 10
-            self.health = 30
-            self.mass = 20
-            self.infection = 20
-        elif kind == 'purple':
-            self.speed_y = 3
-            self.strength = 2
-            self.health = 10
-            self.mass = 2
-            self.infection = 5
-        elif kind == 'blue':
-            self.speed_y = 4
-            self.strength = 1
-            self.health = 10
-            self.mass = 2
-            self.rads = 0
-            self.infection = 1
-            self.motion = sin_motion
-        elif kind == 'debris':
-            self.obstacle = True
-            self.speed_y = 2
-            self.strength = 5
-            self.health = 20
-            self.mass = 20
-            self.infection = 0
-            self.rads_per_frame = random.choice((-1, 1)) * \
-                                  random.randint(5, 10)/100
-            self.theta = random.random() * 2 * math.pi
-            self.rotation = rotation
-            self.infectious = False
-        elif kind == 'meteor':
-            self.obstacle = True
-            self.speed_y = 5
-            self.strength = 10
-            self.health = 50
-            self.mass = 50
-            self.infection = 0
-            self.infectious = False
-        elif kind == 'driller':
-            self.obstacle = True
-            self.speed_y = 2
-            self.strength = 10
-            self.health = 50
-            self.mass = 50
-            self.infection = 0
-            self.infectious = False
-
+    def __init__(self, sprites, pos):
         if isinstance(sprites, list):
             self.sprites = sprites
         else:
@@ -81,6 +30,12 @@ class Monster(object):
         self.x, self.y = pos
 
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+
+        self.obstacle = False  # Doesn't persist as an obstacle
+        self.landed = False  # Hasn't already landed
+        self.infectious = True  # By default, can infect humans
+        self.speed_x = 0  # Directly downwards
+
 
         self.frame = 0  # current animation frame
         self.frame_count = 0  # frame counter
@@ -149,12 +104,45 @@ class Monster(object):
         """ Remove expired statuses, update others. """
         self.status = {k: v - 1 for k, v in self.status.items() if v > 0}
 
-def sin_motion(self):
-    """ Wave-like left & right motion. """
-    self.rads = (self.rads + 0.1) % (2 * math.pi)
-    self.speed_x = math.sin(self.rads) * 4
 
-def rotation(self):
-    """ Rotation. """
-    self.theta = (self.theta + self.rads_per_frame) % (2.0 * math.pi)
+class Green(Monster):
+    def __init__(self, sprites, pos):
+        super(Green, self).__init__(sprites, pos)
+        self.speed_y = 1
+        self.strength = 5
+        self.health = 10
+        self.mass = 10
+        self.infection = 2
+
+
+class Red(Monster):
+    def __init__(self, sprites, pos):
+        super(Red, self).__init__(sprites, pos)
+        self.speed_y = 0.6
+        self.strength = 10
+        self.health = 30
+        self.mass = 20
+        self.infection = 20
+
+
+class Purple(Monster):
+    def __init__(self, sprites, pos):
+        super(Purple, self).__init__(sprites, pos)
+        self.speed_y = 3
+        self.strength = 2
+        self.health = 10
+        self.mass = 2
+        self.infection = 5
+
+
+class Blue(Monster):
+    def __init__(self, sprites, pos):
+        super(Blue, self).__init__(sprites, pos)
+        self.speed_y = 4
+        self.strength = 1
+        self.health = 10
+        self.mass = 2
+        self.rads = 0
+        self.infection = 1
+        self.motion = sin_motion
 
