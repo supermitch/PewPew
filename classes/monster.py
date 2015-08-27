@@ -83,14 +83,14 @@ class Monster(object):
     def increment_frame(self):
         self.frame_count += (1 / self.frame_rate)
         self.frame = int(math.floor(self.frame_count))
-        if self.frame > len(self.sprites):
+        if self.frame >= len(self.sprites):
             self.frame = 0
             self.frame_count = 0
         return self.frame
 
     @property
     def surf(self):
-        return self.sprites[self.frame]
+        return self.sprites[self.frame - 1]
 
     def draw(self):
         """ Return an (image, position) tuple. """

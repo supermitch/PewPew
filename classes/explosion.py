@@ -20,16 +20,15 @@ class Explosion(object):
 
     def update(self):
         self.increment_frame()
-        if self.frame >= 5:
-            self.complete = True
 
     def increment_frame(self):
-        self.frame_count += 1 / self.frame_rate
+        self.frame_count += (1 / self.frame_rate)
         self.frame = int(math.floor(self.frame_count))
-        if self.frame > len(self.sprites):
+        if self.frame >= len(self.sprites):
             self.frame = 0
             self.frame_count = 0
-        return frame
+            self.complete = True
+        return self.frame
 
     @property
     def surf(self):
