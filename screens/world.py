@@ -55,11 +55,7 @@ class World(object):
             'green': 'enemy_3',
             'blue': 'enemy_4',
         }
-        if kind not in sprites:
-            self.__add_obstacle(kind, left)
-            return
-
-        if kind is None:
+        if kind is None or kind not in sprites:
             kind = random.choice(sprites.keys())
 
         sprite = sprites[kind]
