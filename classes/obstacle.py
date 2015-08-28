@@ -20,8 +20,7 @@ class Debris(Obstacle):
         self.strength = 5
         self.health = 20
         self.mass = 20
-        self.rads_per_frame = random.choice((-1, 1)) * \
-                              random.randint(5, 10)/100
+        self.rads_per_frame = random.choice((-1, 1)) * random.randint(5, 10)/100
         self.theta = random.random() * 2 * math.pi
         self.rotation = rotation
 
