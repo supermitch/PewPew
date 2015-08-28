@@ -77,7 +77,8 @@ class World(object):
             'driller': 'driller-flying',
         }
         if kind is None:
-            kind = random.choice(sprites.keys())
+            kind = 'debris'
+            # kind = random.choice(sprites.keys())
 
         sprite = sprites[kind]
         surf, size = self.assets.images[sprite]
