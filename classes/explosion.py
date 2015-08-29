@@ -11,10 +11,9 @@ class Explosion(object):
 
         self.frame = 0
         self.frame_count = 0
-        self.frame_rate = 1  # 1 frame per loop
+        self.frame_rate = 1.0  # 1 frame per loop
 
-        surf = self.sprites[0]
-        self.rect = pygame.Rect(self.x, self.y, surf.get_width(), surf.get_height())
+        self.rect = pygame.Rect(self.x, self.y, self.sprites[0].get_width(), self.sprites[0].get_height())
 
         self.complete = False  # All done exploding
 
@@ -22,7 +21,7 @@ class Explosion(object):
         self.increment_frame()
 
     def increment_frame(self):
-        self.frame_count += (1 / self.frame_rate)
+        self.frame_count += (1.0 / self.frame_rate)
         self.frame = int(math.floor(self.frame_count))
         if self.frame >= len(self.sprites):
             self.frame = 0

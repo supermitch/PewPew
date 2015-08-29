@@ -59,6 +59,7 @@ class Collider(object):
                         self.world.assets.sounds['hit'].play()
                     break  # Can only hit one bullet at a time
 
+            # Monster versus Bombs
             for b in self.world.bombs:
                 if not b.exploding:
                     collision = m.rect.colliderect(b.rect)

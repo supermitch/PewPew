@@ -100,8 +100,7 @@ class World(object):
         image_name = {
             # kind: asset (name attrib, or file)
             'default': 'explode',
-            # TODO: different hero explosion
-            'hero': 'explode',
+            'hero': 'explode',  # TODO: Alternative explosions
         }[kind]
         sprites, size = self.assets.images[image_name]
         x = source.rect.centerx - size[0]/2
